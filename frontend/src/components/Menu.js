@@ -41,7 +41,6 @@ class CTNDetails extends Component {
                     <SimCardIcon/>
                   </ListItemIcon>
                   <ListItemText primary="Additional Sim" />
-
                 </ListItem>
                  <ListItem button className={this.state.currentlySelected === 'additionalHandset' ? classes.currentlySelected : null}
                                   onClick={() => {this.props.onAdditionalHandsetClicked()
@@ -57,7 +56,9 @@ class CTNDetails extends Component {
                   </ListItemIcon>
                   <ListItemText primary="Add To Plan" />
                 </ListItem>
-                <ListItem button>
+                <ListItem button className={this.state.currentlySelected === 'customerProfile' ? classes.currentlySelected : null}
+                                 onClick={() => {this.props.onCustomerProfileClicked()
+                                                 this.setState({currentlySelected: 'customerProfile'})}} >
                   <ListItemIcon>
                     <PeopleIcon />
                   </ListItemIcon>
