@@ -50,7 +50,7 @@ class FinaliseSimOnly extends Component {
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={fixedHeightPaper}>
                            <Box>
-                                <h1>Dscount and spend caps </h1>
+                                <h1>Discount options and spend caps </h1>
                            </Box>
                        </Paper>
                    </Grid>
