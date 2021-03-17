@@ -26,15 +26,20 @@ class GetCustomer(APIView):
             mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
             customer_object = Customer.objects.get(id=mobile_number_object.customer.id)
 
+            def get_other_lines():
+                """
+                Get all the other lines the customer has and also adds the upgrade data and days remaining
+                """
+                other_lines = []
+                for line in customer_object.mobilenumber_set.all().values():
+                    other_lines.append(line)
+                for count, line in enumerate(customer_object.mobilenumber_set.all()):
+                    date_cal = date_calculations.DateTimeCalculations(line)
+                    current_other_line_dic = other_lines[count]
+                    current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
+                    current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
 
-            other_lines = customer_object.mobilenumber_set.all()
-            for count, line in enumerate(other_lines):
-                print(line)
-                print(count)
-                cal = date_calculations.DateTimeCalculations(line)
-                print(cal.calculate_upgrade_date())
-
-            other_lines = other_lines.values()
+                return other_lines
 
 
             date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
@@ -49,7 +54,7 @@ class GetCustomer(APIView):
             mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
             customer['total_lines'] = customer_object.mobilenumber_set.all().count()
 
-            data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': other_lines}
+            data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines()}
 
             return Response(data, status=status.HTTP_200_OK)
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)

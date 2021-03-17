@@ -58,6 +58,20 @@ const styles = () => ({
 class HouseholdView extends Component {
 
 
+    componentDidMount() {
+        this.handleUpgradeDateColour()
+    }
+
+    handleUpgradeDateColour = (line) => {
+        if (line <= 0){
+            return this.props.classes.textSuccess
+        }else if (line <= 100){
+            return this.props.classes.textWarning
+        }else {
+            return this.props.classes.textDanger
+        }
+    }
+    
     render() {
 
         const {classes, customer, otherLines} = this.props
@@ -99,11 +113,12 @@ class HouseholdView extends Component {
                                     <TableBody>
                                         {
                                             otherLines.map((otherLine, index) => {
+                                                const colour = this.handleUpgradeDateColour(otherLine.days_remaining)
                                                 return (
                                                         <TableRow hover={true} key={index}>
                                                             <TableCell className={classes.tableHeading}><Link onClick={() => {this.props.onNewCTNClicked(otherLine.number)}}>{otherLine.number}</Link></TableCell>
                                                             <TableCell align='right'>{otherLine.user}</TableCell>
-                                                            <TableCell align='right'>{otherLine.contract_end}</TableCell>
+                                                            <TableCell className={colour} align='right'>{otherLine.upgrade_date}</TableCell>
                                                         </TableRow>
                                                 )
                                             })
