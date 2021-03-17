@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
 import ChooseSimOnlyTariff from "./ChooseSimOnlyTariff";
+import FinaliseSimOnly from "./FinaliseSimOnly";
 
 
 const styles = (theme) => ({
@@ -14,6 +15,15 @@ const styles = (theme) => ({
 });
 
 class SimOnlyUpgrade extends Component {
+    state = {chooseSimTariff: true}
+
+    handleFinaliseSimOnly = () => {
+        this.setState({chooseSimTariff: false})
+    }
+
+    handleDeleteTariff = () => {
+        this.setState({chooseSimTariff: true})
+    }
 
     render() {
 
@@ -21,7 +31,20 @@ class SimOnlyUpgrade extends Component {
 
         return (
            <div>
-               <ChooseSimOnlyTariff onNewCTNClicked={onNewCTNClicked}fixedHeightPaper={fixedHeightPaper} state={state}/>
+               {
+                   this.state.chooseSimTariff ?
+                       <ChooseSimOnlyTariff onNewCTNClicked={onNewCTNClicked}
+                                            fixedHeightPaper={fixedHeightPaper}
+                                            onFinaliseSimOnlyClicked={this.handleFinaliseSimOnly}
+                                            onDeleteTariffClicked={this.handleDeleteTariff}
+                                            teststate={this.state}
+                                            state={state}/>
+
+                       : <FinaliseSimOnly onNewCTNClicked={onNewCTNClicked}
+                                          fixedHeightPaper={fixedHeightPaper}
+                                          onDeleteTariffClicked={this.handleDeleteTariff}
+                                          state={state}/>
+               }
            </div>
         )
     }

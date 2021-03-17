@@ -11,7 +11,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
 
-
 const styles = (theme) => ({
     textSuccess: {
         color: 'green'
@@ -53,7 +52,6 @@ class SimOnlyBasket extends Component {
     state = {basketItems: null}
 
     componentDidMount() {
-          console.log(this.state)
           fetch("http://127.0.0.1:8000/api/get-simo-only-order")
              .then((response) => response.json())
              .then((data) => {
@@ -123,11 +121,15 @@ class SimOnlyBasket extends Component {
                                <Grid item xs={6}>
                                    <Button className={classes.deleteButton} color='secondary' size='small'
                                            variant='contained'
-                                           onClick={() => this.handleDeleteSimOnlyOrder()}>Delete</Button>
+                                           onClick={() =>
+                                           {   this.props.onDeleteTariffClicked()
+                                               this.handleDeleteSimOnlyOrder()}}>Delete</Button>
                                </Grid>
                                <Grid item xs={6}>
                                    <Button className={classes.finaliseButton} size='small'
-                                           variant='contained'>Finalise</Button>
+                                           variant='contained'
+                                           onClick={() => {
+                                               this.props.onFinaliseSimOnlyClicked()}}>Finalise</Button>
                                </Grid>
                            </Grid>
                        </Box> : null

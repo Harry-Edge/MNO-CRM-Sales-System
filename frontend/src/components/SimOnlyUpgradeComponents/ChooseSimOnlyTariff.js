@@ -15,7 +15,6 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import SimOnlyBasket from "./SimOnlyBasket";
 
-
 const styles = (theme) => ({
     textSuccess: {
         color: 'green'
@@ -176,7 +175,9 @@ class ChooseSimOnlyTariff extends Component {
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.basket}>
                            {
-                               this.state.tariffChosen ? <SimOnlyBasket/> : null
+                               this.state.tariffChosen ? <SimOnlyBasket
+                                                        onFinaliseSimOnlyClicked={this.props.onFinaliseSimOnlyClicked}
+                                                        onDeleteTariffClicked={this.props.onDeleteTariffClicked}/> : null
                            }
                        </Paper>
                    </Grid>

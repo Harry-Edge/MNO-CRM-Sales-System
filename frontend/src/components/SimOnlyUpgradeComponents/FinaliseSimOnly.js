@@ -1,25 +1,46 @@
-import React,  {Component} from "react";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Box from "@material-ui/core/Box";
+import React, {Component} from "react";
+import { withStyles } from '@material-ui/core/styles';
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
 import HouseholdView from "../HouseholdView";
-import {withStyles} from "@material-ui/core/styles";
+import Box from "@material-ui/core/Box";
+import SimOnlyBasket from "./SimOnlyBasket";
+
 
 const styles = (theme) => ({
-     headingText: {
-        fontWeight: 650
+    textSuccess: {
+        color: 'green'
+    },
+    test: {
+        backgroundColor: 'blue'
     },
     tableHeader: {
         fontWeight: 650
     },
+     tableColor:{
+        backgroundColor: '#fdfcfe'
+    },
+    paper: {
+        padding: theme.spacing(2),
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+    },
+    basket: {
+        padding: theme.spacing(2),
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+        height: 370
+    },
 
 });
 
-class ChooseHandset extends Component {
+class FinaliseSimOnly extends Component {
 
-        render() {
+    render() {
 
         const {classes, fixedHeightPaper, state, onNewCTNClicked} = this.props
 
@@ -29,15 +50,7 @@ class ChooseHandset extends Component {
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={fixedHeightPaper}>
                            <Box>
-                               <Typography variant='h6' className={classes.tableHeader}>Announcements</Typography>
-                               <Divider/>
-                               <Box m={2}>
-                                   <Typography className={classes.tableHeader}>- S21, £10 on Switch for every sale</Typography>
-                                   <Typography className={classes.tableHeader}>- 12 Pro/12 Pro Max now in stock </Typography>
-                                   <Typography className={classes.tableHeader}>- iPhone XR £34pm 10GB, £50 Upfront </Typography>
-
-                               </Box>
-
+                                <h1>Dscount and spend caps </h1>
                            </Box>
                        </Paper>
                    </Grid>
@@ -50,12 +63,14 @@ class ChooseHandset extends Component {
                    </Grid>
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={classes.paper}>
-                           <h1>aefa</h1>
+                           <Box>
+                               <h1>VALIDATIONS</h1>
+                           </Box>
                        </Paper>
                    </Grid>
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.basket}>
-                           <h1>Basket</h1>
+                           <SimOnlyBasket onDeleteTariffClicked={this.props.onDeleteTariffClicked}/>
                        </Paper>
                    </Grid>
                </Grid>
@@ -63,4 +78,4 @@ class ChooseHandset extends Component {
         )
     }
 }
-export default withStyles(styles)(ChooseHandset)
+export default withStyles(styles)(FinaliseSimOnly)
