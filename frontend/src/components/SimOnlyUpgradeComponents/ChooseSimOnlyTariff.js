@@ -79,7 +79,10 @@ class ChooseSimOnlyTariff extends Component {
                  }
              })
              .then((data) => {
-                 this.setState({tariffChosen: true})
+                 if (data === 'No Order'){
+                     console.log(data)
+                 }else {
+                    this.setState({tariffChosen: true})}
              }
          ).catch((error) => {
              console.log(error)
