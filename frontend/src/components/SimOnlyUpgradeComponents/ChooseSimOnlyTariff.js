@@ -76,7 +76,7 @@ class ChooseSimOnlyTariff extends Component {
                  if (response.ok){
                      return response.json()
                  }else{
-                     throw new Error('No Order')
+                     throw new Error('No Order Found')
                  }
              })
              .then((data) => {

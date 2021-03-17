@@ -24,6 +24,7 @@ import UpgradeOptions from "./UpgradeOptions";
 import Recommendations from "./Recommendations";
 import SimOnlyUpgrade from "./SimOnlyUpgradeComponents/SimOnlyUpgrade";
 import AdditionalSim from "./AdditionalSimComponents/AdditionalSim";
+import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import HandsetUpgrade from "./HandsetUpgradeComponents/HandsetUpgrade";
 
 const drawerWidth = 240;
@@ -139,6 +140,7 @@ class Dashboard extends Component{
            simOnlyUpgrade: false,
            handsetUpgrade: false,
            additionalSim: false,
+           additionalHandset: false,
            mobileAccount: null,
            customer: null,
            otherLines: null }
@@ -199,11 +201,17 @@ class Dashboard extends Component{
     this.setState({handsetUpgrade: true, dashboard: false})
   };
   handleReturnToDashboard = () => {
-    this.setState({dashboard: true, additionalSim: false, handsetUpgrade: false, simOnlyUpgrade: false })
+    this.setState({dashboard: true, additionalSim: false, additionalHandset: false, handsetUpgrade: false,
+                          simOnlyUpgrade: false })
   };
   handleAdditionalSimClicked = () => {
-    this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalSim: true})
+    this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalHandset: false,
+                          additionalSim: true})
   };
+  handleAdditionalHandsetClicked = () => {
+      this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalSim: false,
+                           additionalHandset: true })
+  }
 
   render() {
 
@@ -260,13 +268,14 @@ class Dashboard extends Component{
                 <Divider />
                   <List>
                     <Menu onReturnToDashboard={this.handleReturnToDashboard}
-                          onAdditionalSimClicked={this.handleAdditionalSimClicked}/>
+                          onAdditionalSimClicked={this.handleAdditionalSimClicked}
+                          onAdditionalHandsetClicked={this.handleAdditionalHandsetClicked}/>
                   </List>
                 <Divider />
                 <Grid>
                   {
                     this.state.mobileAccount ?  <CTNDetails customer={this.state.customer}
-                                                       mobileAccount={this.state.mobileAccount} /> : null
+                                                            mobileAccount={this.state.mobileAccount} /> : null
                   }
                 </Grid>
           </Drawer>
@@ -321,6 +330,10 @@ class Dashboard extends Component{
               {
                 this.state.additionalSim ?
                     <AdditionalSim/> : null
+              }
+              {
+                this.state.additionalHandset ?
+                    <AdditionalHandset/>: null
               }
             </Container>
           </main>

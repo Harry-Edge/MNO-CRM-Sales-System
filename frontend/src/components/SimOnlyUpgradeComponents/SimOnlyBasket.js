@@ -53,6 +53,7 @@ class SimOnlyBasket extends Component {
     state = {basketItems: null}
 
     componentDidMount() {
+          console.log(this.state)
           fetch("http://127.0.0.1:8000/api/get-simo-only-order")
              .then((response) => response.json())
              .then((data) => {

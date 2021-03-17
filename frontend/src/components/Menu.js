@@ -35,15 +35,17 @@ class CTNDetails extends Component {
                   <ListItemText  primary="Dashboard" />
                 </ListItem>
                 <ListItem button className={this.state.currentlySelected === 'additionalSim' ? classes.currentlySelected : null}
-                                 onClick={() => {
-                                                this.props.onAdditionalSimClicked()
-                                                this.setState({currentlySelected: 'additionalSim'})}}>
+                                 onClick={() => {this.props.onAdditionalSimClicked()
+                                                 this.setState({currentlySelected: 'additionalSim'})}}>
                   <ListItemIcon>
                     <SimCardIcon/>
                   </ListItemIcon>
                   <ListItemText primary="Additional Sim" />
+
                 </ListItem>
-                 <ListItem button>
+                 <ListItem button className={this.state.currentlySelected === 'additionalHandset' ? classes.currentlySelected : null}
+                                  onClick={() => {this.props.onAdditionalHandsetClicked()
+                                                  this.setState({currentlySelected: 'additionalHandset'})}}>
                   <ListItemIcon>
                     <SmartphoneIcon />
                   </ListItemIcon>

@@ -71,7 +71,7 @@ class HouseholdView extends Component {
             return this.props.classes.textDanger
         }
     }
-    
+
     render() {
 
         const {classes, customer, otherLines} = this.props

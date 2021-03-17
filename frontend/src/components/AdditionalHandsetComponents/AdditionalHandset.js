@@ -8,15 +8,15 @@ const styles = (theme) => ({
     },
 });
 
-class AdditionalSim extends Component {
+class AdditionalHandset extends Component {
 
     render() {
 
         return (
            <div>
-               <h1>ADDITIONAL SIM</h1>
+               <h1>ADDITIONAL HANDSET</h1>
            </div>
         )
     }
 }
-export default withStyles(styles)(AdditionalSim)
+export default withStyles(styles)(AdditionalHandset)

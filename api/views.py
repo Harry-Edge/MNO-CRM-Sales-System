@@ -88,14 +88,15 @@ class CreateSimOnlyOrder(APIView):
             tariff_object = SimOnlyTariffs.objects.get(tariff_code=serializer.data.get('tariff_code'))
 
             existing_sim_only_order = SimOnlyOrder.objects.filter(customer=customer_object)
+
             if existing_sim_only_order.exists():
-                existing_sim_order = SimOnlyOrder.objects.get(ctn='08888888888')
+                existing_sim_order = SimOnlyOrder.objects.get(ctn='07777777777')
                 existing_sim_order.contract_length = tariff_object.contract_length
                 existing_sim_order.tariff = tariff_object
                 existing_sim_order.save()
                 return Response("Updated Existing Order", status=status.HTTP_200_OK)
             else:
-                SimOnlyOrder.objects.create(ctn='08888888888',
+                SimOnlyOrder.objects.create(ctn='07777777777',
                                             contract_length=tariff_object.contract_length,
                                             contract_type='Sim-Only',
                                             plan_type=tariff_object.plan_type,
@@ -116,8 +117,9 @@ class GetSimOnlyOrder(APIView):
         customer_object = Customer.objects.get(id=1)
 
         sim_only_order_exists = SimOnlyOrder.objects.filter(customer=customer_object)
+
         if sim_only_order_exists.exists():
-            sim_only_order_object = SimOnlyOrder.objects.get(ctn='08888888888')
+            sim_only_order_object = SimOnlyOrder.objects.get(ctn='07777777777')
 
             sim_order = SimOnlyOrderSerializer(sim_only_order_object).data
             tariff_object = SimOnlyTariffs.objects.get(id=sim_order['tariff'])
@@ -127,7 +129,7 @@ class GetSimOnlyOrder(APIView):
 
             return Response(sim_order, status=status.HTTP_200_OK)
         else:
-            return Response("No Order", status=status.HTTP_204_NO_CONTENT)
+            return Response("No Order", status=status.HTTP_200_OK)
 
 
 class DeleteSimOnlyOrder(APIView):
