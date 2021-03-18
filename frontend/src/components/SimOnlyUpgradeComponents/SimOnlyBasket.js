@@ -10,15 +10,11 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = (theme) => ({
     textSuccess: {
         color: 'green'
-    },
-    title: {
-        display: 'flex',
-        justifyContent: 'center',
-        fontWeight: 650
     },
     basketTable: {
         backgroundColor: '#fdfcfe',
@@ -44,7 +40,13 @@ const styles = (theme) => ({
         bottom: -120,
         width: 300,
         backgroundColor: '#fdfcfe',
-    }
+    },
+    progressLoader: {
+          color:'#009999',
+          position: 'relative',
+          marginTop: '20px',
+          marginLeft: '45%'
+    },
 });
 
 class SimOnlyBasket extends Component {
@@ -83,8 +85,6 @@ class SimOnlyBasket extends Component {
         return (
            <div>
                <Box>
-                   <Typography variant='h6' className={classes.title}>Basket</Typography>
-                   <Divider/>
                    { this.state.basketItems ?
                        <Box m={1} className={classes.basketTable}>
                            <Table size="small">
@@ -113,7 +113,7 @@ class SimOnlyBasket extends Component {
                                    </TableRow>
                                </TableBody>
                            </Table>
-                       </Box> : null
+                       </Box> : <CircularProgress className={classes.progressLoader}/>
                    }
                    { this.state.basketItems ?
                        <Box m={1} className={classes.navButtons}>

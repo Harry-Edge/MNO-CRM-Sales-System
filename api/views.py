@@ -28,7 +28,7 @@ class GetCustomer(APIView):
 
             def get_other_lines():
                 """
-                Get all the other lines the customer has and also adds the upgrade data and days remaining
+                Gets all the other lines the customer has and also adds the upgrade data and days remaining
                 """
                 other_lines = []
                 for line in customer_object.mobilenumber_set.all().values():
@@ -114,6 +114,8 @@ class GetSimOnlyOrder(APIView):
     serializer_class = SimOnlyOrderSerializer
 
     def get(self, request):
+        # Simulated a realistic response server time rather than being on local host
+        time.sleep(0.3)
         customer_object = Customer.objects.get(id=1)
 
         sim_only_order_exists = SimOnlyOrder.objects.filter(customer=customer_object)

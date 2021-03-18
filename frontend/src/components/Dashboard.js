@@ -27,6 +27,7 @@ import HandsetUpgrade from "./HandsetUpgradeComponents/HandsetUpgrade";
 import AdditionalSim from "./AdditionalSimComponents/AdditionalSim";
 import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 
 
@@ -133,7 +134,15 @@ const styles = (theme) => ({
   searchBox: {
     height: '30px',
     display: 'flex',
-  }
+
+  },
+  progressLoader: {
+      color:'#009999',
+       position: 'relative',
+      marginTop: '20px',
+      marginLeft: '45%'
+  },
+
 });
 
 class Dashboard extends Component{
@@ -284,7 +293,8 @@ class Dashboard extends Component{
                 <Grid>
                   {
                     this.state.mobileAccount ?  <CTNDetails customer={this.state.customer}
-                                                            mobileAccount={this.state.mobileAccount} /> : null
+                                                            mobileAccount={this.state.mobileAccount} />
+                                                            : <CircularProgress className={classes.progressLoader}/>
                   }
                 </Grid>
           </Drawer>
@@ -303,7 +313,7 @@ class Dashboard extends Component{
                             this.state.customer ? <UpgradeOptions mobileAccount={this.state.mobileAccount}
                                                                   onHandsetUpgradeClicked={this.handleHandsetUpgradeClicked}
                                                                   onSimOnlyUpgradeClicked={this.handleSimOnlyUpgradeClicked}
-                            /> : null
+                            /> :     <CircularProgress className={classes.progressLoader}/>
                           }
                         </Paper>
                       </Grid>
@@ -314,7 +324,7 @@ class Dashboard extends Component{
                             this.state.customer ? <HouseholdView onNewCTNClicked={this.handleNewCTN}
                                                                  customer={this.state.customer}
                                                                  otherLines={this.state.otherLines}
-                            /> : null
+                            /> :     <CircularProgress className={classes.progressLoader}/>
                           }
                         </Paper>
                       </Grid>

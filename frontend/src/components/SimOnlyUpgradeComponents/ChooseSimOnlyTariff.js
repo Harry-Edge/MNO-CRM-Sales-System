@@ -14,6 +14,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import SimOnlyBasket from "./SimOnlyBasket";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const styles = (theme) => ({
     textSuccess: {
@@ -44,13 +45,25 @@ const styles = (theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
+        height: 400
     },
     basket: {
         padding: theme.spacing(2),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: 370
+        height: 400
+    },
+    progressLoader: {
+          color:'#009999',
+          position: 'relative',
+          marginTop: '20px',
+          marginLeft: '45%'
+    },
+      basketTitle: {
+        display: 'flex',
+        justifyContent: 'center',
+        fontWeight: 650
     },
 
 });
@@ -89,7 +102,7 @@ class ChooseSimOnlyTariff extends Component {
              })
     }
 
-    handleSelectSimTariff = (tariffCode) =>{
+    handleSelectSimTariff = (tariffCode) => {
          const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -102,6 +115,11 @@ class ChooseSimOnlyTariff extends Component {
                     this.setState({tariffChosen: false})
                     this.setState({tariffChosen: true})
                 }))
+    }
+
+    handleDeleteTariff = () => {
+        this.setState({tariffChosen: false})
+        return this.props.onDeleteTariffClicked
     }
 
     render() {
@@ -170,18 +188,23 @@ class ChooseSimOnlyTariff extends Component {
                                                </TableBody>
                                            </Table>
                                        </TableContainer>
-                                   </Box> : null
+                                   </Box> : <CircularProgress className={classes.progressLoader}/>
                                }
                            </Box>
                        </Paper>
                    </Grid>
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.basket}>
+                           <Box>
+                               <Typography variant='h6' className={classes.basketTitle}>Basket</Typography>
+                               <Divider/>
                            {
                                this.state.tariffChosen ? <SimOnlyBasket
                                                         onFinaliseSimOnlyClicked={this.props.onFinaliseSimOnlyClicked}
-                                                        onDeleteTariffClicked={this.props.onDeleteTariffClicked}/> : null
+                                                        onDeleteTariffClicked={this.handleDeleteTariff}/>
+                                                        : null
                            }
+                           </Box>
                        </Paper>
                    </Grid>
                </Grid>
