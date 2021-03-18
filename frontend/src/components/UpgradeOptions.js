@@ -76,9 +76,8 @@ class UpgradeOptions extends Component {
                                                                onClick={() => this.props.onSimOnlyUpgradeClicked()} >Upgrade</Button>
 
                                    : <Typography>Available On: <strong className={classes.textDanger}
-                                       >{mobileAccount.upgrade_date}</strong> </Typography>
+                                       >{mobileAccount.upgrade_date}</strong></Typography>
                                }
-
                         </Box>
                     </Grid>
                 </Grid>

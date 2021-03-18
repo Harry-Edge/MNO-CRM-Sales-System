@@ -29,8 +29,6 @@ import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-
-
 const drawerWidth = 240;
 
 const styles = (theme) => ({

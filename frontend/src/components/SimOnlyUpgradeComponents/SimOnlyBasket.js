@@ -51,15 +51,19 @@ const styles = (theme) => ({
 
 class SimOnlyBasket extends Component {
 
-    state = {basketItems: null}
+    state = {basketItems: null,
+             finaliseSim: null}
 
     componentDidMount() {
+        this.setState({finaliseSim: this.props.finaliseSim})
+
           fetch("http://127.0.0.1:8000/api/get-simo-only-order")
              .then((response) => response.json())
              .then((data) => {
                  this.setState({basketItems: data})
              }
          )
+
     }
 
     handleDeleteSimOnlyOrder() {
@@ -126,10 +130,15 @@ class SimOnlyBasket extends Component {
                                                this.handleDeleteSimOnlyOrder()}}>Delete</Button>
                                </Grid>
                                <Grid item xs={6}>
-                                   <Button className={classes.finaliseButton} size='small'
-                                           variant='contained'
+                                   {
+                                       this.state.finaliseSim ?
+                                           <Button className={classes.finaliseButton} size='small' variant='contained' disabled
+                                           >Submit</Button>:
+                                           <Button className={classes.finaliseButton} size='small' variant='contained'
                                            onClick={() => {
                                                this.props.onFinaliseSimOnlyClicked()}}>Finalise</Button>
+                                   }
+
                                </Grid>
                            </Grid>
                        </Box> : null

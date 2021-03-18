@@ -35,6 +35,11 @@ const styles = (theme) => ({
         flexDirection: 'column',
         height: 370
     },
+      basketTitle: {
+        display: 'flex',
+        justifyContent: 'center',
+        fontWeight: 650
+    },
 
 });
 
@@ -47,13 +52,18 @@ class FinaliseSimOnly extends Component {
         return (
            <div>
                <Grid container spacing={2}>
+                   {/* Extras */}
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={fixedHeightPaper}>
                            <Box>
-                                <h1>Discount options and spend caps </h1>
+                                <Typography variant='h6' className={classes.tableHeader}>Add Ons</Typography>
+                                <Divider/>
+                                
+                                <Typography>Spend Caps</Typography>
                            </Box>
                        </Paper>
                    </Grid>
+                   {/* HouseHold View */}
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={fixedHeightPaper}>
                            <HouseholdView customer={state.customer}
@@ -61,16 +71,23 @@ class FinaliseSimOnly extends Component {
                                           otherLines={state.otherLines}/>
                        </Paper>
                    </Grid>
+                   {/* Validations */}
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={classes.paper}>
                            <Box>
-                               <h1>VALIDATIONS</h1>
+                               <Typography>Validations</Typography>
                            </Box>
                        </Paper>
                    </Grid>
+                   {/* Basket */}
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.basket}>
-                           <SimOnlyBasket onDeleteTariffClicked={this.props.onDeleteTariffClicked}/>
+                         <Box>
+                           <Typography variant='h6' className={classes.basketTitle}>Basket</Typography>
+                           <Divider/>
+                           <SimOnlyBasket onDeleteTariffClicked={this.props.onDeleteTariffClicked}
+                                          finaliseSim={this.props.finaliseSim}  />
+                         </Box>
                        </Paper>
                    </Grid>
                </Grid>

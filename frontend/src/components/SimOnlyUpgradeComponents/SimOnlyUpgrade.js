@@ -43,6 +43,7 @@ class SimOnlyUpgrade extends Component {
                        : <FinaliseSimOnly onNewCTNClicked={onNewCTNClicked}
                                           fixedHeightPaper={fixedHeightPaper}
                                           onDeleteTariffClicked={this.handleDeleteTariff}
+                                          finaliseSim={true}
                                           state={state}/>
                }
            </div>
