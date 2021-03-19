@@ -1,5 +1,8 @@
 from django.db import models
 
+SPEND_CAPS = [('None', 'None'), ('0', '0'), ('5', '5'), ('10', '10'), ('20', '20'), ('30', '30'), ('40', '40'),
+              ('50', '50')]
+
 
 class Customer(models.Model):
 
@@ -17,6 +20,7 @@ class Customer(models.Model):
     def __str__(self):
 
         return f"{self.last_name} {self.first_name}"
+
 
 class Insurance(models.Model):
 
@@ -39,10 +43,22 @@ class Insurance(models.Model):
         verbose_name_plural = "Insurance"
 
 
-class MobileNumber(models.Model):
+class SpendCaps(models.Model):
 
-    SPEND_CAPS = [('None', 'None'), ('0', '0'), ('5', '5'), ('10', '10'), ('20', '20'), ('30', '30'), ('40', '40'),
-                  ('50', '50'), ('60', '60'), ('70', '70'), ('80', '80'), ('90', '90'), ('100', '100')]
+    cap_amount = models.CharField(max_length=100, null=True, choices=SPEND_CAPS)
+    cap_name = models.CharField(max_length=200, null=True)
+    mrc = models.IntegerField(null=True)
+    upfront = models.IntegerField(null=True)
+    cap_code = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self):
+        return self.cap_name
+
+    class Meta:
+        verbose_name_plural = "Spend Caps"
+
+
+class MobileNumber(models.Model):
 
     HANDSET_MANUFACTURES = [('Apple', 'Apple'), ('Samsung', 'Samsung')]
 
@@ -124,7 +140,7 @@ class SimOnlyOrder(models.Model):
     plan_type = models.CharField(null=True, max_length=30, choices=PLAN_TYPE)
     contract_type = models.CharField(null=True, max_length=20, choices=CONTRACT_TYPE)
     tariff = models.OneToOneField(SimOnlyTariffs, on_delete=models.SET_NULL, null=True)
-    #cap = models.OneToOneField(SpendCaps, on_delete=models.SET_NULL, null=True)
+    cap = models.OneToOneField(SpendCaps, on_delete=models.SET_NULL, null=True)
     #existing_insurance = models.OneToOneField(Insurance, on_delete=models.SET_NULL, null=True)
     #friends_and_family = models.BooleanField(default=False, null=True)
 

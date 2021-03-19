@@ -48,7 +48,7 @@ const styles = (theme) => ({
         height: 400
     },
     basket: {
-        padding: theme.spacing(2),
+        padding: theme.spacing(1),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
@@ -83,7 +83,7 @@ class ChooseSimOnlyTariff extends Component {
              }
          )
         // Finds if an order already exists
-         await fetch("http://127.0.0.1:8000/api/get-simo-only-order")
+         await fetch("http://127.0.0.1:8000/api/sim-only-order")
              .then((response) => {
                  if (response.ok){
                      return response.json()

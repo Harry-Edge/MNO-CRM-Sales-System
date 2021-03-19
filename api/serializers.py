@@ -13,12 +13,17 @@ class InsuranceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Insurance
-        fields = ('insurance_name')
+        fields = ('insurance_name', )
+
+
+class SpendCapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpendCaps
+        fields = ('id', 'cap_name', 'cap_amount', 'mrc', 'upfront')
+        extra_kwargs = {'id': {'read_only': False}}
 
 
 class MobileNumberSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         model = MobileNumber
         fields = ('number', 'customer', 'user', 'plan', 'mrc', 'device_manufacture', 'device_model', 'insurance',
@@ -26,14 +31,13 @@ class MobileNumberSerializer(serializers.ModelSerializer):
                   'contract_length_months', 'friends_and_family')
 
 
-
 class SimOnlyTariffsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SimOnlyTariffs
-        fields = ('tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type')
+        fields = ('tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type',)
 
 
 class SimOnlyOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = SimOnlyOrder
-        fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff')
+        fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap')

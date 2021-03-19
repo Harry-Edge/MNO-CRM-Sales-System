@@ -41,7 +41,6 @@ class GetCustomer(APIView):
 
                 return other_lines
 
-
             date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
 
             mobile_account = MobileNumberSerializer(mobile_number_object).data
@@ -60,7 +59,7 @@ class GetCustomer(APIView):
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetSimoOnlyTariffs(APIView):
+class GetSimOnlyTariffs(APIView):
     permission_classes = (AllowAny,)
     serializer_class = SimOnlyTariffsSerializer
 
@@ -68,11 +67,42 @@ class GetSimoOnlyTariffs(APIView):
         # Simulated a realistic response server time rather than being on local host
         time.sleep(0.5)
 
-        all_sim_only_tariffs = SimOnlyTariffs.objects.filter()
-
+        all_sim_only_tariffs = SimOnlyTariffs.objects.all()
         data = all_sim_only_tariffs.values()
 
         return Response(data, status=status.HTTP_200_OK)
+
+
+class GetSpendCaps(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = SpendCapSerializer
+
+    def get(self, request):
+        time.sleep(0.5)
+
+        spend_caps = SpendCaps.objects.all()
+        data = spend_caps.values()
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class AddSpendCapToSimOnlyOrder(APIView):
+    permission_classes = (AllowAny,)
+    serializer_class = SpendCapSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            spend_cap_object = SpendCaps.objects.get(id=serializer.data.get('id'))
+            sim_order = SimOnlyOrder.objects.filter()[0]
+
+            sim_order.cap = spend_cap_object
+            sim_order.save()
+
+            return Response("Added Spend Cap to Order", status=status.HTTP_200_OK)
+        else:
+            return Response("Error When addding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateSimOnlyOrder(APIView):
@@ -109,7 +139,7 @@ class CreateSimOnlyOrder(APIView):
             return Response('Error When Creating Sim-Only Order', status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetSimOnlyOrder(APIView):
+class SimOnlyOrderApi(APIView):
     permission_classes = (AllowAny,)
     serializer_class = SimOnlyOrderSerializer
 
@@ -126,6 +156,10 @@ class GetSimOnlyOrder(APIView):
             sim_order = SimOnlyOrderSerializer(sim_only_order_object).data
             tariff_object = SimOnlyTariffs.objects.get(id=sim_order['tariff'])
 
+            if sim_order['cap']:
+                spend_cap_object = SpendCaps.objects.get(id=sim_order['cap'])
+                sim_order['cap_name'] = spend_cap_object.cap_name
+
             sim_order['tariff_data'] = tariff_object.data_allowance
             sim_order['tariff_mrc'] = tariff_object.mrc
 
@@ -133,12 +167,8 @@ class GetSimOnlyOrder(APIView):
         else:
             return Response("No Order", status=status.HTTP_200_OK)
 
-
-class DeleteSimOnlyOrder(APIView):
-    permission_classes = (AllowAny,)
-    serializer_class = SimOnlyOrderSerializer
-
     def delete(self, request):
+
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -149,4 +179,3 @@ class DeleteSimOnlyOrder(APIView):
             return Response('Deleted Item', status=status.HTTP_200_OK)
         else:
             return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
-

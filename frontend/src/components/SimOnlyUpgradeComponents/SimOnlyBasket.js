@@ -57,13 +57,13 @@ class SimOnlyBasket extends Component {
     componentDidMount() {
         this.setState({finaliseSim: this.props.finaliseSim})
 
-          fetch("http://127.0.0.1:8000/api/get-simo-only-order")
+          fetch("http://127.0.0.1:8000/api/sim-only-order")
              .then((response) => response.json())
              .then((data) => {
                  this.setState({basketItems: data})
+                 console.log(this.state.basketItems)
              }
          )
-
     }
 
     handleDeleteSimOnlyOrder() {
@@ -74,7 +74,7 @@ class SimOnlyBasket extends Component {
             body: JSON.stringify({ctn: this.state.basketItems.ctn})
          }
 
-        fetch("http://127.0.0.1:8000/api/delete-sim-only-order", requestOptions)
+        fetch("http://127.0.0.1:8000/api/sim-only-order", requestOptions)
              .then((response) => response.json())
              .then((data) => {
                  this.setState({basketItems: null})
@@ -115,12 +115,20 @@ class SimOnlyBasket extends Component {
                                        <TableCell align='right'>£0</TableCell>
                                        <TableCell align='right'>£{this.state.basketItems.tariff_mrc}</TableCell>
                                    </TableRow>
+                                   {
+                                       this.state.basketItems.cap_name ?
+                                           <TableRow hover={true}>
+                                               <TableCell>{this.state.basketItems.cap_name}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+                                   }
                                </TableBody>
                            </Table>
                        </Box> : <CircularProgress className={classes.progressLoader}/>
                    }
                    { this.state.basketItems ?
-                       <Box m={1} className={classes.navButtons}>
+                       <Box m={1} >
                            <Grid container >
                                <Grid item xs={6}>
                                    <Button className={classes.deleteButton} color='secondary' size='small'
@@ -138,7 +146,6 @@ class SimOnlyBasket extends Component {
                                            onClick={() => {
                                                this.props.onFinaliseSimOnlyClicked()}}>Finalise</Button>
                                    }
-
                                </Grid>
                            </Grid>
                        </Box> : null

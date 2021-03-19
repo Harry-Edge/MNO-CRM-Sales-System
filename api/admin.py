@@ -17,6 +17,11 @@ class InsuranceAdmin(admin.ModelAdmin):
     list_display = ('insurance_name', 'mrc', 'excess_fee')
 
 
+@admin.register(SpendCaps)
+class SpendCapAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cap_name', 'cap_amount', 'cap_code')
+
+
 @admin.register(SimOnlyTariffs)
 class SimoOnlyTariffsAdmin(admin.ModelAdmin):
     list_display = ('id', 'plan_type', 'data_allowance', 'mrc', 'contract_length')
@@ -24,5 +29,5 @@ class SimoOnlyTariffsAdmin(admin.ModelAdmin):
 
 @admin.register(SimOnlyOrder)
 class SimoOnlyOrder(admin.ModelAdmin):
-    list_display = ('id',)
+    list_display = ('id', 'customer', 'ctn', 'plan_type', 'contract_length', 'tariff', 'cap')
 
