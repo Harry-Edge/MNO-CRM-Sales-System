@@ -105,6 +105,31 @@ class AddSpendCapToSimOnlyOrder(APIView):
             return Response("Error When addding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
 
 
+class KeepOrCancelInsurance(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = InsuranceSerializer(data=request.data)
+
+        if serializer.is_valid():
+            sim_order = SimOnlyOrder.objects.filter()[0]
+
+            if serializer.data.get('keep_or_cancel_insurance') == 'keep':
+                mobile_object = MobileNumber.objects.get(number='07777777777')
+                existing_insurance = mobile_object.insurance_option
+                sim_order.existing_insurance = existing_insurance
+                sim_order.save()
+
+                return Response("Continued Existing Insurance", status=status.HTTP_200_OK)
+            else:
+                no_insurance_object = Insurance.objects.get(id=5)
+                sim_order.existing_insurance = no_insurance_object
+                sim_order.save()
+                return Response("Cancelled Existing Insurance", status=status.HTTP_200_OK)
+        else:
+            return Response('Error with insurance options', status=status.HTTP_400_BAD_REQUEST)
+
+
 class CreateSimOnlyOrder(APIView):
     permission_classes = (AllowAny,)
     serializer_class = SimOnlyTariffsSerializer
@@ -145,7 +170,7 @@ class SimOnlyOrderApi(APIView):
 
     def get(self, request):
         # Simulated a realistic response server time rather than being on local host
-        time.sleep(0.3)
+        time.sleep(0.25)
         customer_object = Customer.objects.get(id=1)
 
         sim_only_order_exists = SimOnlyOrder.objects.filter(customer=customer_object)
@@ -159,6 +184,10 @@ class SimOnlyOrderApi(APIView):
             if sim_order['cap']:
                 spend_cap_object = SpendCaps.objects.get(id=sim_order['cap'])
                 sim_order['cap_name'] = spend_cap_object.cap_name
+            if sim_order['existing_insurance']:
+                test = {'insurance_name': sim_only_order_object.existing_insurance.insurance_name,
+                        'insurance_mrc': sim_only_order_object.existing_insurance.mrc}
+                sim_order['existing_insurance'] = test
 
             sim_order['tariff_data'] = tariff_object.data_allowance
             sim_order['tariff_mrc'] = tariff_object.mrc

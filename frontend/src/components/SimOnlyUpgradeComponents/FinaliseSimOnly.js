@@ -46,7 +46,7 @@ const styles = (theme) => ({
         backgroundColor: '#fdfcfe'
     },
     spendCapList: {
-        height: '15vh',
+        height: '16vh',
         width: '95%',
         overflow: 'scroll',
 
@@ -86,6 +86,22 @@ class FinaliseSimOnly extends Component {
                     this.setState({renderBasket: true})
                 }))
     }
+    handleKeepOrCancelInsurance = (option) => {
+        console.log(option)
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({keep_or_cancel_insurance: option})
+        }
+
+        fetch('http://127.0.0.1:8000/api/keep-or-cancel-insurance', requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                this.setState({renderBasket: false})
+                this.setState({renderBasket: true})
+            })
+    }
 
     render() {
 
@@ -124,9 +140,28 @@ class FinaliseSimOnly extends Component {
                                                     : <CircularProgress className={classes.progressLoader}/>
                                             }
                                         </Grid>
-                                        <Grid item xs={6} className={classes.boxColour}>
-                                            <Typography className={classes.header}>Insurance</Typography>
-                                        </Grid>
+                                        {
+                                            state.mobileAccount.insurance ?
+                                                <Grid item xs={6} className={classes.boxColour}>
+                                                    <Typography className={classes.header}>Insurance</Typography>
+                                                    <Box>
+                                                        <List>
+                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('keep')}>
+                                                                <ListItemText classes={{primary:classes.listItem}}  primary='Rollover Existing Insurance'/>
+                                                                <ListItemIcon >
+                                                                    <AddCircleOutlineIcon/>
+                                                                </ListItemIcon>
+                                                            </ListItem>
+                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('cancel')}>
+                                                                <ListItemText classes={{primary:classes.listItem}}  primary='Cancel Insurance'/>
+                                                                <ListItemIcon >
+                                                                    <AddCircleOutlineIcon/>
+                                                                </ListItemIcon>
+                                                            </ListItem>
+                                                        </List>
+                                                    </Box>
+                                                </Grid> : null
+                                        }
                                     </Grid>
                                 </Box>
                            </Box>

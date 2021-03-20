@@ -11,9 +11,11 @@ class CustomerSerializer(serializers.ModelSerializer):
 
 class InsuranceSerializer(serializers.ModelSerializer):
 
+    keep_or_cancel_insurance = serializers.CharField()
+
     class Meta:
         model = Insurance
-        fields = ('insurance_name', )
+        fields = ('insurance_name', 'keep_or_cancel_insurance')
 
 
 class SpendCapSerializer(serializers.ModelSerializer):
@@ -40,4 +42,5 @@ class SimOnlyTariffsSerializer(serializers.ModelSerializer):
 class SimOnlyOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = SimOnlyOrder
-        fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap')
+        fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap',
+                  'existing_insurance')

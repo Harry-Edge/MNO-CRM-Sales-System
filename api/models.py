@@ -139,9 +139,9 @@ class SimOnlyOrder(models.Model):
     contract_length = models.CharField(null=True, choices=CONTRACT_LENGTH, max_length=2)
     plan_type = models.CharField(null=True, max_length=30, choices=PLAN_TYPE)
     contract_type = models.CharField(null=True, max_length=20, choices=CONTRACT_TYPE)
-    tariff = models.OneToOneField(SimOnlyTariffs, on_delete=models.SET_NULL, null=True)
-    cap = models.OneToOneField(SpendCaps, on_delete=models.SET_NULL, null=True)
-    #existing_insurance = models.OneToOneField(Insurance, on_delete=models.SET_NULL, null=True)
+    tariff = models.ForeignKey(SimOnlyTariffs, on_delete=models.SET_NULL, null=True)
+    cap = models.ForeignKey(SpendCaps, on_delete=models.SET_NULL, null=True)
+    existing_insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True, blank=True)
     #friends_and_family = models.BooleanField(default=False, null=True)
 
     # Customer Validations on Order

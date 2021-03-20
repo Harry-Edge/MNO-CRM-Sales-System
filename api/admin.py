@@ -14,7 +14,7 @@ class MobileNumberAdmin(admin.ModelAdmin):
 
 @admin.register(Insurance)
 class InsuranceAdmin(admin.ModelAdmin):
-    list_display = ('insurance_name', 'mrc', 'excess_fee')
+    list_display = ('id', 'insurance_name', 'mrc', 'excess_fee')
 
 
 @admin.register(SpendCaps)

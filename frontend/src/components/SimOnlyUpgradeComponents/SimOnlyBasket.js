@@ -111,7 +111,7 @@ class SimOnlyBasket extends Component {
                                        <TableCell align='right'>£0</TableCell>
                                    </TableRow>
                                     <TableRow hover={true}>
-                                       <TableCell>{this.state.basketItems.plan_type} {this.state.basketItems.tariff_data}</TableCell>
+                                       <TableCell>{this.state.basketItems.plan_type} {this.state.basketItems.tariff_data}GB</TableCell>
                                        <TableCell align='right'>£0</TableCell>
                                        <TableCell align='right'>£{this.state.basketItems.tariff_mrc}</TableCell>
                                    </TableRow>
@@ -121,6 +121,14 @@ class SimOnlyBasket extends Component {
                                                <TableCell>{this.state.basketItems.cap_name}</TableCell>
                                                <TableCell align='right'>£0</TableCell>
                                                <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+                                   }
+                                   {
+                                       this.state.basketItems.existing_insurance ?
+                                           <TableRow hover={true}>
+                                               <TableCell>{this.state.basketItems.existing_insurance.insurance_name}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                               <TableCell align='right'>£{this.state.basketItems.existing_insurance.insurance_mrc}</TableCell>
                                            </TableRow> : null
                                    }
                                </TableBody>
