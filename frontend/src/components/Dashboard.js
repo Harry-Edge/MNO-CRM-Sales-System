@@ -145,16 +145,17 @@ const styles = (theme) => ({
 
 class Dashboard extends Component{
 
-  state = {leftPanelOpen: true,
+  state = {mobileAccount: null,
+           customer: null,
+           otherLines: null,
+           leftPanelOpen: true,
            dashboard: true,
            simOnlyUpgrade: false,
            handsetUpgrade: false,
            additionalSim: false,
            additionalHandset: false,
-           customerProfile: false,
-           mobileAccount: null,
-           customer: null,
-           otherLines: null }
+           customerProfile: false
+            }
 
    constructor(props) {
        super(props);

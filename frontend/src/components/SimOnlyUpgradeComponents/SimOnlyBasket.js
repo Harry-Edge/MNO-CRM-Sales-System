@@ -57,11 +57,23 @@ class SimOnlyBasket extends Component {
     componentDidMount() {
         this.setState({finaliseSim: this.props.finaliseSim})
 
-          fetch("http://127.0.0.1:8000/api/sim-only-order")
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ctn: this.props.ctn})
+        }
+
+          fetch("http://127.0.0.1:8000/api/sim-only-order", requestOptions)
              .then((response) => response.json())
              .then((data) => {
                  this.setState({basketItems: data})
-                 console.log(this.state.basketItems)
+                 if (this.state.basketItems.cap){
+                     // Changes the state of the parent component if the order has a cap and the insurance
+                     // option has been selected
+                     if (this.props.onReadyForValidation) {
+                         this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
+                     }
+                 }
              }
          )
     }

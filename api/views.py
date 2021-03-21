@@ -17,6 +17,9 @@ class GetCustomer(APIView):
     serializer_class = MobileNumberSerializer
 
     def post(self, request):
+        """
+        Returns a Customers full details based on a ctn on their account
+        """
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -61,7 +64,6 @@ class GetCustomer(APIView):
 
 class GetSimOnlyTariffs(APIView):
     permission_classes = (AllowAny,)
-    serializer_class = SimOnlyTariffsSerializer
 
     def get(self, request):
         # Simulated a realistic response server time rather than being on local host
@@ -75,7 +77,6 @@ class GetSimOnlyTariffs(APIView):
 
 class GetSpendCaps(APIView):
     permission_classes = (AllowAny,)
-    serializer_class = SpendCapSerializer
 
     def get(self, request):
         time.sleep(0.5)
@@ -95,14 +96,15 @@ class AddSpendCapToSimOnlyOrder(APIView):
 
         if serializer.is_valid():
             spend_cap_object = SpendCaps.objects.get(id=serializer.data.get('id'))
-            sim_order = SimOnlyOrder.objects.filter()[0]
+
+            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
 
             sim_order.cap = spend_cap_object
             sim_order.save()
 
             return Response("Added Spend Cap to Order", status=status.HTTP_200_OK)
         else:
-            return Response("Error When addding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
 
 
 class KeepOrCancelInsurance(APIView):
@@ -112,10 +114,10 @@ class KeepOrCancelInsurance(APIView):
         serializer = InsuranceSerializer(data=request.data)
 
         if serializer.is_valid():
-            sim_order = SimOnlyOrder.objects.filter()[0]
+            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
 
             if serializer.data.get('keep_or_cancel_insurance') == 'keep':
-                mobile_object = MobileNumber.objects.get(number='07777777777')
+                mobile_object = MobileNumber.objects.get(number=serializer.data.get('ctn'))
                 existing_insurance = mobile_object.insurance_option
                 sim_order.existing_insurance = existing_insurance
                 sim_order.save()
@@ -139,24 +141,24 @@ class CreateSimOnlyOrder(APIView):
 
         if serializer.is_valid():
 
-            customer_object = Customer.objects.get(id=1)
             tariff_object = SimOnlyTariffs.objects.get(tariff_code=serializer.data.get('tariff_code'))
+            ctn = serializer.data.get('ctn')
 
-            existing_sim_only_order = SimOnlyOrder.objects.filter(customer=customer_object)
+            existing_sim_only_order = SimOnlyOrder.objects.filter(ctn=ctn)
 
             if existing_sim_only_order.exists():
-                existing_sim_order = SimOnlyOrder.objects.get(ctn='07777777777')
+                existing_sim_order = SimOnlyOrder.objects.get(ctn=ctn)
                 existing_sim_order.contract_length = tariff_object.contract_length
                 existing_sim_order.tariff = tariff_object
                 existing_sim_order.save()
                 return Response("Updated Existing Order", status=status.HTTP_200_OK)
             else:
-                SimOnlyOrder.objects.create(ctn='07777777777',
+                SimOnlyOrder.objects.create(ctn=ctn,
                                             contract_length=tariff_object.contract_length,
                                             contract_type='Sim-Only',
                                             plan_type=tariff_object.plan_type,
                                             tariff=tariff_object,
-                                            customer=customer_object
+                                            customer=MobileNumber.objects.get(number=ctn).customer
                                             )
 
                 return Response('All Good', status=status.HTTP_200_OK)
@@ -168,33 +170,40 @@ class SimOnlyOrderApi(APIView):
     permission_classes = (AllowAny,)
     serializer_class = SimOnlyOrderSerializer
 
-    def get(self, request):
+    def post(self, request):
+        """
+        Returns a Sim-Only order based on the ctn posted
+        """
         # Simulated a realistic response server time rather than being on local host
         time.sleep(0.25)
-        customer_object = Customer.objects.get(id=1)
+        serializer = self.serializer_class(data=request.data)
 
-        sim_only_order_exists = SimOnlyOrder.objects.filter(customer=customer_object)
+        if serializer.is_valid():
+            ctn = serializer.data.get('ctn')
 
-        if sim_only_order_exists.exists():
-            sim_only_order_object = SimOnlyOrder.objects.get(ctn='07777777777')
+            sim_only_order_exists = SimOnlyOrder.objects.filter(ctn=ctn)
+            if sim_only_order_exists.exists():
+                sim_only_order_object = SimOnlyOrder.objects.get(ctn=ctn)
 
-            sim_order = SimOnlyOrderSerializer(sim_only_order_object).data
-            tariff_object = SimOnlyTariffs.objects.get(id=sim_order['tariff'])
+                sim_order = SimOnlyOrderSerializer(sim_only_order_object).data
+                tariff_object = SimOnlyTariffs.objects.get(id=sim_order['tariff'])
 
-            if sim_order['cap']:
-                spend_cap_object = SpendCaps.objects.get(id=sim_order['cap'])
-                sim_order['cap_name'] = spend_cap_object.cap_name
-            if sim_order['existing_insurance']:
-                test = {'insurance_name': sim_only_order_object.existing_insurance.insurance_name,
-                        'insurance_mrc': sim_only_order_object.existing_insurance.mrc}
-                sim_order['existing_insurance'] = test
+                if sim_order['cap']:
+                    spend_cap_object = SpendCaps.objects.get(id=sim_order['cap'])
+                    sim_order['cap_name'] = spend_cap_object.cap_name
+                if sim_order['existing_insurance']:
+                    test = {'insurance_name': sim_only_order_object.existing_insurance.insurance_name,
+                            'insurance_mrc': sim_only_order_object.existing_insurance.mrc}
+                    sim_order['existing_insurance'] = test
 
-            sim_order['tariff_data'] = tariff_object.data_allowance
-            sim_order['tariff_mrc'] = tariff_object.mrc
+                sim_order['tariff_data'] = tariff_object.data_allowance
+                sim_order['tariff_mrc'] = tariff_object.mrc
 
-            return Response(sim_order, status=status.HTTP_200_OK)
-        else:
-            return Response("No Order", status=status.HTTP_200_OK)
+                return Response(sim_order, status=status.HTTP_200_OK)
+
+            else:
+                return Response("No Order", status=status.HTTP_200_OK)
+        return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
 
@@ -208,3 +217,37 @@ class SimOnlyOrderApi(APIView):
             return Response('Deleted Item', status=status.HTTP_200_OK)
         else:
             return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
+
+
+"""
+Order Validations
+"""
+
+
+class ValidatePostcode(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = GenericSerializer(data=request.data)
+
+        if serializer.is_valid():
+            inputted_postcode = serializer.data.get('string')
+
+            mobile_account = MobileNumber.objects.get(number='07777777777')
+
+            if mobile_account.customer.postcode[-3:] == inputted_postcode.upper():
+                return Response('Validated', status=status.HTTP_200_OK)
+            else:
+                return Response('Incorrect Postcode', status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response('Error', status=status.HTTP_406_NOT_ACCEPTABLE)
+
+
+
+
+
+
+
+
+
+

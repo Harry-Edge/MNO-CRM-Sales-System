@@ -20,8 +20,11 @@ const styles = (theme) => ({
     textSuccess: {
         color: 'green'
     },
-    test: {
-        backgroundColor: 'blue'
+    textDanger: {
+        color: 'red'
+    },
+    textWarning: {
+        color: '#cccc00'
     },
     tableHeader: {
         fontWeight: 650
@@ -72,7 +75,8 @@ class ChooseSimOnlyTariff extends Component {
 
     state = {
         simOnlyTariffs: null,
-        tariffChosen: false
+        tariffChosen: false,
+        ctn: this.props.state.mobileAccount.number
     }
 
     async componentDidMount() {
@@ -83,7 +87,12 @@ class ChooseSimOnlyTariff extends Component {
              }
          )
         // Finds if an order already exists
-         await fetch("http://127.0.0.1:8000/api/sim-only-order")
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ctn: this.state.ctn})
+        }
+         await fetch("http://127.0.0.1:8000/api/sim-only-order", requestOptions)
              .then((response) => {
                  if (response.ok){
                      return response.json()
@@ -106,7 +115,7 @@ class ChooseSimOnlyTariff extends Component {
          const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({tariff_code: tariffCode})
+            body: JSON.stringify({tariff_code: tariffCode, ctn: this.state.ctn})
          }
 
         fetch('http://127.0.0.1:8000/api/create-sim-only-order', requestOptions)
@@ -120,6 +129,25 @@ class ChooseSimOnlyTariff extends Component {
     handleDeleteTariff = () => {
         this.setState({tariffChosen: false})
         return this.props.onDeleteTariffClicked
+    }
+
+    handleCalculateValue = (contractLength, MRC) => {
+        if (contractLength === '1'){
+            // Return the value based on 3 months if the contract is a monthly rolling due to the likelihood of the
+            // customer keeping the sim on for more than 1 month
+            return 3 * MRC
+        }else{
+            return contractLength * MRC
+        }
+    }
+    handleValueColour = (value) => {
+        if (value >= 450) {
+            return this.props.classes.textSuccess
+        }else if (value >= 200) {
+            return this.props.classes.textWarning
+        }else{
+            return this.props.classes.textDanger
+        }
     }
 
     render() {
@@ -136,7 +164,7 @@ class ChooseSimOnlyTariff extends Component {
                                <Divider/>
                                <Box m={2}>
                                    <Typography>- March Sale: 200GB £20pm</Typography>
-                                   <Typography>- ULTD £25pm Ending 20/03/2021</Typography>
+                                   <Typography>- Unlimited £25pm Ending 20/03/2021</Typography>
 
                                </Box>
 
@@ -163,18 +191,22 @@ class ChooseSimOnlyTariff extends Component {
                                                        <TableCell className={classes.tableHeader}>Contract Length</TableCell>
                                                        <TableCell className={classes.tableHeader}>Data</TableCell>
                                                        <TableCell className={classes.tableHeader}>Mrc</TableCell>
+                                                       <TableCell className={classes.tableHeader}>Value</TableCell>
                                                        <TableCell className={classes.tableHeader} align='right'>Select</TableCell>
                                                    </TableRow>
                                                </TableHead>
                                                <TableBody>
                                                    {
                                                        this.state.simOnlyTariffs.map((simOnlyTariff, index) => {
+                                                           const value = this.handleCalculateValue(simOnlyTariff.contract_length, simOnlyTariff.mrc)
+                                                           const valueColour = this.handleValueColour(value)
                                                            return (
                                                                <TableRow hover={true} key={index}>
                                                                    <TableCell>{simOnlyTariff.plan_type}</TableCell>
                                                                    <TableCell>{simOnlyTariff.contract_length} Months</TableCell>
                                                                    <TableCell>{simOnlyTariff.data_allowance}GB</TableCell>
                                                                    <TableCell>£{simOnlyTariff.mrc}pm</TableCell>
+                                                                   <TableCell className={valueColour}>£{value}</TableCell>
                                                                    <TableCell align='right' ><Button className={classes.tableButton}
                                                                                       value={simOnlyTariff.id}
 
@@ -201,7 +233,8 @@ class ChooseSimOnlyTariff extends Component {
                            {
                                this.state.tariffChosen ? <SimOnlyBasket
                                                         onFinaliseSimOnlyClicked={this.props.onFinaliseSimOnlyClicked}
-                                                        onDeleteTariffClicked={this.handleDeleteTariff}/>
+                                                        onDeleteTariffClicked={this.handleDeleteTariff}
+                                                        ctn={this.props.state.mobileAccount.number}/>
                                                         : null
                            }
                            </Box>

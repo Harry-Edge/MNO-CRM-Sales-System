@@ -12,16 +12,20 @@ class CustomerSerializer(serializers.ModelSerializer):
 class InsuranceSerializer(serializers.ModelSerializer):
 
     keep_or_cancel_insurance = serializers.CharField()
+    ctn = serializers.CharField()
 
     class Meta:
         model = Insurance
-        fields = ('insurance_name', 'keep_or_cancel_insurance')
+        fields = ('insurance_name', 'keep_or_cancel_insurance', 'ctn')
 
 
 class SpendCapSerializer(serializers.ModelSerializer):
+
+    ctn = serializers.CharField()
+
     class Meta:
         model = SpendCaps
-        fields = ('id', 'cap_name', 'cap_amount', 'mrc', 'upfront')
+        fields = ('id', 'cap_name', 'cap_amount', 'mrc', 'upfront', 'ctn')
         extra_kwargs = {'id': {'read_only': False}}
 
 
@@ -34,9 +38,12 @@ class MobileNumberSerializer(serializers.ModelSerializer):
 
 
 class SimOnlyTariffsSerializer(serializers.ModelSerializer):
+
+    ctn = serializers.CharField()
+
     class Meta:
         model = SimOnlyTariffs
-        fields = ('tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type',)
+        fields = ('tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type', 'ctn')
 
 
 class SimOnlyOrderSerializer(serializers.ModelSerializer):
@@ -44,3 +51,7 @@ class SimOnlyOrderSerializer(serializers.ModelSerializer):
         model = SimOnlyOrder
         fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap',
                   'existing_insurance')
+
+
+class GenericSerializer(serializers.Serializer):
+    string = serializers.CharField()

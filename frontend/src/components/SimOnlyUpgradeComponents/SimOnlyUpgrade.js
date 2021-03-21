@@ -8,10 +8,6 @@ const styles = (theme) => ({
     textSuccess: {
         color: 'green'
     },
-    test: {
-        backgroundColor: 'blue'
-    }
-
 });
 
 class SimOnlyUpgrade extends Component {

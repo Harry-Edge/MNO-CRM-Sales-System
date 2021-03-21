@@ -10,5 +10,6 @@ urlpatterns = [
     path('add-spend-cap-to-sim-only-order', AddSpendCapToSimOnlyOrder.as_view()),
     path('keep-or-cancel-insurance', KeepOrCancelInsurance.as_view()),
     path('sim-only-order', SimOnlyOrderApi.as_view()),
-    path('get-spend-caps', GetSpendCaps.as_view())
+    path('get-spend-caps', GetSpendCaps.as_view()),
+    path('validate-postcode', ValidatePostcode.as_view())
 ]
