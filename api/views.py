@@ -233,21 +233,32 @@ class ValidatePostcode(APIView):
         if serializer.is_valid():
             inputted_postcode = serializer.data.get('string')
 
-            mobile_account = MobileNumber.objects.get(number='07777777777')
+            mobile_account = MobileNumber.objects.get(number=serializer.data.get('ctn'))
 
             if mobile_account.customer.postcode[-3:] == inputted_postcode.upper():
-                return Response('Validated', status=status.HTTP_200_OK)
+                return Response('Postcode Validated', status=status.HTTP_200_OK)
             else:
                 return Response('Incorrect Postcode', status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
-            return Response('Error', status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
+class ValidateMonthOfBirth(APIView):
+    permission_classes = (AllowAny, )
 
+    def post(self, request):
+        serializer = GenericSerializer(data=request.data)
 
+        if serializer.is_valid():
+            month_of_birth_inputted = serializer.data.get('string')
 
+            mobile_account = MobileNumber.objects.get(number=serializer.data.get('ctn'))
 
-
-
+            if month_of_birth_inputted == str(mobile_account.customer.dob.month):
+                return Response('MOB Validated', status=status.HTTP_200_OK)
+            else:
+                return Response('Incorrect MOB', status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 

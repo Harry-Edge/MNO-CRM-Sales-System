@@ -55,3 +55,4 @@ class SimOnlyOrderSerializer(serializers.ModelSerializer):
 
 class GenericSerializer(serializers.Serializer):
     string = serializers.CharField()
+    ctn = serializers.CharField()

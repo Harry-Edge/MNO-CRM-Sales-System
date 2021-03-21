@@ -21,9 +21,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl'
 
 const styles = (theme) => ({
-    textSuccess: {
-        color: 'green'
-    },
     header: {
         fontWeight: 650
     },
@@ -62,15 +59,17 @@ const styles = (theme) => ({
     },
     postcodeValidation: {
         width: '65%',
+
         paddingRight: '10px',
-        paddingBottom: '15px'
+        paddingBottom: '20px'
 
     },
     mobValidation: {
         minWidth: '65%',
+        marginTop: 0,
         paddingRight: '10px',
         paddingBottom: '15px',
-        height: '55px',
+        height: '53px',
 
     },
     button: {
@@ -84,6 +83,9 @@ const styles = (theme) => ({
         borderColor: '#008080'
         },
     },
+    otpCtnSelect: {
+        width: '50%'
+    }
 
 });
 
@@ -95,7 +97,10 @@ class FinaliseSimOnly extends Component {
              orderReadyForValidation: false,
              postcode: '',
              postcodeValidated: false,
-             postcodeError: '',}
+             postcodeError: '',
+             monthOfBirth: '',
+             monthOfBirthValidated: false,
+             mobError: ''}
 
     componentDidMount() {
            fetch("http://127.0.0.1:8000/api/get-spend-caps")
@@ -108,6 +113,11 @@ class FinaliseSimOnly extends Component {
     }
 
     handleMakeOrderReadyForValidation = (insuranceOptionChosen) => {
+
+        // Called in the basket component if a Spend Cap has been selected
+        // the below also checks if the current ctn has insurance and wont let the order
+        // got to the validation stage unless an option has been selected
+
         const ctnHasExistingInsurance = this.props.state.mobileAccount.insurance
 
         if (ctnHasExistingInsurance){
@@ -153,14 +163,13 @@ class FinaliseSimOnly extends Component {
     handlePostcodeInput = (event) => {
         event.preventDefault()
         this.setState({postcode: event.target.value})
-        console.log(this.state.postcode)
 
     }
     handleValidatePostcode = () => {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({string: this.state.postcode})
+            body: JSON.stringify({string: this.state.postcode, ctn: this.state.ctn})
         }
 
         fetch('http://127.0.0.1:8000/api/validate-postcode', requestOptions)
@@ -175,6 +184,31 @@ class FinaliseSimOnly extends Component {
             }
           )
     }
+    handleMonthOfBirth = (e) => {
+        this.setState({monthOfBirth: e.target.value})
+    }
+
+    handleValidateMOB = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({string: this.state.monthOfBirth, ctn: this.state.ctn})
+        }
+
+         fetch('http://127.0.0.1:8000/api/validate-mob', requestOptions)
+            .then((response) => {
+                if (response.ok){
+                    this.setState({monthOfBirthValidated: true, mobError: ''})
+                }else{
+                    this.setState({mobError: 'Incorrect Month of Birth'})
+                }
+            }).catch((error)=> {
+                console.log(error)
+            }
+          )
+
+    }
+
 
     render() {
 
@@ -271,28 +305,85 @@ class FinaliseSimOnly extends Component {
 
                                         </Grid>
                                          <Grid item xs={12}>
-                                              <FormControl variant="outlined" className={classes.mobValidation}>
+                                              <FormControl variant="outlined"  margin='dense' className={classes.mobValidation}>
                                                 <InputLabel id="mob">Month Of Birth</InputLabel>
                                                 <Select
                                                   labelId="mob"
-                                                  label="Age"
+                                                  label="mob"
+                                                  error={this.state.mobError}
+                                                  value={this.state.monthOfBirth}
                                                   disabled={!this.state.postcodeValidated}
+                                                  onChange={(e) => this.handleMonthOfBirth(e)}
+
                                                 >
-                                                  <MenuItem value='none'>
+                                                  <MenuItem value=''>
                                                     <em>None</em>
                                                   </MenuItem>
-                                                  <MenuItem value={10}>Janurary</MenuItem>
-                                                  <MenuItem value={20}>Twenty</MenuItem>
-                                                  <MenuItem value={30}>Thirty</MenuItem>
+                                                  <MenuItem value={1}>January</MenuItem>
+                                                  <MenuItem value={2}>February</MenuItem>
+                                                  <MenuItem value={3}>March</MenuItem>
+                                                  <MenuItem value={4}>April</MenuItem>
+                                                  <MenuItem value={5}>May</MenuItem>
+                                                  <MenuItem value={6}>June</MenuItem>
+                                                  <MenuItem value={7}>July</MenuItem>
+                                                  <MenuItem value={8}>August</MenuItem>
+                                                  <MenuItem value={9}>September</MenuItem>
+                                                  <MenuItem value={10}>October</MenuItem>
+                                                  <MenuItem value={11}>November</MenuItem>
+                                                  <MenuItem value={12}>December</MenuItem>
                                                 </Select>
-
                                               </FormControl>
                                              <Button className={classes.button} color='secondary'
                                                      variant='contained'
                                                      disabled={!this.state.postcodeValidated}
+                                                     onClick={() => this.handleValidateMOB()}
                                                      type='submit'>Submit</Button>
 
                                         </Grid>
+
+                                        <Grid item xs={12} className={classes.boxColour}>
+                                            <Typography className={classes.header} style={{paddingLeft: 3}}>One-Time Pin</Typography>
+                                            <Box m={1}>
+                                                <Grid container>
+                                                    <Grid item xs={6}>
+                                                        <Box m={1}>
+                                                            <FormControl className={classes.otpCtnSelect}>
+                                                                <Select
+                                                                    labelId="mob"
+                                                                    label="ctn"
+                                                                    value="c">
+                                                                         <MenuItem value='c'>
+                                                                            <em> Select CTN</em>
+                                                                          </MenuItem>
+                                                                          <MenuItem value={1}>07777777777</MenuItem>
+                                                                          <MenuItem value={2}>08888888888</MenuItem>
+                                                                          <MenuItem value={3}>08888888888</MenuItem>
+                                                                          <MenuItem value={4}>08888888888</MenuItem>
+                                                                </Select>
+                                                            </FormControl>
+                                                                <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'
+                                                                 variant='contained'
+                                                                 disabled
+                                                                 >Send</Button>
+                                                        </Box>
+                                                    </Grid>
+                                                     <Grid item xs={6} style={{marginTop: 4}}>
+                                                           <TextField size='small' className={classes.postcodeValidation} variant='outlined'
+                                                           label='Pin'
+                                                           disabled/>
+                                                                <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'
+                                                                 variant='contained'
+                                                                 disabled
+                                                                 type='submit'>Confirm</Button>
+                                                    </Grid>
+                                                </Grid>
+                                            </Box>
+                                        </Grid>
+
+                                        {
+                                            this.state.monthOfBirthValidated ?
+                                                <Typography >MOB vaidated</Typography>: null
+                                        }
                                     </Grid>
                                 </Box>
                            </Box>
