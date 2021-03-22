@@ -154,7 +154,7 @@ class Dashboard extends Component{
            handsetUpgrade: false,
            additionalSim: false,
            additionalHandset: false,
-           customerProfile: false
+           customerProfile: false,
             }
 
    constructor(props) {
@@ -320,7 +320,8 @@ class Dashboard extends Component{
                       <Grid item xs={12} md={4} lg={4}>
                         <Paper className={fixedHeightPaper}>
                           {
-                            this.state.customer ? <HouseholdView onNewCTNClicked={this.handleNewCTN}
+                            this.state.customer ? <HouseholdView currentCTN={this.state.mobileAccount.number}
+                                                                 onNewCTNClicked={this.handleNewCTN}
                                                                  customer={this.state.customer}
                                                                  otherLines={this.state.otherLines}
                             /> :     <CircularProgress className={classes.progressLoader}/>

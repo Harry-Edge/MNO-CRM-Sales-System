@@ -52,6 +52,9 @@ const styles = () => ({
     },
     tableHeading:{
         fontWeight: 580
+    },
+    currentlySelected: {
+        backgroundColor: '#f2f2f2'
     }
 });
 
@@ -74,7 +77,7 @@ class HouseholdView extends Component {
 
     render() {
 
-        const {classes, customer, otherLines} = this.props
+        const {classes, customer, otherLines, currentCTN} = this.props
 
         return (
            <div>
@@ -113,12 +116,12 @@ class HouseholdView extends Component {
                                     <TableBody>
                                         {
                                             otherLines.map((otherLine, index) => {
-                                                const colour = this.handleUpgradeDateColour(otherLine.days_remaining)
+                                                const upgradeColour = this.handleUpgradeDateColour(otherLine.days_remaining)
                                                 return (
-                                                        <TableRow hover={true} key={index}>
+                                                        <TableRow hover={true} key={index} className={otherLine.number === currentCTN ? classes.currentlySelected: null}>
                                                             <TableCell className={classes.tableHeading}><Link onClick={() => {this.props.onNewCTNClicked(otherLine.number)}}>{otherLine.number}</Link></TableCell>
                                                             <TableCell align='right'>{otherLine.user}</TableCell>
-                                                            <TableCell className={colour} align='right'>{otherLine.upgrade_date}</TableCell>
+                                                            <TableCell className={upgradeColour} align='right'>{otherLine.upgrade_date}</TableCell>
                                                         </TableRow>
                                                 )
                                             })

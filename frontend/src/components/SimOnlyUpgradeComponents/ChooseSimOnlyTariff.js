@@ -86,7 +86,7 @@ class ChooseSimOnlyTariff extends Component {
                  this.setState({simOnlyTariffs: data})
              }
          )
-        // Finds if an order already exists
+        // Finds if an order already exists for the ctn
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -173,7 +173,8 @@ class ChooseSimOnlyTariff extends Component {
                    </Grid>
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={fixedHeightPaper}>
-                           <HouseholdView customer={state.customer}
+                           <HouseholdView currentCTN={state.mobileAccount.number}
+                                          customer={state.customer}
                                           onNewCTNClicked={onNewCTNClicked}
                                           otherLines={state.otherLines}/>
                        </Paper>

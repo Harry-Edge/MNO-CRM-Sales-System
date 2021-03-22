@@ -107,7 +107,6 @@ class FinaliseSimOnly extends Component {
              .then((response) => response.json())
              .then((data) => {
                  this.setState({spendCaps: data})
-
              }
          )
     }
@@ -184,10 +183,9 @@ class FinaliseSimOnly extends Component {
             }
           )
     }
-    handleMonthOfBirth = (e) => {
-        this.setState({monthOfBirth: e.target.value})
+    handleMonthOfBirth = (event) => {
+        this.setState({monthOfBirth: event.target.value})
     }
-
     handleValidateMOB = () => {
         const requestOptions = {
             method: 'POST',
@@ -206,7 +204,6 @@ class FinaliseSimOnly extends Component {
                 console.log(error)
             }
           )
-
     }
 
 
@@ -277,7 +274,8 @@ class FinaliseSimOnly extends Component {
                    {/* HouseHold View */}
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={fixedHeightPaper}>
-                           <HouseholdView customer={state.customer}
+                           <HouseholdView currentCTN={state.mobileAccount.number}
+                                          customer={state.customer}
                                           onNewCTNClicked={onNewCTNClicked}
                                           otherLines={state.otherLines}/>
                        </Paper>
@@ -379,7 +377,6 @@ class FinaliseSimOnly extends Component {
                                                 </Grid>
                                             </Box>
                                         </Grid>
-
                                         {
                                             this.state.monthOfBirthValidated ?
                                                 <Typography >MOB vaidated</Typography>: null
@@ -402,7 +399,6 @@ class FinaliseSimOnly extends Component {
                                           ctn={this.props.state.mobileAccount.number}
                                           onReadyForValidation={this.handleMakeOrderReadyForValidation} />: null
                              }
-
                          </Box>
                        </Paper>
                    </Grid>
