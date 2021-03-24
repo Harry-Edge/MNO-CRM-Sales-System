@@ -29,5 +29,5 @@ class SimoOnlyTariffsAdmin(admin.ModelAdmin):
 
 @admin.register(SimOnlyOrder)
 class SimoOnlyOrder(admin.ModelAdmin):
-    list_display = ('id', 'customer', 'ctn', 'plan_type', 'contract_length', 'tariff', 'cap')
+    list_display = ('id', 'customer', 'ctn', 'plan_type', 'contract_length', 'tariff', 'cap', 'order_created_by')
 

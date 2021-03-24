@@ -144,13 +144,16 @@ class SimOnlyOrder(models.Model):
     existing_insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True, blank=True)
     #friends_and_family = models.BooleanField(default=False, null=True)
 
+    order_created_by = models.CharField(max_length=20, null=True)
+    order_submitted_by = models.CharField(max_length=20, null=True)
+
     # Customer Validations on Order
     #postcode_validated = models.BooleanField(null=True)
     #mob_validated = models.BooleanField(null=True)
     #otp = models.IntegerField(null=True)
     #otp_validated = models.BooleanField(null=True)
 
-    #date_ordered = models.DateTimeField(auto_now=True)
+    #date_ordered = models.DateTimeField(auto_now=False)
 
     class Meta:
         verbose_name_plural = "Sim Only Orders"

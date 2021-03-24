@@ -68,6 +68,10 @@ class SimOnlyBasket extends Component {
              .then((data) => {
                  this.setState({basketItems: data})
                  if (this.state.basketItems.cap){
+                     if (this.state.finaliseSim) {
+                         this.props.onCapSelected(this.state.basketItems.cap_name)
+                         this.props.onInsuranceSelected(this.state.basketItems.existing_insurance.insurance_name)
+                     }
                      // Changes the state of the parent component if the order has a cap and the insurance
                      // option has been selected
                      if (this.props.onReadyForValidation) {

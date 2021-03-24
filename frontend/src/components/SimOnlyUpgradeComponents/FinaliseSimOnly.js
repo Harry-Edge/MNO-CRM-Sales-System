@@ -85,6 +85,9 @@ const styles = (theme) => ({
     },
     otpCtnSelect: {
         width: '50%'
+    },
+    currentlySelected: {
+        backgroundColor: '#f2f2f2'
     }
 
 });
@@ -94,6 +97,8 @@ class FinaliseSimOnly extends Component {
     state = {ctn: this.props.state.mobileAccount.number,
              spendCaps: null,
              renderBasket: true,
+             capSelected: null,
+             continueInsurance: null,
              orderReadyForValidation: false,
              postcode: '',
              postcodeValidated: false,
@@ -111,6 +116,16 @@ class FinaliseSimOnly extends Component {
          )
     }
 
+    handleCapSelected = (capName) => {
+        this.setState({capSelected: capName})
+    }
+    handleInsuranceSelected = (insuranceName) => {
+        if (insuranceName === 'No Insurance'){
+            this.setState({continueInsurance: false})
+        }else {
+            this.setState({continueInsurance: true})
+        }
+    }
     handleMakeOrderReadyForValidation = (insuranceOptionChosen) => {
 
         // Called in the basket component if a Spend Cap has been selected
@@ -229,8 +244,10 @@ class FinaliseSimOnly extends Component {
                                                       <Box className={classes.spendCapList}>
                                                         <List>
                                                             {this.state.spendCaps.map((spendCap, index) => {
+
                                                                     return(
-                                                                        <ListItem key={index} button onClick={() => this.handleAddSpendCap(spendCap.id)}>
+                                                                        <ListItem key={index} button onClick={() => this.handleAddSpendCap(spendCap.id)}
+                                                                                  className={this.state.capSelected === spendCap.cap_name ? classes.currentlySelected : null}  >
                                                                             <ListItemText  classes={{primary:classes.listItem}} primary={spendCap.cap_name}/>
                                                                             <ListItemIcon >
                                                                                 <AddCircleOutlineIcon/>
@@ -250,13 +267,15 @@ class FinaliseSimOnly extends Component {
                                                     <Typography className={classes.header}>Insurance</Typography>
                                                     <Box>
                                                         <List>
-                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('keep')}>
+                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('keep')}
+                                                                             className={this.state.continueInsurance ? classes.currentlySelected : null}>
                                                                 <ListItemText classes={{primary:classes.listItem}}  primary='Rollover Existing Insurance'/>
                                                                 <ListItemIcon >
                                                                     <AddCircleOutlineIcon/>
                                                                 </ListItemIcon>
                                                             </ListItem>
-                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('cancel')}>
+                                                            <ListItem button onClick={() => this.handleKeepOrCancelInsurance('cancel')}
+                                                                             className={this.state.continueInsurance === false ? classes.currentlySelected: null}>
                                                                 <ListItemText classes={{primary:classes.listItem}}  primary='Cancel Insurance'/>
                                                                 <ListItemIcon >
                                                                     <AddCircleOutlineIcon/>
@@ -394,7 +413,10 @@ class FinaliseSimOnly extends Component {
                            <Divider/>
                              {
                                  this.state.renderBasket ?
-                                         <SimOnlyBasket onDeleteTariffClicked={this.props.onDeleteTariffClicked}
+                                         <SimOnlyBasket
+                                          onCapSelected={this.handleCapSelected}
+                                          onInsuranceSelected={this.handleInsuranceSelected}
+                                          onDeleteTariffClicked={this.props.onDeleteTariffClicked}
                                           finaliseSim={this.props.finaliseSim}
                                           ctn={this.props.state.mobileAccount.number}
                                           onReadyForValidation={this.handleMakeOrderReadyForValidation} />: null
