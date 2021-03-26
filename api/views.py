@@ -289,3 +289,21 @@ class SendOneTimePin(APIView):
             return Response('Error When Sending OTP', status=status.HTTP_400_BAD_REQUEST)
 
 
+class SubmitSimOnlyOrder(APIView):
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+            """
+            Currently, this will just delete the order that has been made rather than actually 
+            submitting it and changing the details in the database
+            """
+            time.sleep(15)
+            order_object = SimOnlyOrder.objects.get(ctn=serializer.data.get('number'))
+            order_object.delete()
+
+            return Response('Order Submitted', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)

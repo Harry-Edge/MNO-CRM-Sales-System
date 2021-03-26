@@ -106,7 +106,10 @@ class FinaliseSimOnly extends Component {
              monthOfBirth: '',
              monthOfBirthValidated: false,
              mobError: '',
-             otpNumber: ""}
+             otpCTN: '',
+             oneTimePin: '',
+             oneTimePinInputted: '',
+             orderReadyForSubmission: false}
 
     componentDidMount() {
            fetch("http://127.0.0.1:8000/api/get-spend-caps")
@@ -222,20 +225,32 @@ class FinaliseSimOnly extends Component {
           )
     }
     handleSelectOneTimePinNumber = (event) => {
-        this.setState({otpNumber: event.target.value})
+        this.setState({otpCTN: event.target.value})
     }
     handleSendOneTimePin = () => {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({number: this.state.otpNumber})
+            body: JSON.stringify({number: this.state.otpCTN})
         }
 
         fetch('http://127.0.0.1:8000/api/send-one-time-pin', requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log(data)
+                this.setState({oneTimePin: data.pin})
         })
+    }
+    handleValidateOneTimePin = () => {
+        console.log(this.state.oneTimePin)
+        console.log(this.state.oneTimePinInputted)
+
+        if (this.state.oneTimePin === this.state.oneTimePinInputted){
+            this.setState({orderReadyForSubmission: true})
+            console.log(this.state.orderReadyForSubmission)
+        }
+
+
+
     }
 
 
@@ -387,7 +402,7 @@ class FinaliseSimOnly extends Component {
                                                                     onChange={(event) => this.handleSelectOneTimePinNumber(event)}
                                                                     displayEmpty
                                                                     disabled={!this.state.monthOfBirthValidated}
-                                                                    value={this.state.otpNumber}>
+                                                                    value={this.state.otpCTN}>
                                                                           <MenuItem value="">
                                                                             <em>Select CTN</em>
                                                                           </MenuItem>
@@ -406,7 +421,7 @@ class FinaliseSimOnly extends Component {
                                                                     className={classes.button}
                                                                     style={{marginLeft: '15px'}} color='secondary'
                                                                     variant='contained'
-                                                                    disabled={!this.state.otpNumber}
+                                                                    disabled={!this.state.otpCTN}
                                                                     onClick={() => this.handleSendOneTimePin()}
                                                                  >Send</Button>
                                                         </Box>
@@ -414,19 +429,17 @@ class FinaliseSimOnly extends Component {
                                                      <Grid item xs={6} style={{marginTop: 4}}>
                                                            <TextField size='small' className={classes.postcodeValidation} variant='outlined'
                                                            label='Pin'
-                                                           disabled/>
-                                                                <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'
-                                                                 variant='contained'
-                                                                 disabled
-                                                                 type='submit'>Confirm</Button>
+                                                           onChange={(event) => {this.setState({oneTimePinInputted: event.target.value})}}
+                                                           disabled={!this.state.oneTimePin}/>
+                                                            <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'
+                                                             variant='contained'
+                                                             disabled={!this.state.oneTimePinInputted}
+                                                             onClick={() => this.handleValidateOneTimePin()}
+                                                             type='submit'>Confirm</Button>
                                                     </Grid>
                                                 </Grid>
                                             </Box>
                                         </Grid>
-                                        {
-                                            this.state.monthOfBirthValidated ?
-                                                <Typography >MOB vaidated</Typography>: null
-                                        }
                                     </Grid>
                                 </Box>
                            </Box>
@@ -446,7 +459,9 @@ class FinaliseSimOnly extends Component {
                                           onDeleteTariffClicked={this.props.onDeleteTariffClicked}
                                           finaliseSim={this.props.finaliseSim}
                                           ctn={this.props.state.mobileAccount.number}
-                                          onReadyForValidation={this.handleMakeOrderReadyForValidation} />: null
+                                          onReadyForValidation={this.handleMakeOrderReadyForValidation}
+                                          readyForSubmission={this.state.orderReadyForSubmission}
+                                          onReturnToDashboard={this.props.onReturnToDashboard}/>: null
                              }
                          </Box>
                        </Paper>

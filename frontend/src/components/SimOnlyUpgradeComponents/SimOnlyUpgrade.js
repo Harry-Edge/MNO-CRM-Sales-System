@@ -39,7 +39,8 @@ class SimOnlyUpgrade extends Component {
                                           fixedHeightPaper={fixedHeightPaper}
                                           onDeleteTariffClicked={this.handleDeleteTariff}
                                           finaliseSim={true}
-                                          state={state}/>
+                                          state={state}
+                                          onReturnToDashboard={this.props.onReturnToDashboard}/>
                }
            </div>
         )

@@ -53,7 +53,8 @@ class SimOnlyBasket extends Component {
 
     state = {basketItems: null,
              finaliseSim: null,
-             basketTotals: null}
+             basketTotals: null,
+             submittingOrder: false}
 
     componentDidMount() {
         this.setState({finaliseSim: this.props.finaliseSim})
@@ -85,6 +86,8 @@ class SimOnlyBasket extends Component {
                      this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
                  }
 
+                 console.log(this.state)
+
              }
          )
     }
@@ -103,6 +106,24 @@ class SimOnlyBasket extends Component {
                  this.setState({basketItems: null})
              }
          )
+    }
+    handleSubmitOrder = () => {
+       this.setState({submittingOrder: true})
+
+
+       const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({number: this.state.basketItems.ctn})
+        }
+
+        fetch('http://127.0.0.1:8000/api/submit-sim-only-order', requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                this.props.onReturnToDashboard()
+
+        })
     }
 
     render() {
@@ -176,8 +197,14 @@ class SimOnlyBasket extends Component {
                                </Grid>
                                <Grid item xs={6}>
                                    {
+                                       this.state.submittingOrder ?
+                                           <Typography><strong>Submitting</strong></Typography> : null
+                                   }
+                                   {
                                        this.state.finaliseSim ?
-                                           <Button className={classes.finaliseButton} size='small' variant='contained' disabled
+                                           <Button className={classes.finaliseButton} size='small' variant='contained'
+                                                   disabled={!this.props.readyForSubmission}
+                                                   onClick={() => this.handleSubmitOrder()}
                                            >Submit</Button>:
                                            <Button className={classes.finaliseButton} size='small' variant='contained'
                                            onClick={() => {
