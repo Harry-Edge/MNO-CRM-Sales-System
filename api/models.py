@@ -142,7 +142,7 @@ class SimOnlyOrder(models.Model):
     tariff = models.ForeignKey(SimOnlyTariffs, on_delete=models.SET_NULL, null=True)
     cap = models.ForeignKey(SpendCaps, on_delete=models.SET_NULL, null=True)
     existing_insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True, blank=True)
-    #friends_and_family = models.BooleanField(default=False, null=True)
+    friends_and_family = models.BooleanField(default=False, null=True)
 
     order_created_by = models.CharField(max_length=20, null=True)
     order_submitted_by = models.CharField(max_length=20, null=True)

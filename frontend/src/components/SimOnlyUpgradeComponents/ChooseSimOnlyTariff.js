@@ -205,8 +205,8 @@ class ChooseSimOnlyTariff extends Component {
                                                                <TableRow hover={true} key={index}>
                                                                    <TableCell>{simOnlyTariff.plan_type}</TableCell>
                                                                    <TableCell>{simOnlyTariff.contract_length} Months</TableCell>
-                                                                   <TableCell>{simOnlyTariff.data_allowance}GB</TableCell>
-                                                                   <TableCell>£{simOnlyTariff.mrc}pm</TableCell>
+                                                                   <TableCell>{simOnlyTariff.data_allowance === '1000' ? 'ULTD' : simOnlyTariff.data_allowance} GB</TableCell>
+                                                                   <TableCell>{simOnlyTariff.mrc}pm</TableCell>
                                                                    <TableCell className={valueColour}>£{value}</TableCell>
                                                                    <TableCell align='right' ><Button className={classes.tableButton}
                                                                                       value={simOnlyTariff.id}

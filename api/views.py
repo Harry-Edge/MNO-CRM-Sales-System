@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.forms.models import model_to_dict
 from datetime import datetime
 from .extrafunctions import date_calculations
+from .extrafunctions.basket import GetBasketTotals
+from .extrafunctions import twilio_functions
 from .serializers import *
 from .models import *
 import time
@@ -196,10 +198,16 @@ class SimOnlyOrderApi(APIView):
                             'insurance_mrc': sim_only_order_object.existing_insurance.mrc}
                     sim_order['existing_insurance'] = test
 
+                get_basket_totals = GetBasketTotals(sim_only_order_object)
+                basket_totals = {'upfront': get_basket_totals.get_total_upfront(),
+                                 'mrc': get_basket_totals.get_total_mrc()}
+
                 sim_order['tariff_data'] = tariff_object.data_allowance
                 sim_order['tariff_mrc'] = tariff_object.mrc
 
-                return Response(sim_order, status=status.HTTP_200_OK)
+                data = {'sim_order_items': sim_order, 'basket_totals': basket_totals}
+
+                return Response(data, status=status.HTTP_200_OK)
 
             else:
                 return Response("No Order", status=status.HTTP_200_OK)
@@ -260,5 +268,24 @@ class ValidateMonthOfBirth(APIView):
                 return Response('Incorrect MOB', status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response('Error', status=status.HTTP_400_BAD_REQUEST)
+
+
+class SendOneTimePin(APIView):
+    permission_classes = (AllowAny, )
+
+    def post(self, request):
+
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+            ctn_to_send_to = serializer.data.get('number')
+            print('sending to', ctn_to_send_to)
+
+            pin = twilio_functions.send_otp()
+            print(pin)
+
+            return Response({'pin': pin}, status=status.HTTP_200_OK)
+        else:
+            return Response('Error When Sending OTP', status=status.HTTP_400_BAD_REQUEST)
 
 

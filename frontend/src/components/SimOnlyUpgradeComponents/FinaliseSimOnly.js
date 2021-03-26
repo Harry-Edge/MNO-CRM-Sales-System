@@ -105,7 +105,8 @@ class FinaliseSimOnly extends Component {
              postcodeError: '',
              monthOfBirth: '',
              monthOfBirthValidated: false,
-             mobError: ''}
+             mobError: '',
+             otpNumber: ""}
 
     componentDidMount() {
            fetch("http://127.0.0.1:8000/api/get-spend-caps")
@@ -220,6 +221,23 @@ class FinaliseSimOnly extends Component {
             }
           )
     }
+    handleSelectOneTimePinNumber = (event) => {
+        this.setState({otpNumber: event.target.value})
+    }
+    handleSendOneTimePin = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({number: this.state.otpNumber})
+        }
+
+        fetch('http://127.0.0.1:8000/api/send-one-time-pin', requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+        })
+    }
+
 
 
     render() {
@@ -366,21 +384,30 @@ class FinaliseSimOnly extends Component {
                                                         <Box m={1}>
                                                             <FormControl className={classes.otpCtnSelect}>
                                                                 <Select
-                                                                    labelId="mob"
-                                                                    label="ctn"
-                                                                    value="c">
-                                                                         <MenuItem value='c'>
-                                                                            <em> Select CTN</em>
+                                                                    onChange={(event) => this.handleSelectOneTimePinNumber(event)}
+                                                                    displayEmpty
+                                                                    disabled={!this.state.monthOfBirthValidated}
+                                                                    value={this.state.otpNumber}>
+                                                                          <MenuItem value="">
+                                                                            <em>Select CTN</em>
                                                                           </MenuItem>
-                                                                          <MenuItem value={1}>07777777777</MenuItem>
-                                                                          <MenuItem value={2}>08888888888</MenuItem>
-                                                                          <MenuItem value={3}>08888888888</MenuItem>
-                                                                          <MenuItem value={4}>08888888888</MenuItem>
+                                                                         {
+                                                                            state.otherLines.map((otherLine, index) => {
+                                                                                return (
+                                                                                    <MenuItem value={otherLine.number}
+                                                                                        key={index}>{otherLine.number}</MenuItem>
+                                                                                    )
+                                                                                })
+                                                                         }
+
                                                                 </Select>
                                                             </FormControl>
-                                                                <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'
-                                                                 variant='contained'
-                                                                 disabled
+                                                                <Button
+                                                                    className={classes.button}
+                                                                    style={{marginLeft: '15px'}} color='secondary'
+                                                                    variant='contained'
+                                                                    disabled={!this.state.otpNumber}
+                                                                    onClick={() => this.handleSendOneTimePin()}
                                                                  >Send</Button>
                                                         </Box>
                                                     </Grid>

@@ -12,5 +12,6 @@ urlpatterns = [
     path('sim-only-order', SimOnlyOrderApi.as_view()),
     path('get-spend-caps', GetSpendCaps.as_view()),
     path('validate-postcode', ValidatePostcode.as_view()),
-    path('validate-mob', ValidateMonthOfBirth.as_view())
+    path('validate-mob', ValidateMonthOfBirth.as_view()),
+    path('send-one-time-pin', SendOneTimePin.as_view())
 ]

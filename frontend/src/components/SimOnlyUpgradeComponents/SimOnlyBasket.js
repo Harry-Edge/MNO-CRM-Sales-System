@@ -31,7 +31,7 @@ const styles = (theme) => ({
           borderColor: '#008080'
          },
     },
-    deleteButton: {
+    bold: {
         fontWeight: 650,
 
     },
@@ -52,7 +52,8 @@ const styles = (theme) => ({
 class SimOnlyBasket extends Component {
 
     state = {basketItems: null,
-             finaliseSim: null}
+             finaliseSim: null,
+             basketTotals: null}
 
     componentDidMount() {
         this.setState({finaliseSim: this.props.finaliseSim})
@@ -66,18 +67,24 @@ class SimOnlyBasket extends Component {
           fetch("http://127.0.0.1:8000/api/sim-only-order", requestOptions)
              .then((response) => response.json())
              .then((data) => {
-                 this.setState({basketItems: data})
-                 if (this.state.basketItems.cap){
-                     if (this.state.finaliseSim) {
-                         this.props.onCapSelected(this.state.basketItems.cap_name)
-                         this.props.onInsuranceSelected(this.state.basketItems.existing_insurance.insurance_name)
+
+                 this.setState({basketItems: data.sim_order_items, basketTotals: data.basket_totals})
+                 //Code here is pretty terrible
+
+                 if (this.state.finaliseSim) {
+                      if (this.state.basketItems.existing_insurance){
+                            this.props.onInsuranceSelected(this.state.basketItems.existing_insurance.insurance_name)
                      }
-                     // Changes the state of the parent component if the order has a cap and the insurance
-                     // option has been selected
-                     if (this.props.onReadyForValidation) {
-                         this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
+                     if (this.state.basketItems.cap){
+                         this.props.onCapSelected(this.state.basketItems.cap_name)
                      }
                  }
+                 // Changes the state of the parent component if the order has a cap and the insurance
+                 // option has been selected
+                 if (this.props.onReadyForValidation) {
+                     this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
+                 }
+
              }
          )
     }
@@ -110,9 +117,9 @@ class SimOnlyBasket extends Component {
                            <Table size="small">
                                <TableHead>
                                    <TableRow>
-                                       <TableCell>Description</TableCell>
-                                       <TableCell align='right'>One-Off</TableCell>
-                                       <TableCell align='right'>Monthly</TableCell>
+                                       <TableCell className={classes.bold}>Description</TableCell>
+                                       <TableCell className={classes.bold} align='right'>Upfront</TableCell>
+                                       <TableCell className={classes.bold} align='right'>Monthly</TableCell>
                                    </TableRow>
                                </TableHead>
                                <TableBody>
@@ -127,7 +134,7 @@ class SimOnlyBasket extends Component {
                                        <TableCell align='right'>£0</TableCell>
                                    </TableRow>
                                     <TableRow hover={true}>
-                                       <TableCell>{this.state.basketItems.plan_type} {this.state.basketItems.tariff_data}GB</TableCell>
+                                       <TableCell>{this.state.basketItems.plan_type} {this.state.basketItems.tariff_data === '1000' ? 'ULTD' : this.state.basketItems.tariff_data}GB</TableCell>
                                        <TableCell align='right'>£0</TableCell>
                                        <TableCell align='right'>£{this.state.basketItems.tariff_mrc}</TableCell>
                                    </TableRow>
@@ -147,6 +154,12 @@ class SimOnlyBasket extends Component {
                                                <TableCell align='right'>£{this.state.basketItems.existing_insurance.insurance_mrc}</TableCell>
                                            </TableRow> : null
                                    }
+                                   <TableRow hover={true}>
+                                       <TableCell className={classes.bold}> TOTAL:</TableCell>
+                                       <TableCell className={classes.bold} align='right'>£{this.state.basketTotals.upfront}</TableCell>
+                                       <TableCell className={classes.bold} align='right'>£{this.state.basketTotals.mrc}</TableCell>
+                                   </TableRow>
+
                                </TableBody>
                            </Table>
                        </Box> : <CircularProgress className={classes.progressLoader}/>
@@ -155,7 +168,7 @@ class SimOnlyBasket extends Component {
                        <Box m={1} >
                            <Grid container >
                                <Grid item xs={6}>
-                                   <Button className={classes.deleteButton} color='secondary' size='small'
+                                   <Button className={classes.bold} color='secondary' size='small'
                                            variant='contained'
                                            onClick={() =>
                                            {   this.props.onDeleteTariffClicked()
