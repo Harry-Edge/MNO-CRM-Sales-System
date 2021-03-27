@@ -13,9 +13,34 @@ from .models import *
 import time
 
 
-class GetCustomer(APIView):
+class CheckCTNExists(APIView):
 
     permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            ctn = serializer.data.get('number')
+
+            print(ctn)
+
+            try:
+                MobileNumber.objects.get(number=ctn)
+
+                print("here")
+                return Response("CTN Exists", status=status.HTTP_200_OK)
+            except Exception as e:
+                print('here 1 ')
+                return Response('CTN Does Not Exist', status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCustomer(APIView):
+
+    permission_classes = (IsAuthenticated,)
     serializer_class = MobileNumberSerializer
 
     def post(self, request):
@@ -90,7 +115,7 @@ class GetSpendCaps(APIView):
 
 
 class AddSpendCapToSimOnlyOrder(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = SpendCapSerializer
 
     def post(self, request):
@@ -110,7 +135,7 @@ class AddSpendCapToSimOnlyOrder(APIView):
 
 
 class KeepOrCancelInsurance(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = InsuranceSerializer(data=request.data)
@@ -135,7 +160,7 @@ class KeepOrCancelInsurance(APIView):
 
 
 class CreateSimOnlyOrder(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = SimOnlyTariffsSerializer
 
     def post(self, request):
@@ -169,7 +194,7 @@ class CreateSimOnlyOrder(APIView):
 
 
 class SimOnlyOrderApi(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
     serializer_class = SimOnlyOrderSerializer
 
     def post(self, request):
@@ -233,7 +258,7 @@ Order Validations
 
 
 class ValidatePostcode(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = GenericSerializer(data=request.data)
@@ -252,7 +277,7 @@ class ValidatePostcode(APIView):
 
 
 class ValidateMonthOfBirth(APIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = GenericSerializer(data=request.data)
@@ -271,7 +296,7 @@ class ValidateMonthOfBirth(APIView):
 
 
 class SendOneTimePin(APIView):
-    permission_classes = (AllowAny, )
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
 
@@ -290,7 +315,7 @@ class SendOneTimePin(APIView):
 
 
 class SubmitSimOnlyOrder(APIView):
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = MobileNumberSerializer(data=request.data)
@@ -300,7 +325,7 @@ class SubmitSimOnlyOrder(APIView):
             Currently, this will just delete the order that has been made rather than actually 
             submitting it and changing the details in the database
             """
-            time.sleep(15)
+            time.sleep(5)
             order_object = SimOnlyOrder.objects.get(ctn=serializer.data.get('number'))
             order_object.delete()
 

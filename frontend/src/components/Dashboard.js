@@ -35,7 +35,6 @@ const styles = (theme) => ({
   root: {
     display: 'flex',
   },
-
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
   },
@@ -119,7 +118,7 @@ const styles = (theme) => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 250,
+    height: 270,
   },
   logoutButton: {
     fontWeight: 650
@@ -159,15 +158,14 @@ class Dashboard extends Component{
 
    constructor(props) {
        super(props);
-       // Gives me weird errors if not
        this.handleNewCTN = this.handleNewCTN.bind(this)
    }
 
    componentDidMount() {
           const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({number: '08888888888'})
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({number: this.props.initialCTN})
          }
 
           fetch("http://127.0.0.1:8000/api/get-customer", requestOptions)
@@ -186,11 +184,11 @@ class Dashboard extends Component{
 
     const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({number: ctn})
          }
 
-    fetch("http://127.0.0.1:8000/api/get-customer",requestOptions)
+    fetch("http://127.0.0.1:8000/api/get-customer", requestOptions)
              .then((response) => response.json())
              .then((data) => {
                   this.setState({mobileAccount: data.mobile_account,
@@ -252,7 +250,7 @@ class Dashboard extends Component{
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h5" color="inherit" noWrap className={classes.title}>
-                CRM
+                Camelot Pro CSM
               </Typography>
               <SearchBar className={classes.searchBox}
                           placeholder='Search CTN'
@@ -260,7 +258,8 @@ class Dashboard extends Component{
               <Box display={{ xs: 'none', sm: 'block'}}>
                 <Typography  className={classes.username}>Harry Edge(007ew7m)</Typography>
               </Box>
-              <Button className={classes.logoutButton} variant='contained' color='secondary' size='small'>Logout</Button>
+              <Button className={classes.logoutButton} variant='contained' color='secondary' size='small'
+                      onClick={() => this.props.onLogout()}>Logout</Button>
             </Toolbar>
           </AppBar>
 

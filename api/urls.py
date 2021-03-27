@@ -4,6 +4,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 
 urlpatterns = [
+    path('check-ctn-exists', CheckCTNExists.as_view()),
     path('get-customer', GetCustomer.as_view()),
     path('get-sim-only-tariffs', GetSimOnlyTariffs.as_view()),
     path('create-sim-only-order', CreateSimOnlyOrder.as_view()),

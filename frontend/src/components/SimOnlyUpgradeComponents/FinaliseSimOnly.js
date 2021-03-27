@@ -32,13 +32,14 @@ const styles = (theme) => ({
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
+        height: 400
     },
     basket: {
         padding: theme.spacing(1),
         display: 'flex',
         overflow: 'auto',
         flexDirection: 'column',
-        height: 370
+        height: 400
     },
       basketTitle: {
         display: 'flex',
@@ -59,7 +60,6 @@ const styles = (theme) => ({
     },
     postcodeValidation: {
         width: '65%',
-
         paddingRight: '10px',
         paddingBottom: '20px'
 
@@ -109,6 +109,7 @@ class FinaliseSimOnly extends Component {
              otpCTN: '',
              oneTimePin: '',
              oneTimePinInputted: '',
+             oneTimePinError: '',
              orderReadyForSubmission: false}
 
     componentDidMount() {
@@ -151,7 +152,7 @@ class FinaliseSimOnly extends Component {
     handleAddSpendCap = (spendCapId) =>{
          const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({id: spendCapId, ctn: this.state.ctn})
          }
 
@@ -166,7 +167,7 @@ class FinaliseSimOnly extends Component {
     handleKeepOrCancelInsurance = (option) => {
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({keep_or_cancel_insurance: option, ctn:this.state.ctn})
         }
 
@@ -186,7 +187,7 @@ class FinaliseSimOnly extends Component {
     handleValidatePostcode = () => {
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({string: this.state.postcode, ctn: this.state.ctn})
         }
 
@@ -208,7 +209,7 @@ class FinaliseSimOnly extends Component {
     handleValidateMOB = () => {
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({string: this.state.monthOfBirth, ctn: this.state.ctn})
         }
 
@@ -230,7 +231,7 @@ class FinaliseSimOnly extends Component {
     handleSendOneTimePin = () => {
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({number: this.state.otpCTN})
         }
 
@@ -241,19 +242,14 @@ class FinaliseSimOnly extends Component {
         })
     }
     handleValidateOneTimePin = () => {
-        console.log(this.state.oneTimePin)
-        console.log(this.state.oneTimePinInputted)
 
         if (this.state.oneTimePin === this.state.oneTimePinInputted){
-            this.setState({orderReadyForSubmission: true})
-            console.log(this.state.orderReadyForSubmission)
+            this.setState({orderReadyForSubmission: true, oneTimePinError: ""})
+
+        }else{
+            this.setState({oneTimePinError: "Invalid Pin"})
         }
-
-
-
     }
-
-
 
     render() {
 
@@ -341,7 +337,8 @@ class FinaliseSimOnly extends Component {
                                 <Box m={2}>
                                     <Grid container>
                                         <Grid item xs={12}>
-
+                                            <br/>
+                                            <br/>
                                             <TextField size='small' className={classes.postcodeValidation} variant='outlined'
                                                        label='Last 3 Characters of Postcode'
                                                        error={this.state.postcodeError}
@@ -390,7 +387,6 @@ class FinaliseSimOnly extends Component {
                                                      type='submit'>Submit</Button>
 
                                         </Grid>
-
                                         <Grid item xs={12} className={classes.boxColour}>
                                             <Typography className={classes.header} style={{paddingLeft: 3}}>One-Time Pin</Typography>
                                             <Box m={1}>
@@ -429,6 +425,7 @@ class FinaliseSimOnly extends Component {
                                                      <Grid item xs={6} style={{marginTop: 4}}>
                                                            <TextField size='small' className={classes.postcodeValidation} variant='outlined'
                                                            label='Pin'
+                                                           error={this.state.oneTimePinError}
                                                            onChange={(event) => {this.setState({oneTimePinInputted: event.target.value})}}
                                                            disabled={!this.state.oneTimePin}/>
                                                             <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'

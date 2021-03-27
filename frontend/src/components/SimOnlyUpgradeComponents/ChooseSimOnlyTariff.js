@@ -89,7 +89,7 @@ class ChooseSimOnlyTariff extends Component {
         // Finds if an order already exists for the ctn
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({ctn: this.state.ctn})
         }
          await fetch("http://127.0.0.1:8000/api/sim-only-order", requestOptions)
@@ -114,7 +114,7 @@ class ChooseSimOnlyTariff extends Component {
     handleSelectSimTariff = (tariffCode) => {
          const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({tariff_code: tariffCode, ctn: this.state.ctn})
          }
 

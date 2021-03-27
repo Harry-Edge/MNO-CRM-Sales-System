@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -33,13 +32,6 @@ const styles = (theme) => ({
     },
     bold: {
         fontWeight: 650,
-
-    },
-    navButtons: {
-        position: 'relative',
-        bottom: -120,
-        width: 300,
-        backgroundColor: '#fdfcfe',
     },
     progressLoader: {
           color:'#009999',
@@ -54,14 +46,15 @@ class SimOnlyBasket extends Component {
     state = {basketItems: null,
              finaliseSim: null,
              basketTotals: null,
-             submittingOrder: false}
+             submittingOrder: false,
+             timer: 0}
 
     componentDidMount() {
         this.setState({finaliseSim: this.props.finaliseSim})
 
         const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({ctn: this.props.ctn})
         }
 
@@ -85,7 +78,6 @@ class SimOnlyBasket extends Component {
                  if (this.props.onReadyForValidation) {
                      this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
                  }
-
                  console.log(this.state)
 
              }
@@ -96,7 +88,7 @@ class SimOnlyBasket extends Component {
 
          const requestOptions = {
             method: 'DELETE',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({ctn: this.state.basketItems.ctn})
          }
 
@@ -113,7 +105,7 @@ class SimOnlyBasket extends Component {
 
        const requestOptions = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
             body: JSON.stringify({number: this.state.basketItems.ctn})
         }
 
@@ -122,8 +114,13 @@ class SimOnlyBasket extends Component {
             .then((data) => {
                 console.log(data)
                 this.props.onReturnToDashboard()
-
         })
+    }
+    countUp = () => {
+        this.setState({timer: this.state.timer += 1})
+    }
+    startTimer = () => {
+        setInterval((this.countUp),1000)
     }
 
     render() {
@@ -131,8 +128,7 @@ class SimOnlyBasket extends Component {
         const {classes, } = this.props
 
         return (
-           <div>
-               <Box>
+               <Box className={classes.basket}>
                    { this.state.basketItems ?
                        <Box m={1} className={classes.basketTable}>
                            <Table size="small">
@@ -185,9 +181,18 @@ class SimOnlyBasket extends Component {
                            </Table>
                        </Box> : <CircularProgress className={classes.progressLoader}/>
                    }
+                   <br/>
                    { this.state.basketItems ?
-                       <Box m={1} >
-                           <Grid container >
+                       <Box m={1}>
+                           <Grid container>
+                                 {
+                                   this.state.submittingOrder ?
+                                       <box>
+                                            <Typography>Submitting... <strong>Waiting:{this.state.timer}</strong></Typography>
+                                            <br/>
+                                       </box>
+                                       : null
+                                 }
                                <Grid item xs={6}>
                                    <Button className={classes.bold} color='secondary' size='small'
                                            variant='contained'
@@ -195,16 +200,14 @@ class SimOnlyBasket extends Component {
                                            {   this.props.onDeleteTariffClicked()
                                                this.handleDeleteSimOnlyOrder()}}>Delete</Button>
                                </Grid>
-                               <Grid item xs={6}>
-                                   {
-                                       this.state.submittingOrder ?
-                                           <Typography><strong>Submitting</strong></Typography> : null
-                                   }
+                               <Grid item xs={6} className={classes.basketButtons}>
                                    {
                                        this.state.finaliseSim ?
                                            <Button className={classes.finaliseButton} size='small' variant='contained'
                                                    disabled={!this.props.readyForSubmission}
-                                                   onClick={() => this.handleSubmitOrder()}
+                                                   onClick={() => {
+                                                       this.startTimer()
+                                                       this.handleSubmitOrder()}}
                                            >Submit</Button>:
                                            <Button className={classes.finaliseButton} size='small' variant='contained'
                                            onClick={() => {
@@ -215,7 +218,6 @@ class SimOnlyBasket extends Component {
                        </Box> : null
                    }
                </Box>
-           </div>
         )
     }
 }

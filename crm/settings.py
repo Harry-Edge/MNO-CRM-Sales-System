@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import datetime
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -127,7 +128,7 @@ STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = False
 
-#AUTH_USER_MODEL = 'api.Customer'
+#AUTH_USER_MODEL = 'api.User'
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
@@ -146,3 +147,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'crm.utils.my_jwt_response_handler',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=10)
+}
