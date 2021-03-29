@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.forms.models import model_to_dict
 from datetime import datetime
@@ -24,8 +25,6 @@ class CheckCTNExists(APIView):
 
             ctn = serializer.data.get('number')
 
-            print(ctn)
-
             try:
                 MobileNumber.objects.get(number=ctn)
 
@@ -36,6 +35,17 @@ class CheckCTNExists(APIView):
                 return Response('CTN Does Not Exist', status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetEmployee(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+
+        print(request.user)
+        user = User.objects.get(id=request.user.id)
+        data = EmployeeSerializer(user).data
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class GetCustomer(APIView):
@@ -51,41 +61,46 @@ class GetCustomer(APIView):
 
         if serializer.is_valid():
             # Simulated a realistic response server time rather than being on local host
-            time.sleep(0.5)
+            time.sleep(1.5)
 
-            mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
-            customer_object = Customer.objects.get(id=mobile_number_object.customer.id)
+            try:
+                mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
+                customer_object = Customer.objects.get(id=mobile_number_object.customer.id)
 
-            def get_other_lines():
-                """
-                Gets all the other lines the customer has and also adds the upgrade data and days remaining
-                """
-                other_lines = []
-                for line in customer_object.mobilenumber_set.all().values():
-                    other_lines.append(line)
-                for count, line in enumerate(customer_object.mobilenumber_set.all()):
-                    date_cal = date_calculations.DateTimeCalculations(line)
-                    current_other_line_dic = other_lines[count]
-                    current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
-                    current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
+                def get_other_lines():
+                    """
+                    Gets all the other lines the customer has and also adds the upgrade data and days remaining
+                    """
+                    other_lines = []
+                    for line in customer_object.mobilenumber_set.all().values():
+                        other_lines.append(line)
+                    for count, line in enumerate(customer_object.mobilenumber_set.all()):
+                        date_cal = date_calculations.DateTimeCalculations(line)
+                        current_other_line_dic = other_lines[count]
+                        current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
+                        current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
 
-                return other_lines
+                    return other_lines
 
-            date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
+                date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
 
-            mobile_account = MobileNumberSerializer(mobile_number_object).data
-            customer = CustomerSerializer(customer_object).data
+                mobile_account = MobileNumberSerializer(mobile_number_object).data
+                customer = CustomerSerializer(customer_object).data
 
-            mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
-            mobile_account['early_upgrade_fee'] = date_cal.calculate_early_upgrade_fee()
-            mobile_account['is_eligible'] = date_cal.calculate_if_eligible()
-            mobile_account['days_remaining'] = date_cal.calculate_days_remaining()
-            mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
-            customer['total_lines'] = customer_object.mobilenumber_set.all().count()
+                mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
+                mobile_account['early_upgrade_fee'] = date_cal.calculate_early_upgrade_fee()
+                mobile_account['is_eligible'] = date_cal.calculate_if_eligible()
+                mobile_account['days_remaining'] = date_cal.calculate_days_remaining()
+                mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
+                customer['total_lines'] = customer_object.mobilenumber_set.all().count()
 
-            data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines()}
+                data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines()}
 
-            return Response(data, status=status.HTTP_200_OK)
+                return Response(data, status=status.HTTP_200_OK)
+
+            except Exception:
+                return Response('Not Found', status=status.HTTP_406_NOT_ACCEPTABLE)
+
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 

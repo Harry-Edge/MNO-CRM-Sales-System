@@ -47,52 +47,35 @@ class Login extends Component {
     state = {
       username: '',
       password: '',
-      ctn: '',
       credentialsError: '',
-      ctnError: ''
+
     };
 
-    handleLogin = (e) => {
-        this.handleCheckCTNExists()
+   handleLogin = (e) => {
 
-        if (!this.state.ctnError) {
-            console.log("here1")
+    e.preventDefault();
 
-            this.props.onInitialCTN(this.state.ctn)
+    const data = {'username': this.state.username, 'password': this.state.password}
 
-            if (this.props.onLogin(e, this.state.username, this.state.password)) {
-                console.log("Logged in Successfully")
-                this.setState({credentialsError: ''})
-
-            }else{
-                console.log("error")
-                this.setState({credentialsError: 'Invalid Username or Password'})
-            }
-        }
-
-
+    const requestOptions = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
     }
 
-    handleCheckCTNExists = () => {
-        const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({number: this.state.ctn})
-        }
+    fetch('http://localhost:8000/token-auth/', requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
 
-         fetch('http://127.0.0.1:8000/api/check-ctn-exists', requestOptions)
-            .then((response) => {
-                if (response.ok){
-                    console.log("CTN exists")
-                }else{
-                    console.log("incorrect ctn")
-                    this.setState({ctnError: 'Incorrect CTN'})
-                }
-            }).catch((error)=> {
-                console.log(error)
-            }
-          )
-    }
+        if (data.token) {
+            localStorage.setItem('token', data.token);
+            this.props.onLogin()
+        }else{
+            console.log("error")
+            this.setState({credentialsError: 'Invalid Username or Password'})
+        }
+      });
+  };
 
 
   render() {
@@ -137,18 +120,6 @@ class Login extends Component {
                 autoComplete="current-password"
                 onChange={(e) =>{
                     this.setState({password: e.target.value})
-                }}
-              />
-               <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                error={this.state.ctnError}
-                name="ctn"
-                label="CTN"
-                onChange={(e) =>{
-                    this.setState({ctn: e.target.value})
                 }}
               />
               <Button

@@ -47,7 +47,8 @@ const styles = (theme) => ({
         fontWeight: 650
     },
     boxColour: {
-        backgroundColor: '#fdfcfe'
+        backgroundColor: '#fdfcfe',
+        borderColor: 'blue'
     },
     spendCapList: {
         height: '16vh',
@@ -265,11 +266,14 @@ class FinaliseSimOnly extends Component {
                                 <Typography variant='h6' className={classes.header}>Add Ons</Typography>
                                 <Divider/>
                                 <Box m={1}>
-                                    <Grid container >
-                                        <Grid item xs={6} className={classes.boxColour}>
+                                    <Grid container spacing={3}>
+                                        <Grid item xs={6} >
+                                            <Paper>
+                                            <Box m={1}>
                                             <Typography className={classes.header}>Spend Caps</Typography>
                                             {
                                                 this.state.spendCaps?
+
                                                       <Box className={classes.spendCapList}>
                                                         <List>
                                                             {this.state.spendCaps.map((spendCap, index) => {
@@ -289,10 +293,14 @@ class FinaliseSimOnly extends Component {
                                                       </Box>
                                                     : <CircularProgress className={classes.progressLoader}/>
                                             }
+                                            </Box>
+                                            </Paper>
                                         </Grid>
                                         {
                                             state.mobileAccount.insurance ?
-                                                <Grid item xs={6} className={classes.boxColour}>
+                                                <Grid item xs={6}>
+                                                    <Paper >
+                                                    <Box m={1}>
                                                     <Typography className={classes.header}>Insurance</Typography>
                                                     <Box>
                                                         <List>
@@ -312,6 +320,8 @@ class FinaliseSimOnly extends Component {
                                                             </ListItem>
                                                         </List>
                                                     </Box>
+                                                    </Box>
+                                                    </Paper>
                                                 </Grid> : null
                                         }
                                     </Grid>

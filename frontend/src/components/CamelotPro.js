@@ -5,50 +5,28 @@ import Login from "./LoginComponents/Login";
 class CamelotPro extends Component {
 
     state = {
-      loggedIn: false,
+      loggedIn: localStorage.getItem('token') ? true : false,
       initialCTN: ''
     }
 
-  handleLogin = (e, username, password) => {
-
-    e.preventDefault();
-
-    const data = {'username': username, 'password': password}
-
-    const requestOptions = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-    }
-
-    fetch('http://localhost:8000/token-auth/', requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-
-        if (data.token) {
-            localStorage.setItem('token', data.token);
-            this.setState({loggedIn: true,});
-        }
-      });
-  };
+  handleLogin = () => {
+      this.setState({loggedIn: true})
+  }
 
   handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('currentCTN');
     this.setState({ loggedIn: false});
   };
-
-  handleInitialCtn = (CTN) => {
-      this.setState({initialCTN: CTN})
-  }
 
   render() {
     return (
       <div>
           {
               this.state.loggedIn ?
-                  <Dashboard initialCTN={this.state.initialCTN} onLogout={this.handleLogout}/>
+                  <Dashboard  onLogout={this.handleLogout}/>
 
-                  :  <Login onInitialCTN={this.handleInitialCtn} onLogin={this.handleLogin}/>
+                  :  <Login onLogin={this.handleLogin}/>
           }
       </div>
     );

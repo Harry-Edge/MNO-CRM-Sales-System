@@ -147,40 +147,53 @@ class Dashboard extends Component{
   state = {mobileAccount: null,
            customer: null,
            otherLines: null,
-           leftPanelOpen: true,
-           dashboard: true,
+           leftPanelOpen: false,
+           dashboard: false,
            simOnlyUpgrade: false,
            handsetUpgrade: false,
            additionalSim: false,
            additionalHandset: false,
            customerProfile: false,
+           loadingNewCTN: false
             }
+            //Currently selected rather than so many variables
 
    constructor(props) {
        super(props);
        this.handleNewCTN = this.handleNewCTN.bind(this)
    }
 
-   componentDidMount() {
-          const requestOptions = {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-            body: JSON.stringify({number: this.props.initialCTN})
-         }
+  componentDidMount() {
 
-          fetch("http://127.0.0.1:8000/api/get-customer", requestOptions)
-             .then((response) => response.json())
-             .then((data) => {
-                 console.log(data)
-                 this.setState({mobileAccount: data.mobile_account,
+       const employeeDataRequestOptions = {
+            headers: {'Authorization': `JWT ${localStorage.getItem('token')}`
+            }}
+
+       fetch("http://127.0.0.1:8000/api/get-employee", employeeDataRequestOptions)
+            .then((response) => response.json())
+              .then((data) => console.log(data))
+
+
+      if (localStorage.getItem('currentCTN')){
+          this.setState({loadingNewCTN: true})
+          const ctnInContextRequestOptions = {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+              body: JSON.stringify({number: localStorage.getItem('currentCTN')})
+          }
+
+          fetch("http://127.0.0.1:8000/api/get-customer", ctnInContextRequestOptions)
+            .then((response) => response.json())
+              .then((data) => {this.setState({mobileAccount: data.mobile_account,
                                       customer: data.customer,
                                       otherLines: data.other_lines})
+                                this.handleReturnToDashboard()
+                                this.setState({loadingNewCTN: false})})
 
-         })
-  }
+  }}
 
-  handleNewCTN(ctn) {
-    this.handleReturnToDashboard()
+    handleNewCTN(ctn) {
+    this.setState({loadingNewCTN: true})
 
     const requestOptions = {
             method: 'POST',
@@ -189,12 +202,24 @@ class Dashboard extends Component{
          }
 
     fetch("http://127.0.0.1:8000/api/get-customer", requestOptions)
-             .then((response) => response.json())
-             .then((data) => {
-                  this.setState({mobileAccount: data.mobile_account,
+         .then((response) => {
+             if (response.ok) {
+                 return response.json()
+             }else {
+                 throw new Error("Incorrect CTN")
+             }
+         })
+        .then((data) => {
+             this.setState({mobileAccount: data.mobile_account,
                                       customer: data.customer,
                                       otherLines: data.other_lines})
-         })
+             localStorage.setItem('currentCTN', data.mobile_account.number)
+             this.handleReturnToDashboard()
+             this.setState({loadingNewCTN: false})
+        }).catch((error) => {
+            console.log(error)
+            window.alert('Invalid CTN!')
+            this.setState({loadingNewCTN: false})})
 
   }
 
@@ -285,14 +310,15 @@ class Dashboard extends Component{
                     <Menu onReturnToDashboard={this.handleReturnToDashboard}
                           onAdditionalSimClicked={this.handleAdditionalSimClicked}
                           onAdditionalHandsetClicked={this.handleAdditionalHandsetClicked}
-                          onCustomerProfileClicked={this.handleCustomerProfileClicked}/>
+                          onCustomerProfileClicked={this.handleCustomerProfileClicked}
+                            />
                   </List>
                 <Divider />
                 <Grid>
                   {
                     this.state.mobileAccount ?  <CTNDetails customer={this.state.customer}
                                                             mobileAccount={this.state.mobileAccount} />
-                                                            : <CircularProgress className={classes.progressLoader}/>
+                                                            : null
                   }
                 </Grid>
           </Drawer>
@@ -301,6 +327,15 @@ class Dashboard extends Component{
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
             <Container maxWidth="lg" className={classes.container}>
+              {
+                this.state.loadingNewCTN ?
+                    <div>
+                        <CircularProgress className={classes.progressLoader}/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div> : null
+              }
               {
                 this.state.dashboard ?
                     <Grid container spacing={2}>
