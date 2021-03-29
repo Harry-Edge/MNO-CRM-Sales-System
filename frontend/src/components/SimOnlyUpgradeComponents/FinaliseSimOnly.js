@@ -103,7 +103,7 @@ class FinaliseSimOnly extends Component {
              orderReadyForValidation: false,
              postcode: '',
              postcodeValidated: false,
-             postcodeError: '',
+             postcodeError: false,
              monthOfBirth: '',
              monthOfBirthValidated: false,
              mobError: '',
@@ -195,9 +195,9 @@ class FinaliseSimOnly extends Component {
         fetch('http://127.0.0.1:8000/api/validate-postcode', requestOptions)
             .then((response) => {
                 if (response.ok){
-                    this.setState({postcodeValidated: true, postcodeError: ''})
+                    this.setState({postcodeValidated: true, postcodeError: false})
                 }else{
-                    this.setState({postcodeError: 'Incorrect Postcode'})
+                    this.setState({postcodeError: true})
                 }
             }).catch((error)=> {
                 console.log(error)

@@ -6,7 +6,6 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import CircularProgress from '@material-ui/core/CircularProgress'
 
 const styles = (theme) => ({
     headingText: {

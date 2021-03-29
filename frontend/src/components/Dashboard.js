@@ -146,6 +146,7 @@ class Dashboard extends Component{
 
   state = {mobileAccount: null,
            customer: null,
+           employee: null,
            otherLines: null,
            leftPanelOpen: false,
            dashboard: false,
@@ -171,7 +172,7 @@ class Dashboard extends Component{
 
        fetch("http://127.0.0.1:8000/api/get-employee", employeeDataRequestOptions)
             .then((response) => response.json())
-              .then((data) => console.log(data))
+              .then((data) => this.setState({employee: data}))
 
 
       if (localStorage.getItem('currentCTN')){
@@ -275,13 +276,19 @@ class Dashboard extends Component{
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h5" color="inherit" noWrap className={classes.title}>
-                Camelot Pro CSM
+                Camelot Pro
               </Typography>
               <SearchBar className={classes.searchBox}
                           placeholder='Search CTN'
                           onRequestSearch={(ctn) => this.handleNewCTN(ctn)}/>
               <Box display={{ xs: 'none', sm: 'block'}}>
-                <Typography  className={classes.username}>Harry Edge(007ew7m)</Typography>
+                  {
+                      this.state.employee ?
+                          <Typography  className={classes.username}>{`${this.state.employee.first_name} 
+                                                                        ${this.state.employee.last_name}`}
+                                                          ({this.state.employee.username})</Typography>
+                      : <Typography className={classes.username}> </Typography>
+                  }
               </Box>
               <Button className={classes.logoutButton} variant='contained' color='secondary' size='small'
                       onClick={() => this.props.onLogout()}>Logout</Button>

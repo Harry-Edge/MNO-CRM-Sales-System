@@ -100,6 +100,53 @@ class MobileNumber(models.Model):
         return f"{self.number} {self.customer}"
 
 
+class HandsetTariffs(models.Model):
+
+    CONTRACT_LENGTH = [('24', '24')]
+    DATA_ALLOWANCE = [('0.25', '0.25'), ('1', '1'), ('4', '4'), ('10', '10'), ('40', '40'),
+                      ('100', '100'), ('1000', '1000')]
+
+    PLAN_TYPE = [('Standard', 'Standard')]
+
+    contract_length = models.CharField(max_length=10, null=True, choices=CONTRACT_LENGTH)
+    mrc = models.FloatField(null=True)
+    upfront = models.FloatField(null=True)
+    data_allowance = models.CharField(max_length=10, null=True, choices=DATA_ALLOWANCE)
+    plan_type = models.CharField(max_length=10, null=True, choices=PLAN_TYPE)
+
+    def __str__(self):
+        return f"£{self.mrc} {self.plan_type}{self.data_allowance} GB"
+
+    class Meta:
+        verbose_name_plural = "Handset Tariffs"
+
+
+class Handsets(models.Model):
+
+    MANUFACTURES = [('Apple', 'Apple'), ('Samsung', 'Samsung')]
+
+    SPEED_TYPES = [('5G', '5G'), ('4G', '4G')]
+
+    manufacture = models.CharField(max_length=30, null=True, choices=MANUFACTURES)
+    model = models.CharField(max_length=100, null=True)
+    storage = models.IntegerField(null=True)
+    speed_type = models.CharField(max_length=30, null=True, choices=SPEED_TYPES)
+    colour = models.CharField(max_length=100, null=True)
+    cost_price = models.FloatField(max_length=10)
+    mrc = models.FloatField(null=True)
+    upfront = models.FloatField(null=True)
+
+    tariffs_available = models.ManyToManyField(HandsetTariffs)
+    insurance_available = models.ManyToManyField(Insurance)
+
+    class Meta:
+        verbose_name_plural = "Handsets"
+        ordering = ['manufacture', 'model']
+
+    def __str__(self):
+        return f"{self.manufacture} {self.model} {self.storage} {self.colour}"
+
+
 class SimOnlyTariffs(models.Model):
 
     CONTRACT_LENGTH = [('1', '1'), ('12', '12'), ('18', '18'), ('24', '24')]
@@ -146,12 +193,6 @@ class SimOnlyOrder(models.Model):
 
     order_created_by = models.CharField(max_length=20, null=True)
     order_submitted_by = models.CharField(max_length=20, null=True)
-
-    # Customer Validations on Order
-    #postcode_validated = models.BooleanField(null=True)
-    #mob_validated = models.BooleanField(null=True)
-    #otp = models.IntegerField(null=True)
-    #otp_validated = models.BooleanField(null=True)
 
     #date_ordered = models.DateTimeField(auto_now=False)
 

@@ -1,6 +1,5 @@
 import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
-import Typography from "@material-ui/core/Typography";
 
 const styles = (theme) => ({
     textSuccess: {

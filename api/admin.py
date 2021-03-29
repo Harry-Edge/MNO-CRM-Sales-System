@@ -6,11 +6,17 @@ from .models import *
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('id', 'first_name', 'last_name', 'first_line_address', 'postcode')
 
+@admin.register((Handsets))
+class HandsetAdmin(admin.ModelAdmin):
+    list_display = ('id', 'manufacture', 'model', 'storage', 'colour', 'speed_type')
 
 @admin.register(MobileNumber)
 class MobileNumberAdmin(admin.ModelAdmin):
     list_display = ('number', 'customer', 'user', 'mrc', 'data_allowance', 'contract_start', 'contract_end')
 
+@admin.register(HandsetTariffs)
+class HandsetTariffs(admin.ModelAdmin):
+    list_display = ('id', 'plan_type', 'mrc', 'data_allowance', 'contract_length')
 
 @admin.register(Insurance)
 class InsuranceAdmin(admin.ModelAdmin):
@@ -23,7 +29,7 @@ class SpendCapAdmin(admin.ModelAdmin):
 
 
 @admin.register(SimOnlyTariffs)
-class SimoOnlyTariffsAdmin(admin.ModelAdmin):
+class SimOnlyTariffsAdmin(admin.ModelAdmin):
     list_display = ('id', 'plan_type', 'data_allowance', 'mrc', 'contract_length')
 
 

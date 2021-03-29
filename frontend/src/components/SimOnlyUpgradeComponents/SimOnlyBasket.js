@@ -78,7 +78,6 @@ class SimOnlyBasket extends Component {
                  if (this.props.onReadyForValidation) {
                      this.props.onReadyForValidation(this.state.basketItems.existing_insurance)
                  }
-                 console.log(this.state)
 
              }
          )

@@ -41,8 +41,8 @@ class GetEmployee(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        time.sleep(0.1)
 
-        print(request.user)
         user = User.objects.get(id=request.user.id)
         data = EmployeeSerializer(user).data
         return Response(data, status=status.HTTP_200_OK)
@@ -61,7 +61,7 @@ class GetCustomer(APIView):
 
         if serializer.is_valid():
             # Simulated a realistic response server time rather than being on local host
-            time.sleep(1.5)
+            time.sleep(0.1)
 
             try:
                 mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
@@ -102,6 +102,35 @@ class GetCustomer(APIView):
                 return Response('Not Found', status=status.HTTP_406_NOT_ACCEPTABLE)
 
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetHandsets(APIView):
+    permission_classes = (AllowAny,)
+
+    all_handsets = Handsets.objects.all()
+    serializer_class = HandsetsSerializer
+
+    def get(self, request):
+        time.sleep(0.5)
+
+        data = self.all_handsets.values()
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+
+            search_term = serializer.data.get('model')
+            handsets = self.all_handsets.filter(model__icontains=search_term)
+            data = handsets.values()
+
+            print(data)
+
+            return Response("Handser", status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetSimOnlyTariffs(APIView):

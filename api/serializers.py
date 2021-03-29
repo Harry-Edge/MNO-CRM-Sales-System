@@ -44,6 +44,12 @@ class MobileNumberSerializer(serializers.ModelSerializer):
                   'contract_length_months', 'friends_and_family')
 
 
+class HandsetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Handsets
+        fields = ('id', 'manufacture', 'model', 'storage', 'speed_type', 'colour', 'cost_price', 'mrc', 'upfront')
+
+
 class SimOnlyTariffsSerializer(serializers.ModelSerializer):
 
     ctn = serializers.CharField()
