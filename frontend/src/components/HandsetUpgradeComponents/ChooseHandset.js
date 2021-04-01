@@ -15,6 +15,11 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import SearchBar from "material-ui-search-bar";
+import {setRef} from "@material-ui/core";
+import HandsetBasket from "./HandsetBasket";
+import FormControl from "@material-ui/core/FormControl";
+import Select from "@material-ui/core/Select";
+import MenuItem from "@material-ui/core/MenuItem";
 
 const styles = (theme) => ({
     headingText: {
@@ -55,13 +60,15 @@ const styles = (theme) => ({
 
 class ChooseHandset extends Component {
 
-    state = {handsets: null}
+    state = {handsets: null,
+             selectedColour: ''}
 
     componentDidMount() {
           fetch("http://127.0.0.1:8000/api/get-handsets")
              .then((response) => response.json())
              .then((data) =>
                  this.setState({handsets: data}))
+                 console.log(this.state)
      }
 
      handleSearchHandset = (searchTerm) => {
@@ -73,7 +80,14 @@ class ChooseHandset extends Component {
         fetch("http://127.0.0.1:8000/api/get-handsets", requestOptions)
              .then((response) => response.json())
              .then((data) =>
-                 console.log(data))
+                 this.setState({handsets: data}))
+                console.log(this.state)
+    }
+
+    handleColourSelected(event){
+
+        this.setState({selectedColour: event.target.value})
+
     }
 
     render() {
@@ -144,6 +158,8 @@ class ChooseHandset extends Component {
                                                            <TableCell className={classes.tableHeader}>Model</TableCell>
                                                            <TableCell className={classes.tableHeader}>Storage</TableCell>
                                                            <TableCell className={classes.tableHeader}>Speed</TableCell>
+                                                           <TableCell className={classes.tableHeader}>Stock</TableCell>
+                                                           <TableCell className={classes.tableHeader}>Colour</TableCell>
                                                            <TableCell className={classes.tableHeader} align='right'>Select</TableCell>
                                                        </TableRow>
                                                    </TableHead>
@@ -154,8 +170,29 @@ class ChooseHandset extends Component {
                                                                    <TableRow hover={true} key={index}>
                                                                        <TableCell>{handset.manufacture}</TableCell>
                                                                        <TableCell>{handset.model}</TableCell>
-                                                                       <TableCell>{handset.storage}</TableCell>
+                                                                       <TableCell>{handset.storage}GB</TableCell>
                                                                        <TableCell>{handset.speed_type}</TableCell>
+                                                                       <TableCell>1</TableCell>
+                                                                       <TableCell>
+                                                                           <FormControl>
+                                                                               <Select displayEmpty
+                                                                                       onChange={(event) => this.handleColourSelected(event)}
+                                                                                       value={this.state.selectedColour}>
+                                                                               <MenuItem value=''>
+                                                                                   <em>Select Colour</em>
+                                                                               </MenuItem>
+                                                                               {
+                                                                                   handset.colours.map((colour, index) => {
+                                                                                       console.log(Object.keys(colour)[0])
+                                                                                       console.log()
+                                                                                       return(
+                                                                                           <MenuItem value={1}>{Object.keys(colour)[0]}</MenuItem>
+                                                                                       )
+                                                                                   })
+                                                                               }
+                                                                               </Select>
+                                                                           </FormControl>
+                                                                       </TableCell>
                                                                        <TableCell align='right' ><Button className={classes.tableButton}
                                                                                           size='small' variant='contained'
                                                                        >
@@ -172,10 +209,9 @@ class ChooseHandset extends Component {
                                </Box>
                             </Paper>
                    </Grid>
-
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.paper}>
-                           <h1>Basket</h1>
+                           <HandsetBasket/>
                        </Paper>
                    </Grid>
                </Grid>

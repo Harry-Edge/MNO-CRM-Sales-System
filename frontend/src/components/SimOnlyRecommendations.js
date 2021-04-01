@@ -27,7 +27,7 @@ const styles = (theme) => ({
 
 });
 
-class Recommendations extends Component {
+class SimOnlyRecommendations extends Component {
 
     render() {
 
@@ -35,7 +35,7 @@ class Recommendations extends Component {
 
         return (
             <Box>
-                <Typography className={classes.title} >Handset Recommendations</Typography>
+                <Typography className={classes.title} >Sim-Only Recommendations</Typography>
                 <Divider/>
                 <Box m={0}>
                     <Grid container spacing={4}>
@@ -46,10 +46,9 @@ class Recommendations extends Component {
                                         <br/>
                                     </div>
                                     <Divider/>
-                                    <Typography className={classes.text}>Handset: <strong>12 Pro Max</strong></Typography>
                                      <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£68pm</strong></Typography>
-                                     <Typography className={classes.text}>Upfront: <strong>£100</strong></Typography>
+                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
+                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
                                        <div>
                                         <br/>
                                     </div>
@@ -68,21 +67,20 @@ class Recommendations extends Component {
                                 </Box>
                             </Paper>
                         </Grid>
-                               <Grid item xs={3}>
+                          <Grid item xs={3}>
                             <Paper>
                                 <Box m={2}>
                                     <div>
                                         <br/>
                                     </div>
                                     <Divider/>
-                                    <Typography className={classes.text}>Handset: <strong>12 Pro Max</strong></Typography>
                                      <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£68pm</strong></Typography>
-                                     <Typography className={classes.text}>Upfront: <strong>£100</strong></Typography>
+                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
+                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
                                        <div>
                                         <br/>
                                     </div>
-                                                    <Button className={classes.button}
+                                                       <Button className={classes.button}
                                                                fullWidth={true}
                                                                size='small'
                                                                variant='contained'
@@ -97,70 +95,69 @@ class Recommendations extends Component {
                                 </Box>
                             </Paper>
                         </Grid>
-                        <Grid item xs={3}>
+                          <Grid item xs={3}>
                             <Paper>
                                 <Box m={2}>
                                     <div>
                                         <br/>
                                     </div>
                                     <Divider/>
-                                    <Typography className={classes.text}>Handset: <strong>12 Pro Max</strong></Typography>
                                      <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£68pm</strong></Typography>
-                                     <Typography className={classes.text}>Upfront: <strong>£100</strong></Typography>
+                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
+                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
                                        <div>
                                         <br/>
                                     </div>
-                                        <Button className={classes.button}
+                                                       <Button className={classes.button}
                                                                fullWidth={true}
                                                                size='small'
                                                                variant='contained'
                                                                color="primary">Select</Button>
+                                    <div>
+                                        <br/>
+                                    </div>
+                                    <Divider/>
+                                      <div>
+                                        <br/>
+                                    </div>
+                                </Box>
+                            </Paper>
+                        </Grid>
+                          <Grid item xs={3}>
+                            <Paper>
+                                <Box m={2}>
+                                    <div>
+                                        <br/>
+                                    </div>
+                                    <Divider/>
+                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
+                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
+                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
+                                       <div>
+                                        <br/>
+                                    </div>
+                                                       <Button className={classes.button}
+                                                               fullWidth={true}
+                                                               size='small'
+                                                               variant='contained'
+                                                               color="primary">Select</Button>
+                                    <div>
+                                        <br/>
+                                    </div>
+                                    <Divider/>
+                                      <div>
+                                        <br/>
+                                    </div>
+                                </Box>
+                            </Paper>
+                        </Grid>
 
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
-                                  <Grid item xs={3}>
-                            <Paper>
-                                <Box m={2}>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                    <Typography className={classes.text}>Handset: <strong>12 Pro Max</strong></Typography>
-                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£68pm</strong></Typography>
-                                     <Typography className={classes.text}>Upfront: <strong>£100</strong></Typography>
-                                       <div>
-                                        <br/>
-                                    </div>
-                                        <Button className={classes.button}
-                                                               fullWidth={true}
-                                                               size='small'
-                                                               variant='contained'
-                                                               color="primary">Select</Button>
 
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
+
                     </Grid>
                 </Box>
             </Box>
         )
     }
 }
-export default withStyles(styles)(Recommendations)
+export default withStyles(styles)(SimOnlyRecommendations)

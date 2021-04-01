@@ -7,6 +7,7 @@ urlpatterns = [
     path('check-ctn-exists', CheckCTNExists.as_view()),
     path('get-employee', GetEmployee.as_view()),
     path('get-customer', GetCustomer.as_view()),
+    path('get-customer-notes', GetCustomerNotes.as_view()),
     path('get-handsets', GetHandsets.as_view()),
     path('get-sim-only-tariffs', GetSimOnlyTariffs.as_view()),
     path('create-sim-only-order', CreateSimOnlyOrder.as_view()),

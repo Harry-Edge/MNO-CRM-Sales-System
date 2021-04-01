@@ -16,7 +16,7 @@ const styles = (theme) => ({
 
 });
 
-class CTNDetails extends Component {
+class Menu extends Component {
     state = {currentlySelected: 'dashboard'}
 
     render() {
@@ -68,4 +68,4 @@ class CTNDetails extends Component {
         )
     }
 }
-export default withStyles(styles)(CTNDetails)
+export default withStyles(styles)(Menu)

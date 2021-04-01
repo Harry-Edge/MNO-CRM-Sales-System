@@ -22,6 +22,19 @@ class Customer(models.Model):
         return f"{self.last_name} {self.first_name}"
 
 
+class Notes(models.Model):
+
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
+    note_content = models.CharField(max_length=300, null=True, blank=True)
+    date_created = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.customer}{self.note_content}'
+
+    class Meta:
+        verbose_name_plural = 'Notes'
+
+
 class Insurance(models.Model):
 
     INSURANCE_NAME = [('Full Cover £14', 'Full Cover £14'), ('Damage Cover £10', 'Damage Cover £10'),
@@ -136,7 +149,7 @@ class Handsets(models.Model):
     mrc = models.FloatField(null=True)
     upfront = models.FloatField(null=True)
 
-    tariffs_available = models.ManyToManyField(HandsetTariffs)
+    tariffs_available = models.ManyToManyField(HandsetTariffs, null=True, blank=True)
     insurance_available = models.ManyToManyField(Insurance)
 
     class Meta:

@@ -27,6 +27,8 @@ import HandsetUpgrade from "./HandsetUpgradeComponents/HandsetUpgrade";
 import AdditionalSim from "./AdditionalSimComponents/AdditionalSim";
 import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
+import SimOnlyRecommendations from "./SimOnlyRecommendations";
+import Notes from "./NotesComponents/Notes";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const drawerWidth = 240;
@@ -369,10 +371,18 @@ class Dashboard extends Component{
                           }
                         </Paper>
                       </Grid>
+                      <Grid item xs={12}>
+                          <Notes customer={this.state.customer}/>
+                      </Grid>
                       {/* Recommendations */}
                       <Grid item xs={12}>
                         <Paper className={classes.paper}>
                           <Recommendations/>
+                        </Paper>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Paper className={classes.paper}>
+                          <SimOnlyRecommendations/>
                         </Paper>
                       </Grid>
                     </Grid> : null

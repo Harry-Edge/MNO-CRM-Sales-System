@@ -28,10 +28,9 @@ class CheckCTNExists(APIView):
             try:
                 MobileNumber.objects.get(number=ctn)
 
-                print("here")
                 return Response("CTN Exists", status=status.HTTP_200_OK)
             except Exception as e:
-                print('here 1 ')
+
                 return Response('CTN Does Not Exist', status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
@@ -104,33 +103,91 @@ class GetCustomer(APIView):
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
+class GetCustomerNotes(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = NotesSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            time.sleep(0.3)
+            customer = serializer.data.get('id')
+
+            customer_object = Customer.objects.get(id=customer)
+
+            all_notes = Notes.objects.filter(customer=customer_object)
+
+            data = all_notes.values()
+
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddNote(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = NotesSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            note_content = serializer.data.get('noteContent')
+            customer_id = serializer.data.get('id')
+
+            print(note_content)
+            print(customer_id)
+
+            return Response('Added Note', status=status.HTTP_200_OK)
+
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class GetHandsets(APIView):
     permission_classes = (AllowAny,)
 
     all_handsets = Handsets.objects.all()
     serializer_class = HandsetsSerializer
 
-    def get(self, request):
-        time.sleep(0.5)
+    def return_non_repeating_handsets(self, queryset):
+        check_repeating_models_list = []
+        new_handset_list = []
+        for handset in queryset:
+            if handset.model not in check_repeating_models_list:
+                check_repeating_models_list.append(handset.model)
+                new_handset_list.append(self.serializer_class(handset).data)
 
-        data = self.all_handsets.values()
+        for handset in new_handset_list:
+            all_colours_available = []
+            filter = Handsets.objects.filter(model=handset['model'])
+            for handset_model in filter:
+                dic = {}
+                dic[handset_model.colour] = {"id": handset_model.id, 'stock': 3}
+                all_colours_available.append(dic)
+            handset['colours'] = all_colours_available
+
+        return new_handset_list
+
+    def get(self, request):
+
+        data = self.return_non_repeating_handsets(Handsets.objects.all())
+        print(data)
 
         return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request):
+        """
+        Returns a queryset of handsets based on a search term of a model
+        """
+        handsets = self.all_handsets.filter(model__icontains=request.data['model'])
+        data = self.return_non_repeating_handsets(handsets)
 
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-
-            search_term = serializer.data.get('model')
-            handsets = self.all_handsets.filter(model__icontains=search_term)
-            data = handsets.values()
-
-            print(data)
-
-            return Response("Handser", status=status.HTTP_200_OK)
-        else:
-            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class GetSimOnlyTariffs(APIView):

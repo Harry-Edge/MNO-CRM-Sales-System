@@ -16,6 +16,13 @@ class CustomerSerializer(serializers.ModelSerializer):
                   'add_lines_available')
 
 
+class NotesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notes
+        fields = ('id', 'customer', 'note_content', 'date_created')
+        extra_kwargs = {'id': {'read_only': False}}
+
+
 class InsuranceSerializer(serializers.ModelSerializer):
 
     keep_or_cancel_insurance = serializers.CharField()
