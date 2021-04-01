@@ -13,13 +13,13 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'first_name', 'last_name', 'postcode', 'first_line_address', 'credit_class',
-                  'add_lines_available')
+                  'add_lines_available', 'account_last_accessed_by', 'account_last_accessed_date_time')
 
 
 class NotesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notes
-        fields = ('id', 'customer', 'note_content', 'date_created')
+        fields = ('id', 'customer', 'note_content', 'date_created', 'created_by')
         extra_kwargs = {'id': {'read_only': False}}
 
 
@@ -48,7 +48,8 @@ class MobileNumberSerializer(serializers.ModelSerializer):
         model = MobileNumber
         fields = ('number', 'customer', 'user', 'plan', 'mrc', 'device_manufacture', 'device_model', 'insurance',
                   'insurance_option', 'data_allowance', 'spend_cap', 'contract_start', 'contract_end',
-                  'contract_length_months', 'friends_and_family')
+                  'contract_length_months', 'friends_and_family', 'account_last_accessed_date_time',
+                  'account_last_accessed_by')
 
 
 class HandsetsSerializer(serializers.ModelSerializer):

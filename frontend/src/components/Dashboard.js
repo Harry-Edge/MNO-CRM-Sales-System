@@ -166,23 +166,26 @@ class Dashboard extends Component{
        this.handleNewCTN = this.handleNewCTN.bind(this)
    }
 
-  componentDidMount() {
+  async componentDidMount() {
 
        const employeeDataRequestOptions = {
             headers: {'Authorization': `JWT ${localStorage.getItem('token')}`
             }}
 
-       fetch("http://127.0.0.1:8000/api/get-employee", employeeDataRequestOptions)
+       await fetch("http://127.0.0.1:8000/api/get-employee", employeeDataRequestOptions)
             .then((response) => response.json())
               .then((data) => this.setState({employee: data}))
 
 
+      // The below fetches a number if it has been saved on the local storage due to the user
+      // accidentally closing the program so they can resume with the CTN they were last on
       if (localStorage.getItem('currentCTN')){
           this.setState({loadingNewCTN: true})
           const ctnInContextRequestOptions = {
               method: 'POST',
               headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-              body: JSON.stringify({number: localStorage.getItem('currentCTN')})
+              body: JSON.stringify({number: localStorage.getItem('currentCTN'),
+                                          account_last_accessed_by: this.state.employee.username})
           }
 
           fetch("http://127.0.0.1:8000/api/get-customer", ctnInContextRequestOptions)
@@ -191,6 +194,7 @@ class Dashboard extends Component{
                                       customer: data.customer,
                                       otherLines: data.other_lines})
                                 this.handleReturnToDashboard()
+                                console.log(this.state.customer)
                                 this.setState({loadingNewCTN: false})})
 
   }}
@@ -278,7 +282,7 @@ class Dashboard extends Component{
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h5" color="inherit" noWrap className={classes.title}>
-                Camelot Pro
+                Excalibur Pro
               </Typography>
               <SearchBar className={classes.searchBox}
                           placeholder='Search CTN'
@@ -372,7 +376,7 @@ class Dashboard extends Component{
                         </Paper>
                       </Grid>
                       <Grid item xs={12}>
-                          <Notes customer={this.state.customer}/>
+                          <Notes customer={this.state.customer} employee={this.state.employee}/>
                       </Grid>
                       {/* Recommendations */}
                       <Grid item xs={12}>

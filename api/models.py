@@ -17,6 +17,9 @@ class Customer(models.Model):
     credit_class = models.IntegerField(null=True)
     add_lines_available = models.CharField(max_length=2, null=True, choices=ADD_LINE_OPTIONS)
 
+    account_last_accessed_by = models.CharField(max_length=10, null=True)
+    account_last_accessed_date_time = models.DateTimeField(auto_now_add=False, null=True)
+
     def __str__(self):
 
         return f"{self.last_name} {self.first_name}"
@@ -27,6 +30,7 @@ class Notes(models.Model):
     customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
     note_content = models.CharField(max_length=300, null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
+    created_by = models.CharField(max_length=10, null=True)
 
     def __str__(self):
         return f'{self.customer}{self.note_content}'
@@ -81,6 +85,9 @@ class MobileNumber(models.Model):
 
     customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
     user = models.CharField(max_length=11, null=True)
+
+    account_last_accessed_by = models.CharField(max_length=10, null=True)
+    account_last_accessed_date_time = models.DateTimeField(auto_now_add=False, null=True)
 
     """PRODUCTS"""
     number = models.CharField(max_length=11, null=True)

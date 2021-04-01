@@ -11,6 +11,7 @@ from .extrafunctions.basket import GetBasketTotals
 from .extrafunctions import twilio_functions
 from .serializers import *
 from .models import *
+from datetime import datetime
 import time
 
 
@@ -82,16 +83,36 @@ class GetCustomer(APIView):
                     return other_lines
 
                 date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
-
                 mobile_account = MobileNumberSerializer(mobile_number_object).data
                 customer = CustomerSerializer(customer_object).data
 
+                # Gets Open Order for the customer if there is any
+                sim_only_open_orders = SimOnlyOrder.objects.filter(customer=customer_object)
+                open_order_list = []
+                for order in sim_only_open_orders:
+                    open_order_list.append({'number': order.ctn, 'type': order.contract_type})
+
+                # Makes amendments where necessary
                 mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
                 mobile_account['early_upgrade_fee'] = date_cal.calculate_early_upgrade_fee()
                 mobile_account['is_eligible'] = date_cal.calculate_if_eligible()
                 mobile_account['days_remaining'] = date_cal.calculate_days_remaining()
                 mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
                 customer['total_lines'] = customer_object.mobilenumber_set.all().count()
+                customer['account_last_accessed_date_time'] = customer_object.account_last_accessed_date_time.date()
+                customer['open_orders'] = open_order_list
+
+                """
+                 The below puts date and time tracking information on the customer 
+                 and mobile accounts by a given employee
+                """
+                employee_accessing_account = serializer.data.get('account_last_accessed_by')
+                customer_object.account_last_accessed_by = employee_accessing_account
+                customer_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
+                mobile_number_object.account_last_accessed_by = employee_accessing_account
+                mobile_number_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
+                mobile_number_object.save()
+                customer_object.save()
 
                 data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines()}
 
@@ -118,7 +139,7 @@ class GetCustomerNotes(APIView):
 
             customer_object = Customer.objects.get(id=customer)
 
-            all_notes = Notes.objects.filter(customer=customer_object)
+            all_notes = Notes.objects.filter(customer=customer_object).order_by('-id')
 
             data = all_notes.values()
 
@@ -136,13 +157,18 @@ class AddNote(APIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            note_content = serializer.data.get('noteContent')
+            note_content = serializer.data.get('note_content')
             customer_id = serializer.data.get('id')
+            created_by_username = serializer.data.get('created_by')
 
-            print(note_content)
-            print(customer_id)
+            customer_object = Customer.objects.get(id=customer_id)
 
-            return Response('Added Note', status=status.HTTP_200_OK)
+            note = Notes.objects.create(customer=customer_object, note_content=note_content,
+                                        created_by=created_by_username)
+
+            serialized_new_note = self.serializer_class(note).data
+
+            return Response(serialized_new_note, status=status.HTTP_200_OK)
 
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
