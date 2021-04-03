@@ -74,6 +74,14 @@ class SimOnlyOrderSerializer(serializers.ModelSerializer):
                   'existing_insurance')
 
 
+class HandsetOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HandsetOrder
+
+        fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'early_upgrade_fee',
+                  'handset', 'handset_tariff', 'cap', 'insurance', 'upfront', 'handset_credit', 'friends_and_family',
+                    'one_hundred_day_promo')
+
 class GenericSerializer(serializers.Serializer):
     string = serializers.CharField()
     ctn = serializers.CharField()

@@ -89,7 +89,7 @@ class Login extends Component {
               <LockOutlinedIcon/>
             </Avatar>
             <Typography className={classes.title} component="h2" variant="h3">
-               Camelot Pro
+               Excalibur Pro
             </Typography>
             <form className={classes.form} onSubmit={(e) => this.handleLogin(e)} noValidate>
               <TextField

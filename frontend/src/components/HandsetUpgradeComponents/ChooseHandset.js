@@ -61,14 +61,16 @@ const styles = (theme) => ({
 class ChooseHandset extends Component {
 
     state = {handsets: null,
-             selectedColour: ''}
+             selectedColour: '',
+             modelSelectedId: null,
+             modelSelected: '',
+             handsetChosen: false}
 
     componentDidMount() {
           fetch("http://127.0.0.1:8000/api/get-handsets")
              .then((response) => response.json())
              .then((data) =>
                  this.setState({handsets: data}))
-                 console.log(this.state)
      }
 
      handleSearchHandset = (searchTerm) => {
@@ -81,13 +83,25 @@ class ChooseHandset extends Component {
              .then((response) => response.json())
              .then((data) =>
                  this.setState({handsets: data}))
-                console.log(this.state)
     }
 
-    handleColourSelected(event){
+    handleColourSelected(event, model){
 
-        this.setState({selectedColour: event.target.value})
+        this.setState({selectedColour: event.target.value, modelSelected: model})
+    }
+    handleAddModelToBasket = () => {
 
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({handset: this.state.modelSelectedId, ctn: this.props.state.mobileAccount.number})
+        }
+        fetch("http://127.0.0.1:8000/api/create-handset-order", requestOptions)
+             .then((response) => response.json())
+             .then((data) => {
+                 console.log(data)
+                 this.setState({handsetChosen: false})
+                 this.setState({handsetChosen: true})})
     }
 
     render() {
@@ -176,27 +190,28 @@ class ChooseHandset extends Component {
                                                                        <TableCell>
                                                                            <FormControl>
                                                                                <Select displayEmpty
-                                                                                       onChange={(event) => this.handleColourSelected(event)}
-                                                                                       value={this.state.selectedColour}>
+                                                                                       onChange={(event) => this.handleColourSelected(event, handset.model)}
+                                                                                       value={this.state.modelSelected === handset.model ? this.state.selectedColour: ''}>
                                                                                <MenuItem value=''>
                                                                                    <em>Select Colour</em>
                                                                                </MenuItem>
                                                                                {
                                                                                    handset.colours.map((colour, index) => {
-                                                                                       console.log(Object.keys(colour)[0])
-                                                                                       console.log()
                                                                                        return(
-                                                                                           <MenuItem value={1}>{Object.keys(colour)[0]}</MenuItem>
+                                                                                           <MenuItem onClick={() =>
+                                                                                               this.setState({modelSelectedId: Object.values(colour)[0].id})}
+                                                                                                     value={Object.keys(colour)[0]}>{Object.keys(colour)[0]} ({Object.values(colour)[0].stock})</MenuItem>
                                                                                        )
                                                                                    })
                                                                                }
                                                                                </Select>
                                                                            </FormControl>
                                                                        </TableCell>
-                                                                       <TableCell align='right' ><Button className={classes.tableButton}
-                                                                                          size='small' variant='contained'
-                                                                       >
-                                                                                          Select</Button></TableCell>
+                                                                       <TableCell align='right' ><Button
+                                                                           className={classes.tableButton}
+                                                                           size='small' variant='contained'
+                                                                           onClick={() => this.handleAddModelToBasket()} >
+                                                                                          Add</Button></TableCell>
                                                                    </TableRow>
                                                                )
                                                            })
@@ -211,7 +226,13 @@ class ChooseHandset extends Component {
                    </Grid>
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.paper}>
-                           <HandsetBasket/>
+                           {
+                               this.state.handsetChosen ?
+                               <HandsetBasket
+                            handsetChosen={this.state.handsetChosen}
+                            ctn={this.props.state.mobileAccount.number}/>: null
+                           }
+
                        </Paper>
                    </Grid>
                </Grid>

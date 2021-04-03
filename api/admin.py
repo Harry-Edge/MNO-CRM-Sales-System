@@ -43,6 +43,9 @@ class SimOnlyTariffsAdmin(admin.ModelAdmin):
 
 
 @admin.register(SimOnlyOrder)
-class SimoOnlyOrder(admin.ModelAdmin):
+class SimOnlyOrder(admin.ModelAdmin):
     list_display = ('id', 'customer', 'ctn', 'plan_type', 'contract_length', 'tariff', 'cap', 'order_created_by')
 
+@admin.register(HandsetOrder)
+class HandsetOrder(admin.ModelAdmin):
+    list_display = ('id', 'customer', 'ctn', 'plan_type', 'handset', 'handset_tariff', 'cap', 'insurance')

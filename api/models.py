@@ -222,3 +222,37 @@ class SimOnlyOrder(models.Model):
     def __str__(self):
         return f"{self.customer} {self.tariff}"
 
+
+class HandsetOrder(models.Model):
+
+    CONTRACT_LENGTH = [('24', '24')]
+
+    PLAN_TYPE = [('Standard', 'Standard')]
+
+    CONTRACT_TYPE = [('Handset', 'Handset')]
+
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    ctn = models.CharField(null=True, max_length=11)
+    #is_ordered = models.BooleanField(default=False)
+
+    contract_length = models.CharField(null=True, max_length=2, choices=CONTRACT_LENGTH)
+    contract_type = models.CharField(null=True, max_length=30, choices=CONTRACT_TYPE)
+    plan_type = models.CharField(null=True, max_length=30, choices=PLAN_TYPE)
+    early_upgrade_fee = models.FloatField(default=0, null=True)
+    handset = models.ForeignKey(Handsets, on_delete=models.SET_NULL, null=True)
+    handset_tariff = models.ForeignKey(HandsetTariffs, on_delete=models.SET_NULL, null=True)
+    cap = models.ForeignKey(SpendCaps, on_delete=models.SET_NULL, null=True)
+    insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True)
+    upfront = models.FloatField(default=float(0), null=True)
+    #handset_imei = models.CharField(null=True, max_length=15)
+    friends_and_family = models.BooleanField(default=False, null=True)
+    handset_credit = models.IntegerField(default=0, null=True)
+    one_hundred_day_promo = models.BooleanField(default=False, null=True)
+
+    #date_ordered = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.customer}{self.ctn}{self.handset}{self.handset_tariff}"
+
+    class Meta:
+        verbose_name_plural = "Handset Orders"

@@ -379,6 +379,77 @@ class SimOnlyOrderApi(APIView):
             return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
 
 
+class CreateHandsetOrder(APIView):
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HandsetOrderSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            handset_object = Handsets.objects.get(id=serializer.data.get('handset'))
+            ctn = serializer.data.get('ctn')
+
+            existing_handset_order = HandsetOrder.objects.filter(ctn=ctn)
+            if existing_handset_order.exists():
+                existing_order = HandsetOrder.objects.get(ctn=ctn)
+                existing_order.handset = handset_object
+                existing_order.save()
+                return Response('Update Existing Handset Order', status=status.HTTP_200_OK)
+            else:
+                HandsetOrder.objects.create(ctn=ctn,
+                                            customer=MobileNumber.objects.get(number=ctn).customer,
+                                            contract_type='Handset',
+                                            handset=handset_object)
+                return Response('Created Handset Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Error When Creating Handset Order', status=status.HTTP_400_BAD_REQUEST)
+
+
+class HandsetOrderAPI(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HandsetOrderSerializer
+
+    def post(self, request):
+        """
+        Returns a Handset order based on the ctn posted
+        """
+        # Simulated a realistic response server time rather than being on local host
+        time.sleep(0.25)
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            ctn = serializer.data.get('ctn')
+
+            handset_order_exists = HandsetOrder.objects.filter(ctn=ctn)
+            if handset_order_exists.exists():
+                handset_order_object = HandsetOrder.objects.get(ctn=ctn)
+                handset_order = self.serializer_class(handset_order_object).data
+
+
+                handset_order['handset'] = Handsets.objects.get(id=handset_order['handset']).model +\
+                                           " " + Handsets.objects.get(id=handset_order['handset']).colour
+
+                get_basket_totals = GetBasketTotals(handset_order_object)
+                basket_totals = {'upfront': get_basket_totals.get_total_upfront(),
+                                 'mrc': get_basket_totals.get_total_mrc()}
+
+                data = {'handset_order_items': handset_order, 'basket_totals': basket_totals}
+
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                return Response('No handset order', status=status.HTTP_200_OK)
+
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, instance):
+        pass
+
+
 """
 Order Validations
 """

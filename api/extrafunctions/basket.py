@@ -26,7 +26,7 @@ class GetBasketTotals:
                 except AttributeError:
                     return tariff_mrc
 
-        elif self.order_type == 'handset':
+        elif self.customer_order.contract_type == 'Handset':
 
             handset_mrc = self.customer_order.handset.mrc
 
@@ -56,7 +56,7 @@ class GetBasketTotals:
         if self.customer_order.contract_type == 'Sim-Only':
             return float(0.0)
 
-        elif self.order_type == 'handset':
+        elif self.customer_order.contract_type == 'Handset':
 
             try:
                 handset_upfront = self.customer_order.upfront

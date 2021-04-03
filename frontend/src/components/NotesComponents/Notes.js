@@ -83,8 +83,6 @@ class Notes extends Component {
 
     componentDidMount() {
 
-        console.log(this.props.customer.open_orders)
-
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
