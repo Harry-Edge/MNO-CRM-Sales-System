@@ -82,7 +82,6 @@ class SimOnlyBasket extends Component {
              }
          )
     }
-
     handleDeleteSimOnlyOrder() {
 
          const requestOptions = {

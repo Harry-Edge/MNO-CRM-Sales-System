@@ -15,7 +15,6 @@ import TableBody from "@material-ui/core/TableBody";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import SearchBar from "material-ui-search-bar";
-import {setRef} from "@material-ui/core";
 import HandsetBasket from "./HandsetBasket";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
@@ -64,16 +63,40 @@ class ChooseHandset extends Component {
              selectedColour: '',
              modelSelectedId: null,
              modelSelected: '',
-             handsetChosen: false}
+             handsetChosen: false,
+             ctn: this.props.state.mobileAccount.number}
 
     componentDidMount() {
           fetch("http://127.0.0.1:8000/api/get-handsets")
              .then((response) => response.json())
              .then((data) =>
                  this.setState({handsets: data}))
+
+          const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.state.ctn})
+          }
+         fetch("http://127.0.0.1:8000/api/handset-order", requestOptions)
+             .then((response) => {
+                 if (response.ok){
+                     return response.json()
+                 }else{
+                     throw new Error('No Order Found')
+                 }
+             })
+             .then((data) => {
+                 if (data === 'No Order'){
+                     console.log(data)
+                 }else {
+                    this.setState({handsetChosen: true})}
+             }
+         ).catch((error) => {
+             console.log(error)
+             })
      }
 
-     handleSearchHandset = (searchTerm) => {
+    handleSearchHandset = (searchTerm) => {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -102,6 +125,9 @@ class ChooseHandset extends Component {
                  console.log(data)
                  this.setState({handsetChosen: false})
                  this.setState({handsetChosen: true})})
+    }
+    handleDeleteHandsetOrder = () => {
+        this.setState({handsetChosen: false})
     }
 
     render() {
@@ -198,7 +224,7 @@ class ChooseHandset extends Component {
                                                                                {
                                                                                    handset.colours.map((colour, index) => {
                                                                                        return(
-                                                                                           <MenuItem onClick={() =>
+                                                                                           <MenuItem key={index} onClick={() =>
                                                                                                this.setState({modelSelectedId: Object.values(colour)[0].id})}
                                                                                                      value={Object.keys(colour)[0]}>{Object.keys(colour)[0]} ({Object.values(colour)[0].stock})</MenuItem>
                                                                                        )
@@ -229,10 +255,12 @@ class ChooseHandset extends Component {
                            {
                                this.state.handsetChosen ?
                                <HandsetBasket
-                            handsetChosen={this.state.handsetChosen}
-                            ctn={this.props.state.mobileAccount.number}/>: null
+                                currentStage={this.props.currentStage}
+                                onChooseHandsetTariffClicked={this.props.onChooseHandsetTariffClicked}
+                                onHandsetOrderDeleted={this.handleDeleteHandsetOrder}
+                                handsetChosen={this.state.handsetChosen}
+                                ctn={this.props.state.mobileAccount.number}/>: null
                            }
-
                        </Paper>
                    </Grid>
                </Grid>

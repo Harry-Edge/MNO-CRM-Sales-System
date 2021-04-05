@@ -56,11 +56,13 @@ class HandsetBasket extends Component {
     state = {
         basketItems: null,
         basketTotals: null,
+        currentStage: 'chooseHandset',
         submittingOrder: false,
         timer: 0
     }
 
     componentDidMount() {
+        this.setState({currentStage: this.props.currentStage})
 
         const requestOptions = {
             method: 'POST',
@@ -73,6 +75,21 @@ class HandsetBasket extends Component {
             .then((data) => {
                 this.setState({basketItems: data.handset_order_items, basketTotals: data.basket_totals})
             })
+    }
+    handleDeleteHandsetOrder() {
+
+         const requestOptions = {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.state.basketItems.ctn})
+         }
+
+        fetch("http://127.0.0.1:8000/api/handset-order", requestOptions)
+             .then((response) => response.json())
+             .then((data) => {
+                 this.setState({basketItems: null})
+             }
+         )
     }
 
 
@@ -98,7 +115,7 @@ class HandsetBasket extends Component {
                                </TableHead>
                                <TableBody>
                                    <TableRow hover={true}>
-                                       <TableCell>EE {this.state.basketItems.contract_type}</TableCell>
+                                       <TableCell>EE {this.state.basketItems.contract_type} Sale</TableCell>
                                        <TableCell align='right'>£0</TableCell>
                                        <TableCell align='right'>£0</TableCell>
                                    </TableRow>
@@ -153,12 +170,34 @@ class HandsetBasket extends Component {
                                <Grid item xs={6}>
                                    <Button className={classes.bold} color='secondary' size='small'
                                            variant='contained'
+                                           onClick={() => {
+                                               this.props.onHandsetOrderDeleted()
+                                               this.handleDeleteHandsetOrder()
+                                           }}
                                            >Delete</Button>
                                </Grid>
-                               <Grid item xs={6} className={classes.basketButtons}>
-                                   <Button className={classes.finaliseButton} size='small' variant='contained'
-                                   >Choose Tariff</Button>
-                               </Grid>
+                               {
+                                   this.state.currentStage === 'chooseHandset' ?
+                                       <Grid item xs={6} className={classes.basketButtons}>
+                                           <Button className={classes.finaliseButton} size='small' variant='contained'
+                                                   onClick={() => this.props.onChooseHandsetTariffClicked()}
+                                           >Choose Tariff</Button>
+                                       </Grid>: null
+                               }
+                               {
+                                   this.state.currentStage === "chooseHandsetTariff" ?
+                                       <Grid item xs={6} className={classes.basketButtons}>
+                                           <Button className={classes.finaliseButton} size='small' variant='contained'
+                                           >Finalise</Button>
+                                       </Grid>: null
+                               }
+                               {
+                                   this.state.currentStage === "finaliseHandset" ?
+                                   <Grid item xs={6} className={classes.basketButtons}>
+                                           <Button className={classes.finaliseButton} size='small' variant='contained'
+                                           >Sumbit</Button>
+                                   </Grid>: null
+                               }
                            </Grid>
                        </Box> : null
                     }

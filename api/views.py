@@ -13,28 +13,7 @@ from .serializers import *
 from .models import *
 from datetime import datetime
 import time
-
-
-class CheckCTNExists(APIView):
-
-    permission_classes = (AllowAny,)
-
-    def post(self, request):
-        serializer = MobileNumberSerializer(data=request.data)
-
-        if serializer.is_valid():
-
-            ctn = serializer.data.get('number')
-
-            try:
-                MobileNumber.objects.get(number=ctn)
-
-                return Response("CTN Exists", status=status.HTTP_200_OK)
-            except Exception as e:
-
-                return Response('CTN Does Not Exist', status=status.HTTP_406_NOT_ACCEPTABLE)
-        else:
-            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+import csv
 
 
 class GetEmployee(APIView):
@@ -124,6 +103,9 @@ class GetCustomer(APIView):
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
+"""
+Notes
+"""
 class GetCustomerNotes(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -173,49 +155,9 @@ class AddNote(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
-
-class GetHandsets(APIView):
-    permission_classes = (AllowAny,)
-
-    all_handsets = Handsets.objects.all()
-    serializer_class = HandsetsSerializer
-
-    def return_non_repeating_handsets(self, queryset):
-        check_repeating_models_list = []
-        new_handset_list = []
-        for handset in queryset:
-            if handset.model not in check_repeating_models_list:
-                check_repeating_models_list.append(handset.model)
-                new_handset_list.append(self.serializer_class(handset).data)
-
-        for handset in new_handset_list:
-            all_colours_available = []
-            filter = Handsets.objects.filter(model=handset['model'])
-            for handset_model in filter:
-                dic = {}
-                dic[handset_model.colour] = {"id": handset_model.id, 'stock': 3}
-                all_colours_available.append(dic)
-            handset['colours'] = all_colours_available
-
-        return new_handset_list
-
-    def get(self, request):
-
-        data = self.return_non_repeating_handsets(Handsets.objects.all())
-        print(data)
-
-        return Response(data, status=status.HTTP_200_OK)
-
-    def post(self, request):
-        """
-        Returns a queryset of handsets based on a search term of a model
-        """
-        handsets = self.all_handsets.filter(model__icontains=request.data['model'])
-        data = self.return_non_repeating_handsets(handsets)
-
-        return Response(data, status=status.HTTP_200_OK)
-
-
+"""
+Sim-Only Order
+"""
 class GetSimOnlyTariffs(APIView):
     permission_classes = (AllowAny,)
 
@@ -227,63 +169,6 @@ class GetSimOnlyTariffs(APIView):
         data = all_sim_only_tariffs.values()
 
         return Response(data, status=status.HTTP_200_OK)
-
-
-class GetSpendCaps(APIView):
-    permission_classes = (AllowAny,)
-
-    def get(self, request):
-        time.sleep(0.5)
-
-        spend_caps = SpendCaps.objects.all()
-        data = spend_caps.values()
-
-        return Response(data, status=status.HTTP_200_OK)
-
-
-class AddSpendCapToSimOnlyOrder(APIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = SpendCapSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            spend_cap_object = SpendCaps.objects.get(id=serializer.data.get('id'))
-
-            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
-
-            sim_order.cap = spend_cap_object
-            sim_order.save()
-
-            return Response("Added Spend Cap to Order", status=status.HTTP_200_OK)
-        else:
-            return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
-
-
-class KeepOrCancelInsurance(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        serializer = InsuranceSerializer(data=request.data)
-
-        if serializer.is_valid():
-            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
-
-            if serializer.data.get('keep_or_cancel_insurance') == 'keep':
-                mobile_object = MobileNumber.objects.get(number=serializer.data.get('ctn'))
-                existing_insurance = mobile_object.insurance_option
-                sim_order.existing_insurance = existing_insurance
-                sim_order.save()
-
-                return Response("Continued Existing Insurance", status=status.HTTP_200_OK)
-            else:
-                no_insurance_object = Insurance.objects.get(id=5)
-                sim_order.existing_insurance = no_insurance_object
-                sim_order.save()
-                return Response("Cancelled Existing Insurance", status=status.HTTP_200_OK)
-        else:
-            return Response('Error with insurance options', status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateSimOnlyOrder(APIView):
@@ -379,6 +264,132 @@ class SimOnlyOrderApi(APIView):
             return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
 
 
+class KeepOrCancelInsurance(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = InsuranceSerializer(data=request.data)
+
+        if serializer.is_valid():
+            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
+
+            if serializer.data.get('keep_or_cancel_insurance') == 'keep':
+                mobile_object = MobileNumber.objects.get(number=serializer.data.get('ctn'))
+                existing_insurance = mobile_object.insurance_option
+                sim_order.existing_insurance = existing_insurance
+                sim_order.save()
+
+                return Response("Continued Existing Insurance", status=status.HTTP_200_OK)
+            else:
+                no_insurance_object = Insurance.objects.get(id=5)
+                sim_order.existing_insurance = no_insurance_object
+                sim_order.save()
+                return Response("Cancelled Existing Insurance", status=status.HTTP_200_OK)
+        else:
+            return Response('Error with insurance options', status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddSpendCapToSimOnlyOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SpendCapSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            spend_cap_object = SpendCaps.objects.get(id=serializer.data.get('id'))
+
+            sim_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
+
+            sim_order.cap = spend_cap_object
+            sim_order.save()
+
+            return Response("Added Spend Cap to Order", status=status.HTTP_200_OK)
+        else:
+            return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
+
+
+"""
+Handset Order
+"""
+class GetHandsets(APIView):
+    permission_classes = (AllowAny,)
+
+    all_handsets = Handsets.objects.all()
+    serializer_class = HandsetsSerializer
+
+    def return_non_repeating_handsets(self, queryset):
+        check_repeating_models_list = []
+        new_handset_list = []
+        for handset in queryset:
+            if handset.model not in check_repeating_models_list:
+                check_repeating_models_list.append(handset.model)
+                new_handset_list.append(self.serializer_class(handset).data)
+
+        for handset in new_handset_list:
+            all_colours_available = []
+            filter = Handsets.objects.filter(model=handset['model'])
+            for handset_model in filter:
+                dic = {}
+                dic[handset_model.colour] = {"id": handset_model.id, 'stock': 3}
+                all_colours_available.append(dic)
+            handset['colours'] = all_colours_available
+
+        return new_handset_list
+
+    def get(self, request):
+
+        data = self.return_non_repeating_handsets(Handsets.objects.all())
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        """
+        Returns a queryset of handsets based on a search term of a model
+        """
+        handsets = self.all_handsets.filter(model__icontains=request.data['model'])
+        data = self.return_non_repeating_handsets(handsets)
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class GetHandsetTariffs(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = HandsetTariffsSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            handset_object = Handsets.objects.get(id=handset_order_object.handset.id)
+
+            tariffs_available = handset_object.tariffs_available.values()
+
+            def get_handset_tariff_upfront(tariff_count, handset, mrc, data_csv):
+                mrc_correct_format = (str(mrc)[:-2])
+
+                location = f'/Users/harry/Desktop/Git Projects/Excalibur Pro/crm/handset_tariff_and_upfront_prices/{data_csv}.csv'
+
+                reader = csv.DictReader(open(location))
+
+                for tariffs in reader:
+                    if tariffs['Handset'] == handset.upper():
+                        tariffs_available[tariff_count]['upfront'] = tariffs[mrc_correct_format]
+                        return tariffs[mrc_correct_format]
+
+            for count, tariff in enumerate(tariffs_available):
+                if tariff['data_allowance'] == '4':
+                    get_handset_tariff_upfront(count, handset_object.model, tariff['mrc'], '4gb_tariffs')
+
+            data = tariffs_available
+
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class CreateHandsetOrder(APIView):
 
     permission_classes = (IsAuthenticated,)
@@ -408,6 +419,27 @@ class CreateHandsetOrder(APIView):
             return Response('Error When Creating Handset Order', status=status.HTTP_400_BAD_REQUEST)
 
 
+class AddHandsetTariffToOrder(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = HandsetTariffsSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        print(serializer)
+
+        if serializer.is_valid():
+            #upfront = serializer.data.get('upfront')
+            tariff_id = serializer.data.get('id')
+
+            #print(upfront)
+            print(tariff_id)
+
+            return Response('Added Tariff To Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class HandsetOrderAPI(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = HandsetOrderSerializer
@@ -428,7 +460,6 @@ class HandsetOrderAPI(APIView):
                 handset_order_object = HandsetOrder.objects.get(ctn=ctn)
                 handset_order = self.serializer_class(handset_order_object).data
 
-
                 handset_order['handset'] = Handsets.objects.get(id=handset_order['handset']).model +\
                                            " " + Handsets.objects.get(id=handset_order['handset']).colour
 
@@ -440,21 +471,67 @@ class HandsetOrderAPI(APIView):
 
                 return Response(data, status=status.HTTP_200_OK)
             else:
-                return Response('No handset order', status=status.HTTP_200_OK)
+                return Response('No Order', status=status.HTTP_200_OK)
 
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request):
 
-    def delete(self, instance):
-        pass
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            handset_order_object.delete()
+
+            return Response('Deleted Handset Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
+
+
+"""
+Misc
+"""
+class GetSpendCaps(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        time.sleep(0.5)
+
+        spend_caps = SpendCaps.objects.all()
+        data = spend_caps.values()
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class CheckCTNExists(APIView):
+
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            ctn = serializer.data.get('number')
+
+            try:
+                MobileNumber.objects.get(number=ctn)
+
+                return Response("CTN Exists", status=status.HTTP_200_OK)
+            except Exception as e:
+                print(e)
+
+                return Response('CTN Does Not Exist', status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
 
 
 """
 Order Validations
 """
-
-
 class ValidatePostcode(APIView):
     permission_classes = (IsAuthenticated,)
 

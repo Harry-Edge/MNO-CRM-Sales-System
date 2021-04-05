@@ -1,7 +1,5 @@
 from django.urls import path
 from .views import *
-from rest_framework_jwt.views import obtain_jwt_token
-
 
 urlpatterns = [
 
@@ -13,6 +11,7 @@ urlpatterns = [
 
     # Get Products
     path('get-handsets', GetHandsets.as_view()),
+    path('get-handset-tariffs', GetHandsetTariffs.as_view()),
     path('get-spend-caps', GetSpendCaps.as_view()),
     path('get-sim-only-tariffs', GetSimOnlyTariffs.as_view()),
 
@@ -25,6 +24,7 @@ urlpatterns = [
     # HandsetOrder
     path('create-handset-order', CreateHandsetOrder.as_view()),
     path('handset-order', HandsetOrderAPI.as_view()),
+    path('add-handset-tariff-to-order', AddHandsetTariffToOrder.as_view()),
 
     # Validations
     path('check-ctn-exists', CheckCTNExists.as_view()),
