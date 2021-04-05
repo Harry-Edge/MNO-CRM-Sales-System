@@ -67,9 +67,12 @@ class GetCustomer(APIView):
 
                 # Gets Open Order for the customer if there is any
                 sim_only_open_orders = SimOnlyOrder.objects.filter(customer=customer_object)
+                handset_open_orders = HandsetOrder.objects.filter(customer=customer_object)
                 open_order_list = []
-                for order in sim_only_open_orders:
-                    open_order_list.append({'number': order.ctn, 'type': order.contract_type})
+                for sim_order in sim_only_open_orders:
+                    open_order_list.append({'number': sim_order.ctn, 'type': sim_order.contract_type})
+                for handset_order in handset_open_orders:
+                    open_order_list.append({'number': handset_order.ctn, 'type': handset_order.contract_type})
 
                 # Makes amendments where necessary
                 mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
@@ -338,6 +341,7 @@ class GetHandsets(APIView):
         return new_handset_list
 
     def get(self, request):
+        time.sleep(0.5)
 
         data = self.return_non_repeating_handsets(Handsets.objects.all())
 
@@ -410,13 +414,40 @@ class CreateHandsetOrder(APIView):
                 existing_order.save()
                 return Response('Update Existing Handset Order', status=status.HTTP_200_OK)
             else:
+                calculate_upgrade_fee = date_calculations.DateTimeCalculations(MobileNumber.objects.get(number=ctn))
+
                 HandsetOrder.objects.create(ctn=ctn,
                                             customer=MobileNumber.objects.get(number=ctn).customer,
                                             contract_type='Handset',
+                                            early_upgrade_fee=calculate_upgrade_fee.calculate_early_upgrade_fee(),
                                             handset=handset_object)
                 return Response('Created Handset Order', status=status.HTTP_200_OK)
         else:
             return Response('Error When Creating Handset Order', status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddHandsetCreditToOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = GenericSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+
+            handset_credit_selected = serializer.data.get('string')
+
+            if float(handset_credit_selected) > handset_order_object.upfront:
+                handset_order_object.handset_credit = handset_order_object.upfront
+            else:
+                handset_order_object.handset_credit = handset_credit_selected
+            handset_order_object.save()
+
+            return Response('Added credit to order', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
 class AddHandsetTariffToOrder(APIView):
@@ -426,14 +457,19 @@ class AddHandsetTariffToOrder(APIView):
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        print(serializer)
 
         if serializer.is_valid():
-            #upfront = serializer.data.get('upfront')
-            tariff_id = serializer.data.get('id')
 
-            #print(upfront)
-            print(tariff_id)
+            handset_order = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            tariff_object = HandsetTariffs.objects.get(mrc=serializer.data.get('mrc'),
+                                                       data_allowance=serializer.data.get('data_allowance'))
+
+            handset_order.handset_tariff = tariff_object
+            handset_order.contract_type = 'Handset'
+            handset_order.plan_type = tariff_object.plan_type
+            handset_order.contract_length = tariff_object.contract_length
+            handset_order.upfront = serializer.data.get('upfront')
+            handset_order.save()
 
             return Response('Added Tariff To Order', status=status.HTTP_200_OK)
         else:
@@ -463,9 +499,15 @@ class HandsetOrderAPI(APIView):
                 handset_order['handset'] = Handsets.objects.get(id=handset_order['handset']).model +\
                                            " " + Handsets.objects.get(id=handset_order['handset']).colour
 
+                if handset_order['handset_tariff']:
+                    tariff_object = HandsetTariffs.objects.get(id=handset_order['handset_tariff'])
+                    handset_order['tariff_data'] = tariff_object.data_allowance
+                    handset_order['tariff_mrc'] = tariff_object.mrc
+
                 get_basket_totals = GetBasketTotals(handset_order_object)
                 basket_totals = {'upfront': get_basket_totals.get_total_upfront(),
                                  'mrc': get_basket_totals.get_total_mrc()}
+
 
                 data = {'handset_order_items': handset_order, 'basket_totals': basket_totals}
 

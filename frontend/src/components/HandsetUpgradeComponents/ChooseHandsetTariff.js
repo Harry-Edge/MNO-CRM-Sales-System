@@ -1,13 +1,11 @@
 import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
-import ChooseHandset from "./ChooseHandset";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import HouseholdView from "../HouseholdView";
-import SearchBar from "material-ui-search-bar";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
@@ -20,6 +18,11 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import HandsetBasket from "./HandsetBasket";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 
 const styles = (theme) => ({
      headingText: {
@@ -49,12 +52,15 @@ const styles = (theme) => ({
         flexDirection: 'column',
         height: 450
     },
-    searchBox: {
-        height: 50,
-        marginBottom: '15px'
+    saveToolsText: {
+        color: 'grey',
+        fontSize: 12,
+        fontWeight: 650,
     },
-    handsetsBox: {
-        height: '100%',
+    handsetCreditList: {
+        height: '19vh',
+        width: '95%',
+        overflow: 'scroll',
     }
 
 });
@@ -62,9 +68,13 @@ const styles = (theme) => ({
 class ChooseHandsetTariff extends Component {
 
     state = {handsetTariffs: null,
-             ctn: this.props.state.mobileAccount.number}
+             renderBasket: true,
+             handsetCredits: [],
+             handsetCreditSelected: null,
+             tariffSelected: false,
+             ctn: this.props.state.mobileAccount.number,}
 
-    componentDidMount() {
+    async componentDidMount() {
           const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
@@ -77,22 +87,43 @@ class ChooseHandsetTariff extends Component {
                    this.setState({handsetTariffs: data})
                    console.log(data)}
                )
-    }
 
-    handleAddTariffToHandsetOrder = (upfront, tariffId) => {
-        console.log(upfront)
-        console.log(tariffId)
+          // Generates Handset Credit amounts
+          let credit = []
+          for (let i = 10; i <= 300; i += 10){
+              credit.push({handsetCreditName: 'Handset Credit £' + i, value: i})
+          }
+          this.setState({handsetCredits: credit})
+
+    }
+    handleAddTariffToHandsetOrder = (upfront, mrc, dataAllowance) => {
 
          const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-            body: JSON.stringify({id: tariffId})
+            body: JSON.stringify({ctn: this.state.ctn, upfront: upfront, mrc: mrc, data_allowance: dataAllowance})
           }
 
          fetch("http://127.0.0.1:8000/api/add-handset-tariff-to-order", requestOptions)
              .then((response) => response.json())
              .then((data) => {
-                   console.log(data)})
+                   this.setState({renderBasket: false})
+                   this.setState({renderBasket: true, tariffSelected: true})})
+    }
+    handleAddHandsetCreditToOrder = (creditAmount) => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.state.ctn, string: creditAmount})
+        }
+
+        fetch("http://127.0.0.1:8000/api/add-handset-credit-to-order", requestOptions)
+             .then((response) => response.json())
+             .then((data) => {
+                 console.log(data)
+                 this.setState({renderBasket: false})
+                 this.setState({renderBasket: true})
+             })
     }
 
     render() {
@@ -107,6 +138,41 @@ class ChooseHandsetTariff extends Component {
                            <Box>
                                <Typography variant='h6' className={classes.tableHeader}>Save Tools</Typography>
                                <Divider/>
+                               <Box m={1}>
+                                   <Grid container spacing={1}>
+                                       <Grid item xs={6}>
+                                           <Paper>
+                                               <Box m={1}>
+                                                   <Typography className={classes.saveToolsText}>Retail Closing Tool</Typography>
+                                                         <Box className={classes.handsetCreditList}>
+                                                             <List>
+                                                                 {
+                                                                     this.state.handsetCredits.map((handsetCredit, index) => {
+                                                                         return (
+                                                                             <ListItem key={index} button disabled={!this.state.tariffSelected}
+                                                                                onClick={() => this.handleAddHandsetCreditToOrder(handsetCredit.value)}>
+                                                                                <ListItemText classes={{primary:classes.listItem}} primary={handsetCredit.handsetCreditName}/>
+                                                                                <ListItemIcon >
+                                                                                    <AddCircleOutlineIcon/>
+                                                                                </ListItemIcon>
+                                                                            </ListItem>
+                                                                         )
+                                                                     })
+                                                                 }
+                                                            </List>
+                                                        </Box>
+                                               </Box>
+                                           </Paper>
+                                       </Grid>
+                                       <Grid item xs={6}>
+                                           <Paper>
+                                               <Box m={1}>
+                                                   <Typography className={classes.saveToolsText}>Other</Typography>
+                                               </Box>
+                                           </Paper>
+                                       </Grid>
+                                   </Grid>
+                               </Box>
                            </Box>
                        </Paper>
                    </Grid>
@@ -149,7 +215,8 @@ class ChooseHandsetTariff extends Component {
                                                                        <TableCell>£{tariff.upfront}</TableCell>
                                                                        <TableCell align='right'><Button
                                                                            className={classes.tableButton}
-                                                                           onClick={() => this.handleAddTariffToHandsetOrder(tariff.upfront, tariff.id)}
+                                                                           onClick={() =>
+                                                                               this.handleAddTariffToHandsetOrder(tariff.upfront, tariff.mrc, tariff.data_allowance)}
                                                                            size='small' variant='contained'>
                                                                                           Select</Button></TableCell>
                                                                    </TableRow>
@@ -160,19 +227,22 @@ class ChooseHandsetTariff extends Component {
                                                </Table>
                                            </TableContainer>
                                        </Box>
-                                       :null
+                                       : <CircularProgress/>
                                }
                            </Box>
                        </Paper>
                    </Grid>
                    <Grid item xs={12} md={8} lg={4}>
                        <Paper className={classes.paper}>
+                           {
+                               this.state.renderBasket ?
                                <HandsetBasket
-                                currentStage={this.props.currentStage}
-                                onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
-                                handsetChosen={this.state.handsetChosen}
-                                ctn={this.props.state.mobileAccount.number}/>
+                                   currentStage={this.props.currentStage}
+                                   onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
+                                   handsetChosen={this.state.handsetChosen}
+                                   ctn={this.props.state.mobileAccount.number}/> : null
 
+                           }
                        </Paper>
                    </Grid>
                </Grid>

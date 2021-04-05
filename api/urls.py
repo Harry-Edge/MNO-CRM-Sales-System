@@ -25,6 +25,7 @@ urlpatterns = [
     path('create-handset-order', CreateHandsetOrder.as_view()),
     path('handset-order', HandsetOrderAPI.as_view()),
     path('add-handset-tariff-to-order', AddHandsetTariffToOrder.as_view()),
+    path('add-handset-credit-to-order', AddHandsetCreditToOrder.as_view()),
 
     # Validations
     path('check-ctn-exists', CheckCTNExists.as_view()),

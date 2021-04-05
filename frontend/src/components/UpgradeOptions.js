@@ -55,7 +55,8 @@ class UpgradeOptions extends Component {
                                     <Button className={classes.button} endIcon={<KeyboardArrowUpIcon/>}
                                             size='small'
                                             variant='contained'
-                                            color="primary">Early Upgrade
+                                            color="primary"
+                                            onClick={() => this.props.onHandsetUpgradeClicked()}>Early Upgrade
                                         <strong> (£{mobileAccount.early_upgrade_fee} Fee)</strong></Button>
                                 </Box>
                         }

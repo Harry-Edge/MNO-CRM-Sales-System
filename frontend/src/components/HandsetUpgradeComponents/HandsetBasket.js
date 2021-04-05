@@ -126,9 +126,37 @@ class HandsetBasket extends Component {
                                    </TableRow>
                                     <TableRow hover={true}>
                                        <TableCell>{this.state.basketItems.handset}</TableCell>
-                                       <TableCell align='right'>£0</TableCell>
+                                       <TableCell align='right'>{this.state.basketItems.handset_tariff ? '£' + this.state.basketItems.upfront : '£0'}</TableCell>
                                        <TableCell align='right'>£0</TableCell>
                                    </TableRow>
+                                   {
+                                       this.state.basketItems.early_upgrade_fee ?
+                                           <TableRow hover={true}>
+                                               <TableCell>Early Upgrade Fee</TableCell>
+                                               <TableCell align='right'>£{this.state.basketItems.early_upgrade_fee}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+
+                                   }
+                                   {
+                                       this.state.basketItems.handset_tariff ?
+                                           <TableRow hover={true}>
+                                               <TableCell>{this.state.basketItems.plan_type} {this.state.basketItems.tariff_data}GB £{this.state.basketItems.tariff_mrc}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                               <TableCell align='right'>£{this.state.basketItems.tariff_mrc}</TableCell>
+                                           </TableRow> : null
+
+                                   }
+                                    {
+                                       this.state.basketItems.handset_credit ?
+                                           <TableRow hover={true}>
+                                               <TableCell>Handset Credit £{this.state.basketItems.handset_credit}</TableCell>
+                                               <TableCell align='right'> - £{this.state.basketItems.handset_credit}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+
+                                   }
+
                                    {
                                        this.state.basketItems.cap_name ?
                                            <TableRow hover={true}>
@@ -195,7 +223,7 @@ class HandsetBasket extends Component {
                                    this.state.currentStage === "finaliseHandset" ?
                                    <Grid item xs={6} className={classes.basketButtons}>
                                            <Button className={classes.finaliseButton} size='small' variant='contained'
-                                           >Sumbit</Button>
+                                           >Submit</Button>
                                    </Grid>: null
                                }
                            </Grid>

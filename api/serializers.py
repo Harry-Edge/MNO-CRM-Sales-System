@@ -65,8 +65,6 @@ class SimOnlyOrderSerializer(serializers.ModelSerializer):
         model = SimOnlyOrder
         fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap',
                   'existing_insurance')
-        extra_kwargs = {'id': {'read_only': False}}
-
 
 class HandsetsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -80,7 +78,7 @@ class HandsetTariffsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HandsetTariffs
         fields = ('id', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type', 'ctn')
-        #extra_kwargs = {'id': {'read_only': False}}
+
 
 
 class HandsetOrderSerializer(serializers.ModelSerializer):
@@ -94,4 +92,5 @@ class HandsetOrderSerializer(serializers.ModelSerializer):
 
 class GenericSerializer(serializers.Serializer):
     string = serializers.CharField()
+    id = serializers.CharField
     ctn = serializers.CharField()
