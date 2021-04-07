@@ -12,7 +12,7 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Divider from "@material-ui/core/Divider";
 
-const styles = (theme) => ({
+const styles = () => ({
     basketTitle: {
         display: 'flex',
         justifyContent: 'center',

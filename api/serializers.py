@@ -49,7 +49,7 @@ class MobileNumberSerializer(serializers.ModelSerializer):
         fields = ('number', 'customer', 'user', 'plan', 'mrc', 'device_manufacture', 'device_model', 'insurance',
                   'insurance_option', 'data_allowance', 'spend_cap', 'contract_start', 'contract_end',
                   'contract_length_months', 'friends_and_family', 'account_last_accessed_date_time',
-                  'account_last_accessed_by')
+                  'account_last_accessed_by', 'data_usage_3m', 'texts_sent_3m', 'call_mins', 'mms_sent')
 
 
 class SimOnlyTariffsSerializer(serializers.ModelSerializer):
@@ -78,6 +78,7 @@ class HandsetTariffsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HandsetTariffs
         fields = ('id', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type', 'ctn')
+        extra_kwargs = {'ctn': {'read_only': False}}
 
 
 

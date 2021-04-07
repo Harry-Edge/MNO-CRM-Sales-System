@@ -55,7 +55,7 @@ const styles = (theme) => ({
         fontWeight: 650,
     },
     handsetCreditList: {
-        height: '19vh',
+        height: 165,
         width: '95%',
         overflow: 'scroll',
     }

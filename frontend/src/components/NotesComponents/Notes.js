@@ -43,7 +43,7 @@ const styles = (theme) => ({
         borderColor: 'grey'
     },
     noteTable: {
-        height: '17vh',
+        height: 155,
         overflow: 'scroll',
     },
     button: {
@@ -66,7 +66,7 @@ const styles = (theme) => ({
         fontWeight: 650
     },
     openOrdersTable: {
-        height: '9vh',
+        height: 80,
         overflow: 'scroll',
     },
     openOrdersTableText: {

@@ -43,7 +43,7 @@ const styles = () => ({
     },
     table: {
         paddingTop: 10,
-        height: '15vh',
+        height: 165,
         overflow: 'scroll',
         color: 'blue'
     },

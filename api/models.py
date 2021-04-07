@@ -103,10 +103,10 @@ class MobileNumber(models.Model):
 
     """USAGE"""
     spend_cap = models.CharField(max_length=100, null=True, choices=SPEND_CAPS)
-    #data_usage_3m = models.FloatField(max_length=10, null=True)
-    #texts_sent_3m = models.IntegerField(null=True)
-    #call_mins = models.IntegerField(null=True)
-    #mms_sent = models.IntegerField(null=True)
+    data_usage_3m = models.FloatField(max_length=10, null=True)
+    texts_sent_3m = models.IntegerField(null=True)
+    call_mins = models.IntegerField(null=True)
+    mms_sent = models.IntegerField(null=True)
 
     """Eligibility"""
     contract_start = models.DateField(null=True)

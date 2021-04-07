@@ -50,6 +50,7 @@ class CTNDetails extends Component {
 
     componentDidMount() {
         this.handleGetColourOptions()
+        console.log(this.props.mobileAccount)
     };
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Calls the Colour change text options if CTN data has been changed
@@ -133,10 +134,10 @@ class CTNDetails extends Component {
                         <div>
                             <br/>
                         </div>
-                        <Typography className={classes.text}>Data 3m: <strong>90 GB*</strong></Typography>
-                        <Typography className={classes.text}>Text 3m: <strong> 30*</strong></Typography>
-                        <Typography className={classes.text}>Voice 3m: <strong>20*</strong></Typography>
-                        <Typography className={classes.text}>MMS 3m: <strong>1*</strong></Typography>
+                        <Typography className={classes.text}>Data 3m: <strong>{mobileAccount.data_usage_3m}GB</strong></Typography>
+                        <Typography className={classes.text}>Text 3m: <strong> {mobileAccount.texts_sent_3m}</strong></Typography>
+                        <Typography className={classes.text}>Voice 3m: <strong>{mobileAccount.call_mins}</strong></Typography>
+                        <Typography className={classes.text}>MMS 3m: <strong>{mobileAccount.mms_sent}</strong></Typography>
                         <div>
                             <br/>
                         </div>

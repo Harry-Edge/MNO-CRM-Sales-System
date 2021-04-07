@@ -21,16 +21,17 @@ import CTNDetails from "./CTNDetails";
 import Menu from "./Menu";
 import HouseholdView from "./HouseholdView";
 import UpgradeOptions from "./UpgradeOptions";
-import Recommendations from "./Recommendations";
 import SimOnlyUpgrade from "./SimOnlyUpgradeComponents/SimOnlyUpgrade";
 import HandsetUpgrade from "./HandsetUpgradeComponents/HandsetUpgrade";
 import AdditionalSim from "./AdditionalSimComponents/AdditionalSim";
 import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
 import SimOnlyRecommendations from "./SimOnlyRecommendations";
-import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
+import HandsetRecommendations from "./HandsetRecommendations";
 import Notes from "./NotesComponents/Notes";
+import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
 import CircularProgress from "@material-ui/core/CircularProgress";
+
 
 const drawerWidth = 240;
 
@@ -152,6 +153,8 @@ class Dashboard extends Component{
            customer: null,
            employee: null,
            otherLines: null,
+           simOnlyRecommendations: null,
+           handsetRecommendations: null,
            leftPanelOpen: false,
            dashboard: false,
            simOnlyUpgrade: false,
@@ -193,10 +196,12 @@ class Dashboard extends Component{
           fetch("http://127.0.0.1:8000/api/get-customer", ctnInContextRequestOptions)
             .then((response) => response.json())
               .then((data) => {this.setState({mobileAccount: data.mobile_account,
-                                      customer: data.customer,
-                                      otherLines: data.other_lines})
+                                                      customer: data.customer,
+                                                      otherLines: data.other_lines,
+                                                      simOnlyRecommendations: data.sim_only_recommendations,
+                                                      handsetRecommendations: data.handset_recommendations})
                                 this.handleReturnToDashboard()
-                                console.log(this.state.customer)
+                                console.log(this.state)
                                 this.setState({loadingNewCTN: false})})
 
   }}
@@ -207,7 +212,8 @@ class Dashboard extends Component{
     const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-            body: JSON.stringify({number: ctn})
+            body: JSON.stringify({number: ctn,
+                                        account_last_accessed_by: this.state.employee.username})
          }
 
     fetch("http://127.0.0.1:8000/api/get-customer", requestOptions)
@@ -221,7 +227,10 @@ class Dashboard extends Component{
         .then((data) => {
              this.setState({mobileAccount: data.mobile_account,
                                       customer: data.customer,
-                                      otherLines: data.other_lines})
+                                      otherLines: data.other_lines,
+                                      simOnlyRecommendations: data.sim_only_recommendations,
+                                      handsetRecommendations: data.handset_recommendations},
+                                        )
              localStorage.setItem('currentCTN', data.mobile_account.number)
              this.handleReturnToDashboard()
              this.setState({loadingNewCTN: false})
@@ -385,14 +394,21 @@ class Dashboard extends Component{
                       {/* Recommendations */}
                       <Grid item xs={12}>
                         <Paper className={classes.paper}>
-                          <Recommendations/>
+                            {
+                                this.state.loadingNewCTN?
+                                    <CircularProgress className={classes.progressLoader}/>
+                                    : <HandsetRecommendations recommendedTariffs={this.state.handsetRecommendations}/>
+                            }
                         </Paper>
                       </Grid>
-                      <Grid item xs={12}>
-                        <Paper className={classes.paper}>
-                          <SimOnlyRecommendations/>
-                        </Paper>
-                      </Grid>
+                      {
+                          this.state.simOnlyRecommendations ?
+                              <Grid item xs={12}>
+                                <Paper className={classes.paper}>
+                                  <SimOnlyRecommendations recommendedTariffs={this.state.simOnlyRecommendations}/>
+                                </Paper>
+                              </Grid>: null
+                      }
                     </Grid> : null
               }
               {

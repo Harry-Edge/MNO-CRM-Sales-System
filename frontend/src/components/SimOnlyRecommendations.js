@@ -6,6 +6,7 @@ import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button"
+
 const styles = (theme) => ({
     title: {
         fontWeight: 650,
@@ -29,6 +30,13 @@ const styles = (theme) => ({
 
 class SimOnlyRecommendations extends Component {
 
+    state = {recommendedTariff: null}
+
+    componentDidMount() {
+        console.log(this.props.recommendedTariffs)
+        console.log("here")
+    }
+
     render() {
 
         const {classes} = this.props
@@ -39,121 +47,47 @@ class SimOnlyRecommendations extends Component {
                 <Divider/>
                 <Box m={0}>
                     <Grid container spacing={4}>
-                        <Grid item xs={3}>
-                            <Paper>
-                                <Box m={2}>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
-                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
-                                       <div>
-                                        <br/>
-                                    </div>
-                                                       <Button className={classes.button}
-                                                               fullWidth={true}
-                                                               size='small'
-                                                               variant='contained'
-                                                               color="primary">Select</Button>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
-                          <Grid item xs={3}>
-                            <Paper>
-                                <Box m={2}>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
-                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
-                                       <div>
-                                        <br/>
-                                    </div>
-                                                       <Button className={classes.button}
-                                                               fullWidth={true}
-                                                               size='small'
-                                                               variant='contained'
-                                                               color="primary">Select</Button>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
-                          <Grid item xs={3}>
-                            <Paper>
-                                <Box m={2}>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
-                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
-                                       <div>
-                                        <br/>
-                                    </div>
-                                                       <Button className={classes.button}
-                                                               fullWidth={true}
-                                                               size='small'
-                                                               variant='contained'
-                                                               color="primary">Select</Button>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
-                          <Grid item xs={3}>
-                            <Paper>
-                                <Box m={2}>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                     <Typography className={classes.text}>Data: <strong>100GB</strong></Typography>
-                                    <Typography className={classes.text}>Mrc: <strong>£20pm</strong></Typography>
-                                     <Typography className={classes.text}>Contract Length:<strong>24 Months</strong></Typography>
-                                       <div>
-                                        <br/>
-                                    </div>
-                                                       <Button className={classes.button}
-                                                               fullWidth={true}
-                                                               size='small'
-                                                               variant='contained'
-                                                               color="primary">Select</Button>
-                                    <div>
-                                        <br/>
-                                    </div>
-                                    <Divider/>
-                                      <div>
-                                        <br/>
-                                    </div>
-                                </Box>
-                            </Paper>
-                        </Grid>
-
-
-
+                        {
+                            this.props.recommendedTariffs.map((tariff, index) => {
+                                return (
+                                       <Grid item xs={3} key={index}>
+                                            <Paper>
+                                                <Box m={2}>
+                                                    <div>
+                                                        <br/>
+                                                    </div>
+                                                    <Divider/>
+                                                    <Typography
+                                                        className={classes.text}>
+                                                        Data: <strong>{tariff.data_allowance}GB</strong></Typography>
+                                                    <Typography
+                                                        className={classes.text}>
+                                                        Mrc: <strong>£{tariff.mrc}pm</strong></Typography>
+                                                    <Typography
+                                                         className={classes.text}>
+                                                         Contract Length:
+                                                         <strong>{tariff.contract_length} Months</strong></Typography>
+                                                    <div>
+                                                        <br/>
+                                                    </div>
+                                                   <Button className={classes.button}
+                                                           fullWidth={true}
+                                                           size='small'
+                                                           variant='contained'
+                                                           color="primary">Select</Button>
+                                                    <div>
+                                                        <br/>
+                                                    </div>
+                                                    <Divider/>
+                                                    <div>
+                                                        <br/>
+                                                    </div>
+                                                </Box>
+                                            </Paper>
+                                       </Grid>
+                                )
+                            })
+                        }
                     </Grid>
                 </Box>
             </Box>

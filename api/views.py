@@ -9,6 +9,7 @@ from datetime import datetime
 from .extrafunctions import date_calculations
 from .extrafunctions.basket import GetBasketTotals
 from .extrafunctions import twilio_functions
+from .extrafunctions import recommendations
 from .serializers import *
 from .models import *
 from datetime import datetime
@@ -40,68 +41,90 @@ class GetCustomer(APIView):
 
         if serializer.is_valid():
             # Simulated a realistic response server time rather than being on local host
-            time.sleep(0.1)
+            time.sleep(0.3)
 
             try:
-                mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
-                customer_object = Customer.objects.get(id=mobile_number_object.customer.id)
-
-                def get_other_lines():
-                    """
-                    Gets all the other lines the customer has and also adds the upgrade data and days remaining
-                    """
-                    other_lines = []
-                    for line in customer_object.mobilenumber_set.all().values():
-                        other_lines.append(line)
-                    for count, line in enumerate(customer_object.mobilenumber_set.all()):
-                        date_cal = date_calculations.DateTimeCalculations(line)
-                        current_other_line_dic = other_lines[count]
-                        current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
-                        current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
-
-                    return other_lines
-
-                date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
-                mobile_account = MobileNumberSerializer(mobile_number_object).data
-                customer = CustomerSerializer(customer_object).data
-
-                # Gets Open Order for the customer if there is any
-                sim_only_open_orders = SimOnlyOrder.objects.filter(customer=customer_object)
-                handset_open_orders = HandsetOrder.objects.filter(customer=customer_object)
-                open_order_list = []
-                for sim_order in sim_only_open_orders:
-                    open_order_list.append({'number': sim_order.ctn, 'type': sim_order.contract_type})
-                for handset_order in handset_open_orders:
-                    open_order_list.append({'number': handset_order.ctn, 'type': handset_order.contract_type})
-
-                # Makes amendments where necessary
-                mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
-                mobile_account['early_upgrade_fee'] = date_cal.calculate_early_upgrade_fee()
-                mobile_account['is_eligible'] = date_cal.calculate_if_eligible()
-                mobile_account['days_remaining'] = date_cal.calculate_days_remaining()
-                mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
-                customer['total_lines'] = customer_object.mobilenumber_set.all().count()
-                customer['account_last_accessed_date_time'] = customer_object.account_last_accessed_date_time.date()
-                customer['open_orders'] = open_order_list
-
-                """
-                 The below puts date and time tracking information on the customer 
-                 and mobile accounts by a given employee
-                """
-                employee_accessing_account = serializer.data.get('account_last_accessed_by')
-                customer_object.account_last_accessed_by = employee_accessing_account
-                customer_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
-                mobile_number_object.account_last_accessed_by = employee_accessing_account
-                mobile_number_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
-                mobile_number_object.save()
-                customer_object.save()
-
-                data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines()}
-
-                return Response(data, status=status.HTTP_200_OK)
-
+                MobileNumber.objects.get(number=serializer.data.get('number'))
             except Exception:
                 return Response('Not Found', status=status.HTTP_406_NOT_ACCEPTABLE)
+
+            mobile_number_object = MobileNumber.objects.get(number=serializer.data.get('number'))
+            customer_object = Customer.objects.get(id=mobile_number_object.customer.id)
+
+            def get_other_lines():
+                """
+                Gets all the other lines the customer has and also adds the upgrade data and days remaining
+                """
+                other_lines = []
+                for line in customer_object.mobilenumber_set.all().values():
+                    other_lines.append(line)
+                for count, line in enumerate(customer_object.mobilenumber_set.all()):
+                    date_cal = date_calculations.DateTimeCalculations(line)
+                    current_other_line_dic = other_lines[count]
+                    current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
+                    current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
+
+                return other_lines
+
+            # Recommendations
+            recommended_sim_tariffs = recommendations.get_simo_recommendations(mobile_number_object)
+            if recommended_sim_tariffs:
+                recommended_sim_tariffs = recommended_sim_tariffs.values()
+            else:
+                recommended_sim_tariffs = None
+            handset_tariffs_recommended, handsets = recommendations.get_handset_recommendations(mobile_number_object)
+
+            handset_recommendations_list = []
+            for count, tariff in enumerate(handset_tariffs_recommended):
+                handset_recommended_dict = {}
+                handset_recommended_dict['id'] = tariff.id
+                handset_recommended_dict['handset'] = handsets[count].model
+                handset_recommended_dict['data'] = tariff.data_allowance
+                handset_recommended_dict['mrc'] = tariff.mrc
+                handset_recommended_dict['upfront'] = recommendations.get_upfront(tariff.mrc, handsets[count].model, tariff.data_allowance)
+                handset_recommendations_list.append(handset_recommended_dict)
+
+            # Serializes Data
+            date_cal = date_calculations.DateTimeCalculations(mobile_number_object)
+            mobile_account = MobileNumberSerializer(mobile_number_object).data
+            customer = CustomerSerializer(customer_object).data
+
+            # Gets Open Order for the customer if there is any
+            sim_only_open_orders = SimOnlyOrder.objects.filter(customer=customer_object)
+            handset_open_orders = HandsetOrder.objects.filter(customer=customer_object)
+            open_order_list = []
+            for sim_order in sim_only_open_orders:
+                open_order_list.append({'number': sim_order.ctn, 'type': sim_order.contract_type})
+            for handset_order in handset_open_orders:
+                open_order_list.append({'number': handset_order.ctn, 'type': handset_order.contract_type})
+
+            # Makes amendments where necessary
+            mobile_account['upgrade_date'] = date_cal.calculate_upgrade_date()
+            mobile_account['early_upgrade_fee'] = date_cal.calculate_early_upgrade_fee()
+            mobile_account['is_eligible'] = date_cal.calculate_if_eligible()
+            mobile_account['days_remaining'] = date_cal.calculate_days_remaining()
+            mobile_account['insurance_option'] = mobile_number_object.insurance_option.insurance_name
+            customer['total_lines'] = customer_object.mobilenumber_set.all().count()
+            customer['account_last_accessed_date_time'] = customer_object.account_last_accessed_date_time.date()
+            customer['open_orders'] = open_order_list
+
+            """
+             The below puts date and time tracking information on the customer 
+             and mobile accounts by a given employee
+            """
+            employee_accessing_account = serializer.data.get('account_last_accessed_by')
+            customer_object.account_last_accessed_by = employee_accessing_account
+            customer_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
+            mobile_number_object.account_last_accessed_by = employee_accessing_account
+            mobile_number_object.account_last_accessed_date_time = datetime.now(tz=timezone.utc)
+            mobile_number_object.save()
+            customer_object.save()
+
+            data = {'mobile_account': mobile_account, 'customer': customer, 'other_lines': get_other_lines(),
+                    'sim_only_recommendations': recommended_sim_tariffs,
+                    'handset_recommendations': handset_recommendations_list}
+
+            return Response(data, status=status.HTTP_200_OK)
 
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
@@ -386,6 +409,12 @@ class GetHandsetTariffs(APIView):
             for count, tariff in enumerate(tariffs_available):
                 if tariff['data_allowance'] == '4':
                     get_handset_tariff_upfront(count, handset_object.model, tariff['mrc'], '4gb_tariffs')
+                if tariff['data_allowance'] == '10':
+                    get_handset_tariff_upfront(count, handset_object.model, tariff['mrc'], '10gb_tariffs')
+                if tariff['data_allowance'] == '100':
+                    get_handset_tariff_upfront(count, handset_object.model, tariff['mrc'], '100gb_tariffs')
+                if tariff['data_allowance'] == '1000':
+                    get_handset_tariff_upfront(count, handset_object.model, tariff['mrc'], 'ultd_tariffs')
 
             data = tariffs_available
 

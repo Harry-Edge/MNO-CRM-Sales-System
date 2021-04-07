@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
     spendCapList: {
-        height: '18vh',
+        height: 165,
         width: '95%',
         overflow: 'scroll',
     },
