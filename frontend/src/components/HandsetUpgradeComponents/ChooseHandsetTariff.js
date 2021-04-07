@@ -22,14 +22,27 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 
 const styles = (theme) => ({
+   textSuccess: {
+        color: 'green'
+    },
+    textDanger: {
+        color: 'red'
+    },
+    textWarning: {
+        color: '#e6ac00'
+    },
      headingText: {
         fontWeight: 650
     },
     tableHeader: {
         fontWeight: 650
     },
+    table: {
+         height: 400,
+        overflow: 'scroll',
+    },
     tableColor:{
-        backgroundColor: '#fdfcfe'
+        backgroundColor: '#fdfcfe',
     },
      tableButton: {
         color: 'white',
@@ -122,6 +135,18 @@ class ChooseHandsetTariff extends Component {
                  this.setState({renderBasket: true})
              })
     }
+    handleCalculateValue = (contractLength, mrc, upfront) => {
+            return (parseInt(contractLength, 10) * mrc) + parseInt(upfront, 10)
+    }
+    handleValueColour = (value) => {
+        if (value >= 1500) {
+            return this.props.classes.textSuccess
+        }else if (value >= 1200) {
+            return this.props.classes.textWarning
+        }else{
+            return this.props.classes.textDanger
+        }
+    }
 
     render() {
 
@@ -186,7 +211,7 @@ class ChooseHandsetTariff extends Component {
                                {
                                    this.state.handsetTariffs ?
                                        <Box>
-                                           <TableContainer>
+                                           <TableContainer className={classes.table}>
                                                <Table size="small" className={classes.tableColor} >
                                                    <TableHead>
                                                        <TableRow>
@@ -202,12 +227,16 @@ class ChooseHandsetTariff extends Component {
                                                    <TableBody>
                                                        {
                                                            this.state.handsetTariffs.map((tariff, index) => {
+                                                               const value = this.handleCalculateValue(tariff.contract_length, tariff.mrc, tariff.upfront)
+
+                                                               const valueColour = this.handleValueColour(value)
+
                                                                return (
                                                                    <TableRow hover={true} key={index}>
                                                                        <TableCell>{tariff.plan_type}</TableCell>
                                                                        <TableCell>{tariff.data_allowance}GB </TableCell>
                                                                        <TableCell>{tariff.contract_length} Months</TableCell>
-                                                                       <TableCell>£1000</TableCell>
+                                                                       <TableCell className={valueColour}>£{value}</TableCell>
                                                                        <TableCell>£{tariff.mrc}</TableCell>
                                                                        <TableCell>£{tariff.upfront}</TableCell>
                                                                        <TableCell align='right'><Button

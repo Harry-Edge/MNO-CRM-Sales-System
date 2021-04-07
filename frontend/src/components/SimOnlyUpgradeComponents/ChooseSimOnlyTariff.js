@@ -24,7 +24,7 @@ const styles = (theme) => ({
         color: 'red'
     },
     textWarning: {
-        color: '#cccc00'
+        color: '#e6ac00'
     },
     tableHeader: {
         fontWeight: 650

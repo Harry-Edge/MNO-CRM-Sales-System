@@ -576,7 +576,6 @@ class HandsetOrderAPI(APIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-
             handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
             handset_order_object.delete()
 
@@ -635,7 +634,6 @@ class ValidatePostcode(APIView):
 
         if serializer.is_valid():
             inputted_postcode = serializer.data.get('string')
-
             mobile_account = MobileNumber.objects.get(number=serializer.data.get('ctn'))
 
             if mobile_account.customer.postcode[-3:] == inputted_postcode.upper():
@@ -654,7 +652,6 @@ class ValidateMonthOfBirth(APIView):
 
         if serializer.is_valid():
             month_of_birth_inputted = serializer.data.get('string')
-
             mobile_account = MobileNumber.objects.get(number=serializer.data.get('ctn'))
 
             if month_of_birth_inputted == str(mobile_account.customer.dob.month):

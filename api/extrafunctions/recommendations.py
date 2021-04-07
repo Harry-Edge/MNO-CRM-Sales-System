@@ -6,7 +6,7 @@ from .date_calculations import DateTimeCalculations
 
 def get_upfront(mrc, model, data_allowance):
 
-    """ This tag get all the upfront costs for the relevant tariffs for a specific handset """
+    """ This function get all the upfront costs for the relevant tariffs for a specific handset """
 
     mrc_correct_format = (str(mrc)[:-2])
 
