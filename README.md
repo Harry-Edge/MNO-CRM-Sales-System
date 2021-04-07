@@ -1,6 +1,8 @@
-## Mobile Network CRM (React + Django REST Framework)
+## Mobile Network Operator CRM/POS System (React + Django REST Framework)
 
-Very much a work in progress CRM/POS system using React and Django. No way near complete/finalised.
+A single page React app that would be used be a MNO to perform various tasks on a customers account. Ths system can upgrade,
+sell additional products, change customer details, add notes and various other features along with an overview of the customers account 
+and their mobile numbers.   
 
 
 ## Dashboard
