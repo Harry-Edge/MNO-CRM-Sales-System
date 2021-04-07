@@ -476,6 +476,26 @@ class AddHandsetTariffToOrder(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
+class AddSpendCapToHandsetOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SpendCapSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            spend_cap_object = SpendCaps.objects.get(id=serializer.data.get('id'))
+
+            handset_order = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+
+            handset_order.cap = spend_cap_object
+            handset_order.save()
+
+            return Response("Added Spend Cap to Order", status=status.HTTP_200_OK)
+        else:
+            return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
+
+
 class HandsetOrderAPI(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = HandsetOrderSerializer
@@ -503,6 +523,10 @@ class HandsetOrderAPI(APIView):
                     tariff_object = HandsetTariffs.objects.get(id=handset_order['handset_tariff'])
                     handset_order['tariff_data'] = tariff_object.data_allowance
                     handset_order['tariff_mrc'] = tariff_object.mrc
+
+                if handset_order['cap']:
+                    spend_cap_object = SpendCaps.objects.get(id=handset_order['cap'])
+                    handset_order['cap_name'] = spend_cap_object.cap_name
 
                 get_basket_totals = GetBasketTotals(handset_order_object)
                 basket_totals = {'upfront': get_basket_totals.get_total_upfront(),

@@ -28,6 +28,7 @@ import AdditionalSim from "./AdditionalSimComponents/AdditionalSim";
 import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
 import SimOnlyRecommendations from "./SimOnlyRecommendations";
+import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
 import Notes from "./NotesComponents/Notes";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -44,9 +45,10 @@ const styles = (theme) => ({
     justifyContent: 'flex-start',
     display: 'flex',
     alignItems: 'center',
-    padding: '17px 17px',
+    paddingTop: 10,
+    paddingLeft: 5,
+    color: '#009999',
     float: 'left'
-
   },
   toolbarIcon: {
     float: 'right',
@@ -279,8 +281,10 @@ class Dashboard extends Component{
                 onClick={this.handleDrawerOpen}
                 className={this.state.leftPanelOpen ? classes.menuButtonHidden : classes.menuButton}
               >
-                <MenuIcon />
+
+                <MenuIcon/>
               </IconButton>
+
               <Typography component="h1" variant="h5" color="inherit" noWrap className={classes.title}>
                 Excalibur Pro
               </Typography>
@@ -310,7 +314,7 @@ class Dashboard extends Component{
                 open={this.state.leftPanelOpen}>
                 <div>
                   <Grid item xs={6} className={classes.test}>
-
+                      <AddToHomeScreenIcon className={classes.test} fontSize='large'/>
                   </Grid>
                   <Grid item xs={6} className={classes.toolbarIcon}>
                     <IconButton onClick={this.handleDrawerClose}>

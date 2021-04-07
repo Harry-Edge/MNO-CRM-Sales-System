@@ -54,6 +54,7 @@ const styles = (theme) => ({
 class HandsetBasket extends Component {
 
     state = {
+        finaliseHandset: false,
         basketItems: null,
         basketTotals: null,
         currentStage: 'chooseHandset',
@@ -74,6 +75,12 @@ class HandsetBasket extends Component {
             .then((response) => response.json())
             .then((data) => {
                 this.setState({basketItems: data.handset_order_items, basketTotals: data.basket_totals})
+
+                if (this.state.currentStage === 'finaliseHandset') {
+                    if (this.state.basketItems.cap) {
+                        this.props.onCapSelected(this.state.basketItems.cap_name)
+                    }
+                }
             })
     }
     handleDeleteHandsetOrder() {
@@ -147,7 +154,7 @@ class HandsetBasket extends Component {
                                            </TableRow> : null
 
                                    }
-                                    {
+                                   {
                                        this.state.basketItems.handset_credit ?
                                            <TableRow hover={true}>
                                                <TableCell>Handset Credit £{this.state.basketItems.handset_credit}</TableCell>
@@ -156,7 +163,6 @@ class HandsetBasket extends Component {
                                            </TableRow> : null
 
                                    }
-
                                    {
                                        this.state.basketItems.cap_name ?
                                            <TableRow hover={true}>
@@ -216,6 +222,7 @@ class HandsetBasket extends Component {
                                    this.state.currentStage === "chooseHandsetTariff" ?
                                        <Grid item xs={6} className={classes.basketButtons}>
                                            <Button className={classes.finaliseButton} size='small' variant='contained'
+                                                   onClick={() => this.props.onFinaliseHandsetClicked()}
                                            >Finalise</Button>
                                        </Grid>: null
                                }
@@ -236,5 +243,3 @@ class HandsetBasket extends Component {
     }
 }
 export default withStyles(styles)(HandsetBasket)
-
-

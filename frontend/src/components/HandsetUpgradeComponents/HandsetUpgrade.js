@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
 import ChooseHandset from "./ChooseHandset";
 import ChooseHandsetTariff from "./ChooseHandsetTariff";
+import FinaliseHandset from "./FinaliseHandsetUpgrade";
 
 const styles = () => ({
      headingText: {
@@ -22,6 +23,9 @@ class HandsetUpgrade extends Component {
     handleChooseHandsetTariff = () => {
         this.setState({chooseHandset: false, chooseHandsetTariff: true, currentStage: 'chooseHandsetTariff'})
     }
+    handleFinaliseHandset = () => {
+        this.setState({currentStage: 'finaliseHandset'})
+    }
 
     render() {
 
@@ -40,9 +44,17 @@ class HandsetUpgrade extends Component {
                {
                    this.state.currentStage === 'chooseHandsetTariff' ?
                        <ChooseHandsetTariff fixedHeightPaper={fixedHeightPaper}
+                                            onFinaliseHandsetClicked={this.handleFinaliseHandset}
                                             onHandsetOrderDeleted={this.handleDeleteHandsetOrder}
                                             currentStage={this.state.currentStage}
                                             onNewCTNClicked={onNewCTNClicked} state={state}/>: null
+               }
+               {
+                   this.state.currentStage === 'finaliseHandset' ?
+                       <FinaliseHandset fixedHeightPaper={fixedHeightPaper}
+                                        onHandsetOrderDeleted={this.handleDeleteHandsetOrder}
+                                        currentStage={this.state.currentStage}
+                                        onNewCTNClicked={onNewCTNClicked} state={state}/> : null
                }
            </div>
         )
