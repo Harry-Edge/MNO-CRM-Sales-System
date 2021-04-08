@@ -6,27 +6,16 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import HouseholdView from "../HouseholdView";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableCell from "@material-ui/core/TableCell";
-import TableBody from "@material-ui/core/TableBody";
-import Button from "@material-ui/core/Button";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import HandsetBasket from "./HandsetBasket";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import OrderValidations from "../GlobalComponents/OrderValidations";
 import SpendCaps from "../GlobalComponents/SpendCaps";
+import HandsetInsurance from "../GlobalComponents/HandsetInsurance";
 
 
 const styles = (theme) => ({
     header: {
-        fontWeight: 650
+        fontWeight: 650,
+        color: 'grey'
     },
     paper: {
         padding: theme.spacing(2),
@@ -40,18 +29,14 @@ const styles = (theme) => ({
         fontSize: 12,
         fontWeight: 650,
     },
-    handsetCreditList: {
-        height: '19vh',
-        width: '95%',
-        overflow: 'scroll',
-    }
-
 });
 
 class FinaliseHandset extends Component {
 
     state = {renderBasket: true,
-            ctn: this.props.state.mobileAccount.number,}
+             ctn: this.props.state.mobileAccount.number,
+             capSelected: null,
+             insuranceSelected: null}
 
     handleCapSelected = (capName) => {
         this.setState({capSelected: capName})
@@ -64,6 +49,25 @@ class FinaliseHandset extends Component {
          }
 
         fetch('http://127.0.0.1:8000/api/add-spend-cap-to-handset-order', requestOptions)
+            .then((response) => response.json()
+                .then((data) => {
+                    console.log(data)
+                    this.setState({renderBasket: false})
+                    this.setState({renderBasket: true})
+                }))
+    }
+    handleInsuranceSelected = (insuranceName) => {
+        this.setState({insuranceSelected: insuranceName})
+    }
+    handleAddInsurance = (insuranceId) => {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({id: insuranceId, ctn: this.props.state.mobileAccount.number})
+         }
+
+        fetch('http://127.0.0.1:8000/api/add-insurance-to-handset-order', requestOptions)
             .then((response) => response.json()
                 .then((data) => {
                     console.log(data)
@@ -95,6 +99,16 @@ class FinaliseHandset extends Component {
                                             </Box>
                                             </Paper>
                                         </Grid>
+                                         <Grid item xs={6} >
+                                            <Paper>
+                                            <Box m={1}>
+                                            <Typography className={classes.header}>Insurance</Typography>
+                                            <HandsetInsurance orderCtn={this.state.ctn}
+                                                              insuranceSelected={this.state.insuranceSelected}
+                                                              onInsuranceSelected={this.handleAddInsurance}/>
+                                            </Box>
+                                            </Paper>
+                                        </Grid>
                                    </Grid>
                                </Box>
                            </Box>
@@ -122,11 +136,11 @@ class FinaliseHandset extends Component {
                                this.state.renderBasket ?
                                <HandsetBasket
                                    onCapSelected={this.handleCapSelected}
+                                   onInsuranceSelected={this.handleInsuranceSelected}
                                    currentStage={this.props.currentStage}
                                    onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
                                    handsetChosen={this.state.handsetChosen}
                                    ctn={this.props.state.mobileAccount.number}/> : null
-
                            }
                        </Paper>
                    </Grid>

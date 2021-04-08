@@ -525,6 +525,49 @@ class AddSpendCapToHandsetOrder(APIView):
             return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
 
 
+class GetHandsetInsurance(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        """
+        Retrieves the insurance available for a given handset
+        """
+
+        serializer = GenericSerializer(data=request.data)
+
+        if serializer.is_valid():
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            handset_insurance_options = handset_order_object.handset.insurance_available.values()
+
+            return Response(handset_insurance_options, status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+class AddInsuranceToHandsetOrder(APIView):
+
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = HandsetInsuranceSerializer
+
+    def post(self, request):
+
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            insurance_object = Insurance.objects.get(id=serializer.data.get('id'))
+
+            handset_order_object.insurance = insurance_object
+            handset_order_object.save()
+
+            return Response('Added Insurance', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class HandsetOrderAPI(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = HandsetOrderSerializer
@@ -556,6 +599,10 @@ class HandsetOrderAPI(APIView):
                 if handset_order['cap']:
                     spend_cap_object = SpendCaps.objects.get(id=handset_order['cap'])
                     handset_order['cap_name'] = spend_cap_object.cap_name
+                if handset_order['insurance']:
+                    insurance_object = Insurance.objects.get(id=handset_order['insurance'])
+                    handset_order['insurance'] = insurance_object.insurance_name
+                    handset_order['insurance_mrc'] = insurance_object.mrc
 
                 get_basket_totals = GetBasketTotals(handset_order_object)
                 basket_totals = {'upfront': get_basket_totals.get_total_upfront(),

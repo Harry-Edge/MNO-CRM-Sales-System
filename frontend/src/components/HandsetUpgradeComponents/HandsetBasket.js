@@ -23,6 +23,8 @@ const styles = () => ({
     },
     basketTable: {
         backgroundColor: '#fdfcfe',
+        height: 300,
+        overflow: 'scroll'
     },
      finaliseButton: {
         color: 'white',
@@ -77,8 +79,12 @@ class HandsetBasket extends Component {
                 this.setState({basketItems: data.handset_order_items, basketTotals: data.basket_totals})
 
                 if (this.state.currentStage === 'finaliseHandset') {
+                    // Updates the current selected CSS to match what is in the basket
                     if (this.state.basketItems.cap) {
                         this.props.onCapSelected(this.state.basketItems.cap_name)
+                    }
+                    if (this.state.basketItems.insurance){
+                        this.props.onInsuranceSelected(this.state.basketItems.insurance)
                     }
                 }
             })
@@ -99,7 +105,6 @@ class HandsetBasket extends Component {
          )
     }
 
-
     render() {
 
         const {classes,} = this.props
@@ -108,7 +113,7 @@ class HandsetBasket extends Component {
             <Box>
                 <Typography variant='h6' className={classes.basketTitle}>Basket</Typography>
                 <Divider/>
-                <Box>
+                <Grid>
                     {
                         this.state.basketItems ?
                                  <Box m={1} className={classes.basketTable}>
@@ -172,11 +177,11 @@ class HandsetBasket extends Component {
                                            </TableRow> : null
                                    }
                                    {
-                                       this.state.basketItems.existing_insurance ?
+                                       this.state.basketItems.insurance ?
                                            <TableRow hover={true}>
-                                               <TableCell>{this.state.basketItems.existing_insurance.insurance_name}</TableCell>
+                                               <TableCell>{this.state.basketItems.insurance}</TableCell>
                                                <TableCell align='right'>£0</TableCell>
-                                               <TableCell align='right'>£{this.state.basketItems.existing_insurance.insurance_mrc}</TableCell>
+                                               <TableCell align='right'>£{this.state.basketItems.insurance_mrc}</TableCell>
                                            </TableRow> : null
                                    }
                                    <TableRow hover={true}>
@@ -184,15 +189,15 @@ class HandsetBasket extends Component {
                                        <TableCell className={classes.bold} align='right'>£{this.state.basketTotals.upfront}</TableCell>
                                        <TableCell className={classes.bold} align='right'>£{this.state.basketTotals.mrc}</TableCell>
                                    </TableRow>
-
                                </TableBody>
                            </Table>
-                       </Box> : <CircularProgress className={classes.progressLoader}/>
+                       </Box>
+                            : <CircularProgress className={classes.progressLoader}/>
                    }
                    <br/>
                    { this.state.basketItems ?
                        <Box m={1}>
-                           <Grid container>
+                           <Grid container >
                                  {
                                    this.state.submittingOrder ?
                                        <box>
@@ -236,7 +241,7 @@ class HandsetBasket extends Component {
                            </Grid>
                        </Box> : null
                     }
-                </Box>
+                </Grid>
             </Box>
         )
 

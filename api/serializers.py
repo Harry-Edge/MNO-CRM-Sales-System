@@ -81,7 +81,6 @@ class HandsetTariffsSerializer(serializers.ModelSerializer):
         extra_kwargs = {'ctn': {'read_only': False}}
 
 
-
 class HandsetOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = HandsetOrder
@@ -89,6 +88,15 @@ class HandsetOrderSerializer(serializers.ModelSerializer):
         fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'early_upgrade_fee',
                   'handset', 'handset_tariff', 'cap', 'insurance', 'upfront', 'handset_credit', 'friends_and_family',
                     'one_hundred_day_promo')
+
+
+class HandsetInsuranceSerializer(serializers.ModelSerializer):
+    ctn = serializers.CharField()
+
+    class Meta:
+        model = Insurance
+        fields = ('id', 'insurance_name', 'mrc', 'excess_fee', 'ctn')
+        extra_kwargs = {'id': {'read_only': False}}
 
 
 class GenericSerializer(serializers.Serializer):

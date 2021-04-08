@@ -9,7 +9,7 @@ import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = () => ({
-    spendCapList: {
+    insuranceList: {
         height: 160,
         width: '95%',
         overflow: 'scroll',
@@ -29,15 +29,23 @@ const styles = () => ({
 });
 
 
-class SpendCaps extends Component {
+class HandsetInsurance extends Component {
 
-    state = {spendCaps: null}
+    state = {insuranceOptions: null}
 
     componentDidMount() {
-        fetch("http://127.0.0.1:8000/api/get-spend-caps")
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.props.orderCtn, string: 'empty'})
+         }
+
+        fetch("http://127.0.0.1:8000/api/get-handset-insurance", requestOptions)
              .then((response) => response.json())
              .then((data) => {
-                 this.setState({spendCaps: data})
+                 console.log(data)
+                 this.setState({insuranceOptions: data})
              }
          )
     }
@@ -49,18 +57,23 @@ class SpendCaps extends Component {
         return (
             <div>
                 {
-                    this.state.spendCaps?
-                          <Box className={classes.spendCapList}>
+                    this.state.insuranceOptions?
+                          <Box className={classes.insuranceList}>
                             <List>
-                                {this.state.spendCaps.map((spendCap, index) => {
+                                {this.state.insuranceOptions.map((insurance, index) => {
                                         return(
                                             <ListItem key={index}
                                                       button
-                                                      style={{height: 40}}
-                                                      onClick={() => this.props.onSpendCapSelected(spendCap.id)}
-                                                      className={this.props.capSelected === spendCap.cap_name ? classes.currentlySelected : null}>
-                                                <ListItemText  classes={{primary:classes.listItem}} primary={spendCap.cap_name}/>
-                                                <ListItemIcon >
+                                                      style={{height: 45}}
+                                                      onClick={() => this.props.onInsuranceSelected(insurance.id)}
+                                                      className={this.props.insuranceSelected
+                                                      === insurance.insurance_name ? classes.currentlySelected : null}>
+                                                <ListItemText  classes={{primary:classes.listItem}}
+                                                               primary={insurance.insurance_name}
+                                                               secondary={ insurance.excess_fee ?
+                                                                   '£' + insurance.excess_fee + ' Excess': null}
+                                                />
+                                                <ListItemIcon>
                                                     <AddCircleOutlineIcon/>
                                                 </ListItemIcon>
                                             </ListItem>
@@ -75,5 +88,4 @@ class SpendCaps extends Component {
         )
     }
 }
-
-export default withStyles(styles)(SpendCaps)
+export default withStyles(styles)(HandsetInsurance)

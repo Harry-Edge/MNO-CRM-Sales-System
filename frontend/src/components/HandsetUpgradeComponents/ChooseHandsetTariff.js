@@ -172,6 +172,7 @@ class ChooseHandsetTariff extends Component {
                                                                      this.state.handsetCredits.map((handsetCredit, index) => {
                                                                          return (
                                                                              <ListItem key={index} button disabled={!this.state.tariffSelected}
+                                                                                       style={{height: 40}}
                                                                                 onClick={() => this.handleAddHandsetCreditToOrder(handsetCredit.value)}>
                                                                                 <ListItemText classes={{primary:classes.listItem}} primary={handsetCredit.handsetCreditName}/>
                                                                                 <ListItemIcon >

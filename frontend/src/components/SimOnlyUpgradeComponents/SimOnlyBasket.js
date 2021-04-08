@@ -17,6 +17,8 @@ const styles = (theme) => ({
     },
     basketTable: {
         backgroundColor: '#fdfcfe',
+        height: 270,
+        overflow: 'scroll'
     },
      finaliseButton: {
         color: 'white',
