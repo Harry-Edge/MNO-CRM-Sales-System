@@ -244,7 +244,7 @@ class HandsetOrder(models.Model):
     cap = models.ForeignKey(SpendCaps, on_delete=models.SET_NULL, null=True)
     insurance = models.ForeignKey(Insurance, on_delete=models.SET_NULL, null=True)
     upfront = models.FloatField(default=float(0), null=True)
-    #handset_imei = models.CharField(null=True, max_length=15)
+    handset_imei = models.CharField(null=True, max_length=15)
     friends_and_family = models.BooleanField(default=False, null=True)
     handset_credit = models.IntegerField(default=0, null=True)
     one_hundred_day_promo = models.BooleanField(default=False, null=True)
@@ -256,3 +256,20 @@ class HandsetOrder(models.Model):
 
     class Meta:
         verbose_name_plural = "Handset Orders"
+
+
+class HandsetStock(models.Model):
+
+    handset = models.ForeignKey(Handsets, on_delete=models.SET_NULL, null=True)
+    imei = models.CharField(max_length=15, null=True)
+
+    def __str__(self):
+
+        return f"{self.handset} {self.imei}"
+
+    class Meta:
+        verbose_name_plural = "Handset Stock"
+
+
+
+

@@ -49,3 +49,7 @@ class SimOnlyOrder(admin.ModelAdmin):
 @admin.register(HandsetOrder)
 class HandsetOrder(admin.ModelAdmin):
     list_display = ('id', 'customer', 'ctn', 'plan_type', 'handset', 'handset_tariff', 'cap', 'insurance')
+
+@admin.register(HandsetStock)
+class HandsetStock(admin.ModelAdmin):
+    list_filter = ('handset', 'imei')

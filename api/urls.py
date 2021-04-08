@@ -29,6 +29,7 @@ urlpatterns = [
     path('add-spend-cap-to-handset-order', AddSpendCapToHandsetOrder.as_view()),
     path('get-handset-insurance', GetHandsetInsurance.as_view()),
     path('add-insurance-to-handset-order', AddInsuranceToHandsetOrder.as_view()),
+    path('validate-handset-imei', ValidateHandsetImei.as_view()),
 
     # Validations
     path('check-ctn-exists', CheckCTNExists.as_view()),

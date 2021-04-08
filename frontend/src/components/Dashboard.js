@@ -424,7 +424,9 @@ class Dashboard extends Component{
               }
               {
                 this.state.additionalSim ?
-                    <AdditionalSim/> : null
+                    <AdditionalSim fixedHeightPaper={fixedHeightPaper} state={this.state}
+                                    onNewCTNClicked={this.handleNewCTN}
+                                    onReturnToDashboard={this.handleReturnToDashboard}/> : null
               }
               {
                 this.state.additionalHandset ?

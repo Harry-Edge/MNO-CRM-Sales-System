@@ -10,7 +10,7 @@ import HandsetBasket from "./HandsetBasket";
 import OrderValidations from "../GlobalComponents/OrderValidations";
 import SpendCaps from "../GlobalComponents/SpendCaps";
 import HandsetInsurance from "../GlobalComponents/HandsetInsurance";
-
+import StockControl from "../GlobalComponents/StockControl";
 
 const styles = (theme) => ({
     header: {
@@ -36,7 +36,9 @@ class FinaliseHandset extends Component {
     state = {renderBasket: true,
              ctn: this.props.state.mobileAccount.number,
              capSelected: null,
-             insuranceSelected: null}
+             insuranceSelected: null,
+             orderReadyForValidation: false,
+             orderReadyForSubmission: false}
 
     handleCapSelected = (capName) => {
         this.setState({capSelected: capName})
@@ -75,6 +77,12 @@ class FinaliseHandset extends Component {
                     this.setState({renderBasket: true})
                 }))
     }
+    handleMakeOrderReadyForValidation = () => {
+        this.setState({orderReadyForValidation: true})
+    }
+    handleMakeOrderReadyForSubmission = () => {
+        this.setState({orderReadyForSubmission: true})
+    }
 
     render() {
 
@@ -89,7 +97,7 @@ class FinaliseHandset extends Component {
                                <Typography variant='h6' className={classes.header}>Add Ons</Typography>
                                <Divider/>
                                <Box m={1}>
-                                   <Grid container spacing={1}>
+                                   <Grid container spacing={2}>
                                          <Grid item xs={6} >
                                             <Paper>
                                             <Box m={1}>
@@ -123,10 +131,17 @@ class FinaliseHandset extends Component {
                    </Grid>
                    <Grid item xs={12} md={8} lg={8}>
                        <Paper className={classes.paper}>
-                            <Typography variant='h6' className={classes.header}>Order Validations</Typography>
+                            <Typography variant='h6' className={classes.header}>Order Validations & Stock Control</Typography>
                             <Divider/>
                             <Box m={1}>
-                                <OrderValidations state={state}/>
+                                <br/>
+                                <StockControl orderCTN={this.state.ctn}/>
+                                <br/>
+                                <br/>
+                                <OrderValidations
+                                    orderReadyForValidation={this.state.orderReadyForValidation}
+                                    onReadyForSubmission={this.handleMakeOrderReadyForSubmission}
+                                    state={state}/>
                             </Box>
                        </Paper>
                    </Grid>
@@ -139,6 +154,8 @@ class FinaliseHandset extends Component {
                                    onInsuranceSelected={this.handleInsuranceSelected}
                                    currentStage={this.props.currentStage}
                                    onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
+                                   onReadyForValidation={this.handleMakeOrderReadyForValidation}
+
                                    handsetChosen={this.state.handsetChosen}
                                    ctn={this.props.state.mobileAccount.number}/> : null
                            }

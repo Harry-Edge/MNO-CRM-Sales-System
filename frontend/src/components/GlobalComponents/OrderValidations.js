@@ -131,8 +131,6 @@ class OrderValidations extends Component {
         if (this.state.oneTimePin === this.state.oneTimePinInputted){
             this.setState({oneTimePinError: ""})
             this.props.onReadyForSubmission()
-
-
         }else{
             this.setState({oneTimePinError: "Invalid Pin"})
         }

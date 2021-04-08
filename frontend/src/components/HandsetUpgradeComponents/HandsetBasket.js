@@ -86,6 +86,10 @@ class HandsetBasket extends Component {
                     if (this.state.basketItems.insurance){
                         this.props.onInsuranceSelected(this.state.basketItems.insurance)
                     }
+                    // Make the order ready for validation of a spend cap and insurance has been selected
+                    if (this.state.basketItems.cap && this.state.basketItems.insurance){
+                        this.props.onReadyForValidation()
+                    }
                 }
             })
     }

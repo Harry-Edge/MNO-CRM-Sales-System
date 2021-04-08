@@ -746,3 +746,20 @@ class SubmitSimOnlyOrder(APIView):
             return Response('Order Submitted', status=status.HTTP_200_OK)
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
+class ValidateHandsetImei(APIView):
+
+    permission_classes = (IsAuthenticated, )
+    serializer_class = HandsetStockSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            print(serializer.data.get('imei'))
+            print(serializer.data.get('ctn'))
+            return Response('Valid IMEI', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+

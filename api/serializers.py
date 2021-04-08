@@ -99,6 +99,14 @@ class HandsetInsuranceSerializer(serializers.ModelSerializer):
         extra_kwargs = {'id': {'read_only': False}}
 
 
+class HandsetStockSerializer(serializers.ModelSerializer):
+    ctn = serializers.CharField()
+
+    class Meta:
+        model = HandsetStock
+        fields = ('imei', 'ctn')
+
+
 class GenericSerializer(serializers.Serializer):
     string = serializers.CharField()
     id = serializers.CharField
