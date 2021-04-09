@@ -335,6 +335,26 @@ class AddSpendCapToSimOnlyOrder(APIView):
             return Response("Error When adding Spend Cap", status=status.HTTP_400_BAD_REQUEST)
 
 
+class SubmitSimOnlyOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+            """
+            Currently, this will just delete the order that has been made rather than actually 
+            submitting it and changing the details in the database
+            """
+            time.sleep(5)
+            order_object = SimOnlyOrder.objects.get(ctn=serializer.data.get('number'))
+            order_object.delete()
+
+            return Response('Order Submitted', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 """
 Handset Order
 """
@@ -669,6 +689,25 @@ class CheckCTNExists(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
+class SubmitHandsetOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = MobileNumberSerializer(data=request.data)
+
+        if serializer.is_valid():
+            """
+            Currently, this will just delete the order that has been made rather than actually 
+            submitting it and changing the details in the database
+            """
+            time.sleep(5)
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('number'))
+            handset_order_object.delete()
+
+            return Response('Order Submitted', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
 
 """
 Order Validations
@@ -728,26 +767,6 @@ class SendOneTimePin(APIView):
             return Response('Error When Sending OTP', status=status.HTTP_400_BAD_REQUEST)
 
 
-class SubmitSimOnlyOrder(APIView):
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        serializer = MobileNumberSerializer(data=request.data)
-
-        if serializer.is_valid():
-            """
-            Currently, this will just delete the order that has been made rather than actually 
-            submitting it and changing the details in the database
-            """
-            time.sleep(5)
-            order_object = SimOnlyOrder.objects.get(ctn=serializer.data.get('number'))
-            order_object.delete()
-
-            return Response('Order Submitted', status=status.HTTP_200_OK)
-        else:
-            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
-
-
 class ValidateHandsetImei(APIView):
 
     permission_classes = (IsAuthenticated, )
@@ -757,9 +776,21 @@ class ValidateHandsetImei(APIView):
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
-            print(serializer.data.get('imei'))
-            print(serializer.data.get('ctn'))
-            return Response('Valid IMEI', status=status.HTTP_200_OK)
+
+            handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            inputted_imei = serializer.data.get('imei')
+
+            HandsetStock.objects.filter(imei=inputted_imei)
+
+            if HandsetStock.objects.filter(imei=inputted_imei).exists():
+                if HandsetStock.objects.get(imei=inputted_imei).handset == handset_order_object.handset:
+                    handset_order_object.handset_imei = inputted_imei
+                    handset_order_object.save()
+                    return Response('Added Handset Stock to Order', status=status.HTTP_200_OK)
+                else:
+                    return Response('Handset IMEI does not match order handset', status=status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                return Response('Invalid IMEI', status=status.HTTP_406_NOT_ACCEPTABLE)
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 

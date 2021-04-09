@@ -155,8 +155,9 @@ class FinaliseHandset extends Component {
                                    currentStage={this.props.currentStage}
                                    onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
                                    onReadyForValidation={this.handleMakeOrderReadyForValidation}
-
+                                   readyForSubmission={this.state.orderReadyForSubmission}
                                    handsetChosen={this.state.handsetChosen}
+                                   onReturnToDashboard={this.props.onReturnToDashboard}
                                    ctn={this.props.state.mobileAccount.number}/> : null
                            }
                        </Paper>

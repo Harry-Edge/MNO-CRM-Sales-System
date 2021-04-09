@@ -261,7 +261,9 @@ class HandsetOrder(models.Model):
 class HandsetStock(models.Model):
 
     handset = models.ForeignKey(Handsets, on_delete=models.SET_NULL, null=True)
-    imei = models.CharField(max_length=15, null=True)
+    imei = models.CharField(max_length=15, null=True, unique=True)
+    sold = models.BooleanField(default=False, null=True)
+    sold_ctn = models.ForeignKey(MobileNumber, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
 

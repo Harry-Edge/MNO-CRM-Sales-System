@@ -109,6 +109,29 @@ class HandsetBasket extends Component {
          )
     }
 
+    handleSubmitOrder = () => {
+       this.setState({submittingOrder: true})
+
+       const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({number: this.state.basketItems.ctn})
+        }
+
+        fetch('http://127.0.0.1:8000/api/submit-handset-order', requestOptions)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                this.props.onReturnToDashboard()
+        })
+    }
+    countUp = () => {
+        this.setState({timer: this.state.timer += 1})
+    }
+    startTimer = () => {
+        setInterval((this.countUp),1000)
+    }
+
     render() {
 
         const {classes,} = this.props
@@ -238,7 +261,14 @@ class HandsetBasket extends Component {
                                {
                                    this.state.currentStage === "finaliseHandset" ?
                                    <Grid item xs={6} className={classes.basketButtons}>
-                                           <Button className={classes.finaliseButton} size='small' variant='contained'
+                                           <Button className={classes.finaliseButton}
+                                                   size='small'
+                                                   variant='contained'
+                                                   onClick={() => {
+                                                       this.startTimer()
+                                                       this.handleSubmitOrder()
+                                                   }}
+                                                   disabled={!this.props.readyForSubmission}
                                            >Submit</Button>
                                    </Grid>: null
                                }

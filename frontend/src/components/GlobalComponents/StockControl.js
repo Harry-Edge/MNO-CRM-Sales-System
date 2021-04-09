@@ -45,10 +45,12 @@ class StockControl extends Component {
     }
 
     handleValidateImei = () => {
+
+        console.log(this.props.orderCTN)
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-            body: JSON.stringify({imei: this.state.imeiInput, ctn: this.props.orderCtn})
+            body: JSON.stringify({imei: this.state.imeiInput, ctn: this.props.orderCTN})
          }
 
         fetch('http://127.0.0.1:8000/api/validate-handset-imei', requestOptions)

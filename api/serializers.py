@@ -104,7 +104,7 @@ class HandsetStockSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = HandsetStock
-        fields = ('imei', 'ctn')
+        fields = ('id', 'imei', 'handset', 'ctn')
 
 
 class GenericSerializer(serializers.Serializer):

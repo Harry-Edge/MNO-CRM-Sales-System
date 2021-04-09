@@ -38,5 +38,6 @@ urlpatterns = [
     path('send-one-time-pin', SendOneTimePin.as_view()),
 
     # Submit Order
-    path('submit-sim-only-order', SubmitSimOnlyOrder.as_view())
+    path('submit-sim-only-order', SubmitSimOnlyOrder.as_view()),
+    path('submit-handset-order', SubmitHandsetOrder.as_view())
 ]

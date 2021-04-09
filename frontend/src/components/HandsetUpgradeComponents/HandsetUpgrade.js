@@ -54,6 +54,7 @@ class HandsetUpgrade extends Component {
                        <FinaliseHandset fixedHeightPaper={fixedHeightPaper}
                                         onHandsetOrderDeleted={this.handleDeleteHandsetOrder}
                                         currentStage={this.state.currentStage}
+                                        onReturnToDashboard={this.props.onReturnToDashboard}
                                         onNewCTNClicked={onNewCTNClicked} state={state}/> : null
                }
            </div>

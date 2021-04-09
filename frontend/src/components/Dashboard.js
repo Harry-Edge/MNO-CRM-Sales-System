@@ -420,7 +420,8 @@ class Dashboard extends Component{
               {
                 this.state.handsetUpgrade ?
                     <HandsetUpgrade fixedHeightPaper={fixedHeightPaper} state={this.state}
-                                    onNewCTNClicked={this.handleNewCTN}/> : null
+                                    onNewCTNClicked={this.handleNewCTN}
+                                    onReturnToDashboard={this.handleReturnToDashboard}/> : null
               }
               {
                 this.state.additionalSim ?

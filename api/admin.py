@@ -52,4 +52,4 @@ class HandsetOrder(admin.ModelAdmin):
 
 @admin.register(HandsetStock)
 class HandsetStock(admin.ModelAdmin):
-    list_filter = ('handset', 'imei')
+    list_filter = ('handset', 'imei', 'sold', 'sold_ctn')

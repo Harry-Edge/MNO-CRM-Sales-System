@@ -10,10 +10,6 @@ App is currently still a work in progress project with numerous bugs and feature
 
 Build with Django REST Framework, React, Material-UI .
 
-## Dashboard
-![](/sampleimages/Dashboard.jpeg?raw=true "Dashboard")
-
-
 ## Features
 	- Customer can have multiple mobile numbers on one account
     - Detailed customer view of usage and current products
@@ -28,3 +24,5 @@ Build with Django REST Framework, React, Material-UI .
 	- Shows income/profitability for tariffs
     - Colour changing information depending on mobile account data for readability
     
+## Dashboard
+![](/sampleimages/Dashboard.jpeg?raw=true "Dashboard")
