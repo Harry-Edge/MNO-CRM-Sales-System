@@ -794,3 +794,25 @@ class ValidateHandsetImei(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
+
+class UpdateCustomerDetails(APIView):
+
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = CustomerSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            customer_object = Customer.objects.get(id=serializer.data.get('id'))
+            customer_object.first_name = serializer.data.get('first_name')
+            customer_object.last_name = serializer.data.get('last_name')
+            customer_object.first_line_address = serializer.data.get('first_line_address')
+            customer_object.postcode = serializer.data.get('postcode')
+            customer_object.email = serializer.data.get('email')
+            customer_object.save()
+
+            return Response('Update Details', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status.HTTP_400_BAD_REQUEST)

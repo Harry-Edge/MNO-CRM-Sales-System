@@ -39,5 +39,8 @@ urlpatterns = [
 
     # Submit Order
     path('submit-sim-only-order', SubmitSimOnlyOrder.as_view()),
-    path('submit-handset-order', SubmitHandsetOrder.as_view())
+    path('submit-handset-order', SubmitHandsetOrder.as_view()),
+
+    # Misc
+    path('update-customer-details', UpdateCustomerDetails.as_view())
 ]

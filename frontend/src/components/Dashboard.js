@@ -435,7 +435,7 @@ class Dashboard extends Component{
               }
               {
                 this.state.customerProfile ?
-                    <CustomerProfile/> : null
+                    <CustomerProfile customer={this.state.customer}/> : null
               }
             </Container>
           </main>
@@ -444,5 +444,4 @@ class Dashboard extends Component{
       );
   }
 }
-
 export default withStyles(styles)(Dashboard)
