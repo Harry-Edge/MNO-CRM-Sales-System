@@ -30,11 +30,20 @@ const styles = (theme) => ({
 
 class SimOnlyRecommendations extends Component {
 
-    state = {recommendedTariff: null}
+    addRecommendedSimToBasket = (tariffCode) => {
+        console.log(tariffCode)
+           const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({tariff_code: tariffCode, ctn: this.props.ctn})
+         }
 
-    componentDidMount() {
-        console.log(this.props.recommendedTariffs)
-        console.log("here")
+        fetch('http://127.0.0.1:8000/api/create-sim-only-order', requestOptions)
+            .then((response) => response.json()
+                .then((data) => {
+                    console.log(data)
+                    this.props.onSelectedRecommendation()
+                }))
     }
 
     render() {
@@ -74,6 +83,7 @@ class SimOnlyRecommendations extends Component {
                                                            fullWidth={true}
                                                            size='small'
                                                            variant='contained'
+                                                           onClick={() => this.addRecommendedSimToBasket(tariff.id)}
                                                            color="primary">Select</Button>
                                                     <div>
                                                         <br/>

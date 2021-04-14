@@ -31,7 +31,7 @@ const styles = (theme) => ({
     textWarning: {
         color: '#e6ac00'
     },
-     headingText: {
+    headingText: {
         fontWeight: 650
     },
     tableHeader: {

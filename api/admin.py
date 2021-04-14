@@ -39,16 +39,18 @@ class SpendCapAdmin(admin.ModelAdmin):
 
 @admin.register(SimOnlyTariffs)
 class SimOnlyTariffsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'plan_type', 'data_allowance', 'mrc', 'contract_length')
+    list_display = ('id', 'tariff_code', 'plan_type', 'data_allowance', 'mrc', 'contract_length')
 
 
 @admin.register(SimOnlyOrder)
 class SimOnlyOrder(admin.ModelAdmin):
     list_display = ('id', 'customer', 'ctn', 'plan_type', 'contract_length', 'tariff', 'cap', 'order_created_by')
 
+
 @admin.register(HandsetOrder)
 class HandsetOrder(admin.ModelAdmin):
     list_display = ('id', 'customer', 'ctn', 'plan_type', 'handset', 'handset_tariff', 'cap', 'insurance')
+
 
 @admin.register(HandsetStock)
 class HandsetStock(admin.ModelAdmin):

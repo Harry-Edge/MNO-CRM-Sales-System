@@ -405,7 +405,10 @@ class Dashboard extends Component{
                           this.state.simOnlyRecommendations ?
                               <Grid item xs={12}>
                                 <Paper className={classes.paper}>
-                                  <SimOnlyRecommendations recommendedTariffs={this.state.simOnlyRecommendations}/>
+                                  <SimOnlyRecommendations
+                                                        onSelectedRecommendation={this.handleSimOnlyUpgradeClicked}
+                                                        ctn={this.state.mobileAccount.number}
+                                                        recommendedTariffs={this.state.simOnlyRecommendations}/>
                                 </Paper>
                               </Grid>: null
                       }

@@ -12,8 +12,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 import {withStyles} from "@material-ui/core/styles";
 
-
-const styles = (theme) => ({
+const styles = () => ({
     tableHeader: {
         fontWeight: 650
     },
@@ -32,7 +31,6 @@ const styles = (theme) => ({
          },
     },
 })
-
 
 class ChooseHandsetsTable extends Component {
 

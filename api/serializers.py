@@ -59,7 +59,8 @@ class SimOnlyTariffsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SimOnlyTariffs
-        fields = ('tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type', 'ctn')
+        fields = ('id', 'tariff_code', 'contract_length', 'mrc', 'upfront', 'data_allowance', 'plan_type', 'ctn')
+
 
 
 class SimOnlyOrderSerializer(serializers.ModelSerializer):
@@ -67,6 +68,7 @@ class SimOnlyOrderSerializer(serializers.ModelSerializer):
         model = SimOnlyOrder
         fields = ('id', 'customer', 'ctn', 'plan_type', 'contract_type', 'contract_length', 'tariff', 'cap',
                   'existing_insurance')
+
 
 class HandsetsSerializer(serializers.ModelSerializer):
     class Meta:
