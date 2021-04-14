@@ -722,7 +722,7 @@ class ValidatePostcode(APIView):
             inputted_postcode = serializer.data.get('string')
             mobile_account = MobileNumber.objects.get(number=serializer.data.get('ctn'))
 
-            if mobile_account.customer.postcode[-3:] == inputted_postcode.upper():
+            if mobile_account.customer.postcode[-3:].upper() == inputted_postcode.upper():
                 return Response('Postcode Validated', status=status.HTTP_200_OK)
             else:
                 return Response('Incorrect Postcode', status=status.HTTP_406_NOT_ACCEPTABLE)
