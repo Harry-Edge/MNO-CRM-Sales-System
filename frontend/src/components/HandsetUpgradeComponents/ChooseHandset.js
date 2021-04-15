@@ -109,6 +109,7 @@ class ChooseHandset extends Component {
     }
 
     handleColourSelected(event, model){
+        console.log(model)
 
         this.setState({selectedColour: event.target.value, modelSelected: model})
     }

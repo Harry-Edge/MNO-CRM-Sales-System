@@ -59,10 +59,10 @@ class GetCustomer(APIView):
                 for line in customer_object.mobilenumber_set.all().values():
                     other_lines.append(line)
                 for count, line in enumerate(customer_object.mobilenumber_set.all()):
-                    date_cal = date_calculations.DateTimeCalculations(line)
+                    recommended_date_cal = date_calculations.DateTimeCalculations(line)
                     current_other_line_dic = other_lines[count]
-                    current_other_line_dic['upgrade_date'] = date_cal.calculate_upgrade_date()
-                    current_other_line_dic['days_remaining'] = date_cal.calculate_days_remaining()
+                    current_other_line_dic['upgrade_date'] = recommended_date_cal.calculate_upgrade_date()
+                    current_other_line_dic['days_remaining'] = recommended_date_cal.calculate_days_remaining()
 
                 return other_lines
 
@@ -76,12 +76,19 @@ class GetCustomer(APIView):
 
             handset_recommendations_list = []
             for count, tariff in enumerate(handset_tariffs_recommended):
-                handset_recommended_dict = {}
-                handset_recommended_dict['id'] = tariff.id
-                handset_recommended_dict['handset'] = handsets[count].model
-                handset_recommended_dict['data'] = tariff.data_allowance
-                handset_recommended_dict['mrc'] = tariff.mrc
-                handset_recommended_dict['upfront'] = recommendations.get_upfront(tariff.mrc, handsets[count].model, tariff.data_allowance)
+                def get_colour_options():
+                    all_colours_available = []
+                    filter = Handsets.objects.filter(model=handsets[count].model)
+                    for handset_model in filter:
+                        dic = {handset_model.colour: {"id": handset_model.id, 'stock': 3}}
+                        all_colours_available.append(dic)
+                    return all_colours_available
+
+                handset_recommended_dict = {'id': tariff.id, 'handset': handsets[count].model,
+                                            'data': tariff.data_allowance, 'mrc': tariff.mrc,
+                                            'colours_available': get_colour_options(),
+                                            'upfront': recommendations.get_upfront(tariff.mrc, handsets[count].model,
+                                                                                  tariff.data_allowance)}
                 handset_recommendations_list.append(handset_recommended_dict)
 
             # Serializes Data
@@ -376,8 +383,7 @@ class GetHandsets(APIView):
             all_colours_available = []
             filter = Handsets.objects.filter(model=handset['model'])
             for handset_model in filter:
-                dic = {}
-                dic[handset_model.colour] = {"id": handset_model.id, 'stock': 3}
+                dic = {handset_model.colour: {"id": handset_model.id, 'stock': 3}}
                 all_colours_available.append(dic)
             handset['colours'] = all_colours_available
 

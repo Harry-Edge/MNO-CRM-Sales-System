@@ -241,6 +241,9 @@ class Dashboard extends Component{
 
   }
 
+  // The below needs massively sorting
+  // and improving
+
   handleDrawerOpen = () => {
     this.setState({leftPanelOpen: true})
   };
@@ -397,7 +400,10 @@ class Dashboard extends Component{
                             {
                                 this.state.loadingNewCTN?
                                     <CircularProgress className={classes.progressLoader}/>
-                                    : <HandsetRecommendations recommendedTariffs={this.state.handsetRecommendations}/>
+                                    : <HandsetRecommendations
+                                                            ctn={this.state.mobileAccount.number}
+                                                            onSelectedRecommended={this.handleHandsetUpgradeClicked}
+                                                            recommendedTariffs={this.state.handsetRecommendations}/>
                             }
                         </Paper>
                       </Grid>

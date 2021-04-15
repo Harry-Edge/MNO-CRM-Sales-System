@@ -13,7 +13,7 @@ const styles = (theme) => ({
         color: 'grey'
     },
     text: {
-        paddingTop: 12
+        paddingTop: 7
     },
     button: {
     textTransform: 'none',
