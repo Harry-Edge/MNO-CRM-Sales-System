@@ -54,7 +54,19 @@ const styles = (theme) => ({
     },
     handsetsBox: {
         height: '100%',
-    }
+    },
+    textSuccess: {
+        color: 'green',
+        fontWeight: 650
+    },
+    textDanger: {
+        color: 'red',
+        fontWeight: 650
+    },
+    textWarning: {
+        color: '#e6ac00',
+        fontWeight: 650
+    },
 });
 
 class ChooseHandset extends Component {
@@ -129,6 +141,16 @@ class ChooseHandset extends Component {
     }
     handleDeleteHandsetOrder = () => {
         this.setState({handsetChosen: false})
+    }
+
+    handleStockColour = (stock) => {
+        if (stock >= 2) {
+            return this.props.classes.textSuccess
+        }else if (stock >= 1) {
+            return this.props.classes.textWarning
+        }else{
+            return this.props.classes.textDanger
+        }
     }
 
     render() {
@@ -213,7 +235,7 @@ class ChooseHandset extends Component {
                                                                        <TableCell>{handset.model}</TableCell>
                                                                        <TableCell>{handset.storage}GB</TableCell>
                                                                        <TableCell>{handset.speed_type}</TableCell>
-                                                                       <TableCell>1</TableCell>
+                                                                       <TableCell className={this.handleStockColour(handset.total_stock)}>{handset.total_stock}</TableCell>
                                                                        <TableCell>
                                                                            <FormControl>
                                                                                <Select displayEmpty
@@ -225,7 +247,7 @@ class ChooseHandset extends Component {
                                                                                {
                                                                                    handset.colours.map((colour, index) => {
                                                                                        return(
-                                                                                           <MenuItem key={index} onClick={() =>
+                                                                                           <MenuItem className={this.handleStockColour(Object.values(colour)[0].stock)} key={index} onClick={() =>
                                                                                                this.setState({modelSelectedId: Object.values(colour)[0].id})}
                                                                                                      value={Object.keys(colour)[0]}>{Object.keys(colour)[0]} ({Object.values(colour)[0].stock})</MenuItem>
                                                                                        )

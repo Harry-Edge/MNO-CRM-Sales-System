@@ -80,7 +80,8 @@ class GetCustomer(APIView):
                     all_colours_available = []
                     filter = Handsets.objects.filter(model=handsets[count].model)
                     for handset_model in filter:
-                        dic = {handset_model.colour: {"id": handset_model.id, 'stock': 3}}
+                        stock = HandsetStock.objects.filter(handset=handset_model).count()
+                        dic = {handset_model.colour: {"id": handset_model.id, 'stock': stock}}
                         all_colours_available.append(dic)
                     return all_colours_available
 
@@ -378,15 +379,25 @@ class GetHandsets(APIView):
             if handset.model not in check_repeating_models_list:
                 check_repeating_models_list.append(handset.model)
                 new_handset_list.append(self.serializer_class(handset).data)
+                # Gets total stock
+
+                def get_total_stock():
+                    stock_list = []
+                    for hand in HandsetStock.objects.all():
+                        if hand.handset.model == handset.model:
+                            stock_list.append(hand.handset.model)
+                    return len(stock_list)
+                new_handset_list[-1]['total_stock'] = get_total_stock()
 
         for handset in new_handset_list:
             all_colours_available = []
             filter = Handsets.objects.filter(model=handset['model'])
             for handset_model in filter:
-                dic = {handset_model.colour: {"id": handset_model.id, 'stock': 3}}
+                stock = HandsetStock.objects.filter(handset=handset_model).count()
+                dic = {handset_model.colour: {"id": handset_model.id, 'stock': stock}}
                 all_colours_available.append(dic)
             handset['colours'] = all_colours_available
-
+        print(new_handset_list)
         return new_handset_list
 
     def get(self, request):
