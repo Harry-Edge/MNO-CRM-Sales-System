@@ -41,6 +41,10 @@ const styles = (theme) => ({
           borderColor: '#008080'
          },
     },
+    table: {
+         height: 350,
+        overflow: 'scroll',
+    },
     paper: {
         padding: theme.spacing(2),
         display: 'flex',
@@ -67,6 +71,12 @@ const styles = (theme) => ({
         color: '#e6ac00',
         fontWeight: 650
     },
+    progressLoader: {
+      color:'#009999',
+       position: 'relative',
+      marginTop: '20px',
+      marginLeft: '45%'
+  },
 });
 
 class ChooseHandset extends Component {
@@ -214,7 +224,7 @@ class ChooseHandset extends Component {
                                <Box m={2}>
                                    { this.state.handsets ?
                                        <Box>
-                                           <TableContainer>
+                                           <TableContainer className={classes.table}>
                                                <Table size="small" className={classes.tableColor} >
                                                    <TableHead>
                                                        <TableRow>

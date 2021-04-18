@@ -396,6 +396,17 @@ class Dashboard extends Component{
                       </Grid>
                       {/* Recommendations */}
                       <Grid item xs={12}>
+                          {
+                              this.state.simOnlyRecommendations ?
+                                  <Grid item xs={12}>
+                                    <Paper className={classes.paper}>
+                                      <SimOnlyRecommendations
+                                                            onSelectedRecommendation={this.handleSimOnlyUpgradeClicked}
+                                                            ctn={this.state.mobileAccount.number}
+                                                            recommendedTariffs={this.state.simOnlyRecommendations}/>
+                                    </Paper>
+                                  </Grid>: null
+                          }
                         <Paper className={classes.paper}>
                             {
                                 this.state.loadingNewCTN?
@@ -407,17 +418,6 @@ class Dashboard extends Component{
                             }
                         </Paper>
                       </Grid>
-                      {
-                          this.state.simOnlyRecommendations ?
-                              <Grid item xs={12}>
-                                <Paper className={classes.paper}>
-                                  <SimOnlyRecommendations
-                                                        onSelectedRecommendation={this.handleSimOnlyUpgradeClicked}
-                                                        ctn={this.state.mobileAccount.number}
-                                                        recommendedTariffs={this.state.simOnlyRecommendations}/>
-                                </Paper>
-                              </Grid>: null
-                      }
                     </Grid> : null
               }
               {

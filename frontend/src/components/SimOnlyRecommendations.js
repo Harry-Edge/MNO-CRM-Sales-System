@@ -84,7 +84,7 @@ class SimOnlyRecommendations extends Component {
                                                            size='small'
                                                            variant='contained'
                                                            onClick={() => this.addRecommendedSimToBasket(tariff.id)}
-                                                           color="primary">Select</Button>
+                                                           color="primary">Add To Basket</Button>
                                                     <div>
                                                         <br/>
                                                     </div>

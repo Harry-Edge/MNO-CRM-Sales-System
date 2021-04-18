@@ -135,6 +135,19 @@ class ChooseHandsetTariff extends Component {
                  this.setState({renderBasket: true})
              })
     }
+    handleAddFriendsAndFamily = () => {
+        const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.state.ctn})
+        }
+
+        fetch("http://127.0.0.1:8000/api/add-handset-friends-and-family", requestOptions)
+             .then((response) => response.json())
+             .then((data) => {
+                 console.log(data)
+             })
+    }
     handleCalculateValue = (contractLength, mrc, upfront) => {
             return (parseInt(contractLength, 10) * mrc) + parseInt(upfront, 10)
     }
@@ -191,6 +204,17 @@ class ChooseHandsetTariff extends Component {
                                            <Paper>
                                                <Box m={1}>
                                                    <Typography className={classes.saveToolsText}>Other</Typography>
+                                                   <Box>
+                                                       <List>
+                                                           <ListItem button disabled={!this.state.tariffSelected}
+                                                                    onClick={() => this.handleAddFriendsAndFamily()}>
+                                                               <ListItemText primary='Friend and Family 30%'/>
+                                                               <ListItemIcon>
+                                                                   <AddCircleOutlineIcon/>
+                                                               </ListItemIcon>
+                                                           </ListItem>
+                                                       </List>
+                                                   </Box>
                                                </Box>
                                            </Paper>
                                        </Grid>
@@ -239,8 +263,8 @@ class ChooseHandsetTariff extends Component {
                                                                        <TableCell>{tariff.data_allowance}GB </TableCell>
                                                                        <TableCell>{tariff.contract_length} Months</TableCell>
                                                                        <TableCell className={valueColour}>£{value}</TableCell>
-                                                                       <TableCell>£{tariff.mrc}</TableCell>
-                                                                       <TableCell>£{tariff.upfront}</TableCell>
+                                                                       <TableCell style={{fontWeight: 650}}>£{tariff.mrc}</TableCell>
+                                                                       <TableCell style={{fontWeight: 650}}>£{tariff.upfront}</TableCell>
                                                                        <TableCell align='right'><Button
                                                                            className={classes.tableButton}
                                                                            onClick={() =>

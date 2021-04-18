@@ -132,7 +132,7 @@ class HandsetRecommendations extends Component {
                                                        size='small'
                                                        variant='contained'
                                                        onClick={() => this.addRecommendedHandsetAndTariffToBasket()}
-                                                       color="primary">Select</Button>
+                                                       color="primary">Add To Basket</Button>
                                                 <div>
                                                     <br/>
                                                 </div>

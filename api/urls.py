@@ -27,6 +27,7 @@ urlpatterns = [
     path('add-handset-tariff-to-order', AddHandsetTariffToOrder.as_view()),
     path('add-handset-credit-to-order', AddHandsetCreditToOrder.as_view()),
     path('add-spend-cap-to-handset-order', AddSpendCapToHandsetOrder.as_view()),
+    path('add-handset-friends-and-family', AddFriendsAndFamilyToHandsetOrder.as_view()),
     path('get-handset-insurance', GetHandsetInsurance.as_view()),
     path('add-insurance-to-handset-order', AddInsuranceToHandsetOrder.as_view()),
     path('validate-handset-imei', ValidateHandsetImei.as_view()),

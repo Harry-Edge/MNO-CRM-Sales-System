@@ -2,10 +2,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
-from django.contrib.auth.models import User
 from django.utils import timezone
-from django.forms.models import model_to_dict
-from datetime import datetime
 from .extrafunctions import date_calculations
 from .extrafunctions.basket import GetBasketTotals
 from .extrafunctions import twilio_functions
@@ -17,11 +14,14 @@ import time
 import csv
 
 
+delay_local_host_server_time = 0.25
+
+
 class GetEmployee(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        time.sleep(0.1)
+        time.sleep(delay_local_host_server_time)
 
         user = User.objects.get(id=request.user.id)
         data = EmployeeSerializer(user).data
@@ -41,7 +41,7 @@ class GetCustomer(APIView):
 
         if serializer.is_valid():
             # Simulated a realistic response server time rather than being on local host
-            time.sleep(0.3)
+            time.sleep(delay_local_host_server_time)
 
             try:
                 MobileNumber.objects.get(number=serializer.data.get('number'))
@@ -150,7 +150,7 @@ class GetCustomerNotes(APIView):
 
         if serializer.is_valid():
 
-            time.sleep(0.3)
+            time.sleep(delay_local_host_server_time)
             customer = serializer.data.get('id')
 
             customer_object = Customer.objects.get(id=customer)
@@ -197,7 +197,7 @@ class GetSimOnlyTariffs(APIView):
 
     def get(self, request):
         # Simulated a realistic response server time rather than being on local host
-        time.sleep(0.5)
+        time.sleep(delay_local_host_server_time)
 
         all_sim_only_tariffs = SimOnlyTariffs.objects.all()
         data = all_sim_only_tariffs.values()
@@ -248,7 +248,7 @@ class SimOnlyOrderApi(APIView):
         Returns a Sim-Only order based on the ctn posted
         """
         # Simulated a realistic response server time rather than being on local host
-        time.sleep(0.25)
+        time.sleep(delay_local_host_server_time)
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -401,7 +401,7 @@ class GetHandsets(APIView):
         return new_handset_list
 
     def get(self, request):
-        time.sleep(0.5)
+        time.sleep(delay_local_host_server_time)
 
         data = self.return_non_repeating_handsets(Handsets.objects.all())
 
@@ -605,6 +605,22 @@ class AddInsuranceToHandsetOrder(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
+class AddFriendsAndFamilyToHandsetOrder(APIView):
+
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = GenericSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            ctn = serializer.data.get('ctn')
+            print(ctn)
+            return Response('Added F&F To Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
 class HandsetOrderAPI(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = HandsetOrderSerializer
@@ -613,8 +629,7 @@ class HandsetOrderAPI(APIView):
         """
         Returns a Handset order based on the ctn posted
         """
-        # Simulated a realistic response server time rather than being on local host
-        time.sleep(0.25)
+        time.sleep(delay_local_host_server_time)
         serializer = self.serializer_class(data=request.data)
 
         if serializer.is_valid():
@@ -675,7 +690,7 @@ class GetSpendCaps(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request):
-        time.sleep(0.5)
+        time.sleep(delay_local_host_server_time)
 
         spend_caps = SpendCaps.objects.all()
         data = spend_caps.values()
@@ -707,7 +722,7 @@ class CheckCTNExists(APIView):
 
 
 class SubmitHandsetOrder(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request):
         serializer = MobileNumberSerializer(data=request.data)
@@ -811,7 +826,9 @@ class ValidateHandsetImei(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
-
+"""
+Customer Details 
+"""
 class UpdateCustomerDetails(APIView):
 
     permission_classes = (IsAuthenticated, )
