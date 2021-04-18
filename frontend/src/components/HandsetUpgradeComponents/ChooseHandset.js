@@ -201,7 +201,8 @@ class ChooseHandset extends Component {
                        <Paper className={fixedHeightPaper}>
                            <HouseholdView customer={state.customer}
                                           onNewCTNClicked={onNewCTNClicked}
-                                          otherLines={state.otherLines}/>
+                                          otherLines={state.otherLines}
+                                          currentCTN={state.mobileAccount.number}/>
                        </Paper>
                    </Grid>
                     <Grid item className={classes.paper} style={{height: 465}} xs={12} md={8} lg={8}>
