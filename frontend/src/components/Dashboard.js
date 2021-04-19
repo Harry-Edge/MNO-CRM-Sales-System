@@ -156,15 +156,8 @@ class Dashboard extends Component{
            simOnlyRecommendations: null,
            handsetRecommendations: null,
            leftPanelOpen: false,
-           dashboard: false,
-           simOnlyUpgrade: false,
-           handsetUpgrade: false,
-           additionalSim: false,
-           additionalHandset: false,
-           customerProfile: false,
-           loadingNewCTN: false
-            }
-            //Currently selected rather than so many variables
+           currentPage: '',
+           loadingNewCTN: false}
 
    constructor(props) {
        super(props);
@@ -201,12 +194,13 @@ class Dashboard extends Component{
                                                       simOnlyRecommendations: data.sim_only_recommendations,
                                                       handsetRecommendations: data.handset_recommendations})
                                 this.handleReturnToDashboard()
-                                console.log(this.state)
+                                console.log(data.mobile_account)
+
                                 this.setState({loadingNewCTN: false})})
 
   }}
 
-    handleNewCTN(ctn) {
+  handleNewCTN(ctn) {
     this.setState({loadingNewCTN: true})
 
     const requestOptions = {
@@ -241,36 +235,30 @@ class Dashboard extends Component{
 
   }
 
-  // The below needs massively sorting
-  // and improving
-
+  // Navigation Functions
   handleDrawerOpen = () => {
     this.setState({leftPanelOpen: true})
   };
   handleDrawerClose = () => {
     this.setState({leftPanelOpen: false})
   };
+  handleReturnToDashboard = () => {
+    this.setState({currentPage: 'dashboard'})
+  };
   handleSimOnlyUpgradeClicked = () => {
-    this.setState({simOnlyUpgrade: true, dashboard: false})
+    this.setState({currentPage: 'simOnlyUpgrade'})
   };
   handleHandsetUpgradeClicked = () => {
-    this.setState({handsetUpgrade: true, dashboard: false})
-  };
-  handleReturnToDashboard = () => {
-    this.setState({dashboard: true, additionalSim: false, additionalHandset: false, handsetUpgrade: false,
-                          customerProfile: false, simOnlyUpgrade: false })
+    this.setState({currentPage: 'handsetUpgrade'})
   };
   handleAdditionalSimClicked = () => {
-    this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalHandset: false,
-                          customerProfile: false, additionalSim: true})
+    this.setState({currentPage: 'additionalSim'})
   };
   handleAdditionalHandsetClicked = () => {
-      this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalSim: false,
-                           customerProfile: false, additionalHandset: true })
+      this.setState({currentPage: 'additionalHandset'})
   }
   handleCustomerProfileClicked = () => {
-      this.setState({dashboard: false, simOnlyUpgrade: false, handsetUpgrade: false, additionalSim: false,
-                           additionalHandset: false, customerProfile: true})
+      this.setState({currentPage: 'customerProfile'})
   }
 
   render() {
@@ -366,7 +354,7 @@ class Dashboard extends Component{
                     </div> : null
               }
               {
-                this.state.dashboard ?
+                this.state.currentPage === 'dashboard' ?
                     <Grid container spacing={2}>
                       {/* Upgrade Options */}
                       <Grid item xs={12} md={8} lg={8}>
@@ -421,35 +409,34 @@ class Dashboard extends Component{
                     </Grid> : null
               }
               {
-                this.state.simOnlyUpgrade ?
+                this.state.currentPage === 'simOnlyUpgrade'  ?
                     <SimOnlyUpgrade fixedHeightPaper={fixedHeightPaper} state={this.state}
                                     onNewCTNClicked={this.handleNewCTN}
                                     onReturnToDashboard={this.handleReturnToDashboard}/> : null
               }
               {
-                this.state.handsetUpgrade ?
+                this.state.currentPage === 'handsetUpgrade' ?
                     <HandsetUpgrade fixedHeightPaper={fixedHeightPaper} state={this.state}
                                     onNewCTNClicked={this.handleNewCTN}
                                     onReturnToDashboard={this.handleReturnToDashboard}/> : null
               }
               {
-                this.state.additionalSim ?
+                this.state.currentPage === 'additionalSim' ?
                     <AdditionalSim fixedHeightPaper={fixedHeightPaper} state={this.state}
                                     onNewCTNClicked={this.handleNewCTN}
                                     onReturnToDashboard={this.handleReturnToDashboard}/> : null
               }
               {
-                this.state.additionalHandset ?
+                this.state.currentPage === 'additionalHandset' ?
                     <AdditionalHandset/>: null
               }
               {
-                this.state.customerProfile ?
+                this.state.currentPage === 'customerProfile' ?
                     <CustomerProfile customer={this.state.customer}/> : null
               }
             </Container>
           </main>
         </div>
-
       );
   }
 }

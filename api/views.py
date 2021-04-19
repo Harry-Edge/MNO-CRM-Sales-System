@@ -116,6 +116,8 @@ class GetCustomer(APIView):
             customer['total_lines'] = customer_object.mobilenumber_set.all().count()
             customer['account_last_accessed_date_time'] = customer_object.account_last_accessed_date_time.date()
             customer['open_orders'] = open_order_list
+            if date_cal.calculate_days_remaining() <= 100:
+                mobile_account['eligible_for_100_day_promo'] = True
 
             """
              The below puts date and time tracking information on the customer 
@@ -430,7 +432,7 @@ class GetHandsetTariffs(APIView):
             handset_order_object = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
             handset_object = Handsets.objects.get(id=handset_order_object.handset.id)
 
-            tariffs_available = handset_object.tariffs_available.values()
+            tariffs_available = handset_object.tariffs_available.values().order_by('-mrc')
 
             def get_handset_tariff_upfront(tariff_count, handset, mrc, data_csv):
                 mrc_correct_format = (str(mrc)[:-2])
@@ -544,6 +546,24 @@ class AddHandsetTariffToOrder(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
+class AddOneHundredDayPromoToOrder(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = GenericSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            handset_order = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+            handset_order.one_hundred_day_promo = True
+            handset_order.early_upgrade_fee = 0
+            handset_order.save()
+            return Response('Added 100 Day Promo To Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class AddSpendCapToHandsetOrder(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = SpendCapSerializer
@@ -603,23 +623,6 @@ class AddInsuranceToHandsetOrder(APIView):
             handset_order_object.save()
 
             return Response('Added Insurance', status=status.HTTP_200_OK)
-        else:
-            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
-
-
-class AddFriendsAndFamilyToHandsetOrder(APIView):
-
-    permission_classes = (IsAuthenticated, )
-
-    serializer_class = GenericSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
-            ctn = serializer.data.get('ctn')
-            print(ctn)
-            return Response('Added F&F To Order', status=status.HTTP_200_OK)
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
@@ -688,6 +691,32 @@ class HandsetOrderAPI(APIView):
 # //
 # MISCELLANEOUS FUNCTIONS
 # //
+
+class AddFriendsAndFamilyToOrder(APIView):
+
+    permission_classes = (IsAuthenticated, )
+
+    serializer_class = GenericSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+
+        if serializer.is_valid():
+            order_type = serializer.data.get('string')
+
+            if order_type == 'handset':
+                handset_order = HandsetOrder.objects.get(ctn=serializer.data.get('ctn'))
+                handset_order.friends_and_family = True
+                handset_order.save()
+            elif order_type == 'sim_only':
+                sim_only_order = SimOnlyOrder.objects.get(ctn=serializer.data.get('ctn'))
+                sim_only_order.friends_and_family = True
+
+            return Response('Added F&F To Order', status=status.HTTP_200_OK)
+        else:
+            return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
+
+
 class GetSpendCaps(APIView):
     permission_classes = (AllowAny,)
 

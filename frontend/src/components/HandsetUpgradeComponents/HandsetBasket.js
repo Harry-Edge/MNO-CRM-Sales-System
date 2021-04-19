@@ -125,6 +125,11 @@ class HandsetBasket extends Component {
                 this.props.onReturnToDashboard()
         })
     }
+
+    handleCalculateFriendsAndFamilyDiscountAmount = () => {
+        return (this.state.basketItems.tariff_mrc * 0.3).toFixed(1)
+    }
+
     countUp = () => {
         this.setState({timer: this.state.timer += 1})
     }
@@ -134,7 +139,7 @@ class HandsetBasket extends Component {
 
     render() {
 
-        const {classes,} = this.props
+        const {classes, state} = this.props
 
         return (
             <Box>
@@ -169,10 +174,19 @@ class HandsetBasket extends Component {
                                        <TableCell align='right'>£0</TableCell>
                                    </TableRow>
                                    {
-                                       this.state.basketItems.early_upgrade_fee ?
+                                       state.early_upgrade_fee ?
                                            <TableRow hover={true}>
                                                <TableCell>Early Upgrade Fee</TableCell>
-                                               <TableCell align='right'>£{this.state.basketItems.early_upgrade_fee}</TableCell>
+                                               <TableCell align='right'>£{state.early_upgrade_fee}</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+
+                                   }
+                                   {
+                                       this.state.basketItems.one_hundred_day_promo ?
+                                           <TableRow hover={true}>
+                                               <TableCell>100 Day Promo </TableCell>
+                                               <TableCell align='right'>- £{state.early_upgrade_fee}</TableCell>
                                                <TableCell align='right'>£0</TableCell>
                                            </TableRow> : null
 
@@ -192,6 +206,15 @@ class HandsetBasket extends Component {
                                                <TableCell>Handset Credit £{this.state.basketItems.handset_credit}</TableCell>
                                                <TableCell align='right'> - £{this.state.basketItems.handset_credit}</TableCell>
                                                <TableCell align='right'>£0</TableCell>
+                                           </TableRow> : null
+
+                                   }
+                                   {
+                                       this.state.basketItems.friends_and_family ?
+                                           <TableRow hover={true}>
+                                               <TableCell>Friends and Family</TableCell>
+                                               <TableCell align='right'>£0</TableCell>
+                                               <TableCell align='right'> - £{this.handleCalculateFriendsAndFamilyDiscountAmount()}</TableCell>
                                            </TableRow> : null
 
                                    }

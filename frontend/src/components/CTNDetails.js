@@ -50,7 +50,6 @@ class CTNDetails extends Component {
 
     componentDidMount() {
         this.handleGetColourOptions()
-        console.log(this.props.mobileAccount)
     };
     componentDidUpdate(prevProps, prevState, snapshot) {
         // Calls the Colour change text options if CTN data has been changed

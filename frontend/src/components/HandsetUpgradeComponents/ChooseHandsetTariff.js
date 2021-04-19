@@ -94,8 +94,7 @@ class ChooseHandsetTariff extends Component {
           fetch("http://127.0.0.1:8000/api/get-handset-tariffs", requestOptions)
              .then((response) => response.json())
              .then((data) => {
-                   this.setState({handsetTariffs: data})
-                   console.log(data)}
+                   this.setState({handsetTariffs: data})}
                )
 
           // Generates Handset Credit amounts
@@ -139,15 +138,36 @@ class ChooseHandsetTariff extends Component {
         const requestOptions = {
             method: 'POST',
             headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
-            body: JSON.stringify({ctn: this.state.ctn})
+            body: JSON.stringify({ctn: this.state.ctn, string: 'handset'})
         }
 
-        fetch("http://127.0.0.1:8000/api/add-handset-friends-and-family", requestOptions)
+        fetch("http://127.0.0.1:8000/api/add-friends-and-family", requestOptions)
              .then((response) => response.json())
              .then((data) => {
                  console.log(data)
+                 this.setState({renderBasket: false})
+                 this.setState({renderBasket: true})
              })
     }
+
+    handleAddHundredDayPromo = () => {
+
+       const requestOptions = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json', 'Authorization': `JWT ${localStorage.getItem('token')}`},
+            body: JSON.stringify({ctn: this.state.ctn, string: 'handset'})
+        }
+
+        fetch("http://127.0.0.1:8000/api/add-100-day-promo-to-order", requestOptions)
+             .then((response) => response.json())
+             .then((data) => {
+                 console.log(data)
+                 this.setState({renderBasket: false})
+                 this.setState({renderBasket: true})
+             })
+
+    }
+
     handleCalculateValue = (contractLength, mrc, upfront) => {
             return (parseInt(contractLength, 10) * mrc) + parseInt(upfront, 10)
     }
@@ -213,6 +233,16 @@ class ChooseHandsetTariff extends Component {
                                                                    <AddCircleOutlineIcon/>
                                                                </ListItemIcon>
                                                            </ListItem>
+                                                           {
+                                                               state.mobileAccount.eligible_for_100_day_promo ?
+                                                                     <ListItem button disabled={!this.state.tariffSelected}
+                                                                            onClick={() => this.handleAddHundredDayPromo()}>
+                                                                       <ListItemText primary='100 Day Early Promo'/>
+                                                                       <ListItemIcon>
+                                                                           <AddCircleOutlineIcon/>
+                                                                       </ListItemIcon>
+                                                                   </ListItem> : null
+                                                           }
                                                        </List>
                                                    </Box>
                                                </Box>
@@ -293,6 +323,7 @@ class ChooseHandsetTariff extends Component {
                                    onHandsetOrderDeleted={this.props.onHandsetOrderDeleted}
                                    handsetChosen={this.state.handsetChosen}
                                    onFinaliseHandsetClicked={this.props.onFinaliseHandsetClicked}
+                                   state={state.mobileAccount}
                                    ctn={this.props.state.mobileAccount.number}/> : null
 
                            }

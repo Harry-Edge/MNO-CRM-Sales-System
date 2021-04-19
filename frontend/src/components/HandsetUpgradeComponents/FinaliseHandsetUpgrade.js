@@ -158,6 +158,7 @@ class FinaliseHandset extends Component {
                                    onReadyForValidation={this.handleMakeOrderReadyForValidation}
                                    readyForSubmission={this.state.orderReadyForSubmission}
                                    handsetChosen={this.state.handsetChosen}
+                                   state={state.mobileAccount}
                                    onReturnToDashboard={this.props.onReturnToDashboard}
                                    ctn={this.props.state.mobileAccount.number}/> : null
                            }

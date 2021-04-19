@@ -51,13 +51,25 @@ class UpgradeOptions extends Component {
                                             onClick={() => this.props.onHandsetUpgradeClicked()}>Upgrade</Button>
                                 </Box>
                                 :
-                                <Box m={1}>
-                                    <Button className={classes.button} endIcon={<KeyboardArrowUpIcon/>}
-                                            size='small'
-                                            variant='contained'
-                                            color="primary"
-                                            onClick={() => this.props.onHandsetUpgradeClicked()}>Early Upgrade
-                                        <strong> (£{mobileAccount.early_upgrade_fee} Fee)</strong></Button>
+                                <Box>
+                                    <Box m={1}>
+                                        <Button className={classes.button} endIcon={<KeyboardArrowUpIcon/>}
+                                                size='small'
+                                                variant='contained'
+                                                color="primary"
+                                                onClick={() => this.props.onHandsetUpgradeClicked()}>Early Upgrade
+                                            <strong> (£{mobileAccount.early_upgrade_fee} Fee)</strong></Button>
+                                    </Box>
+                                    {
+                                        mobileAccount.eligible_for_100_day_promo ?
+                                             <Box m={1}>
+                                                <Button className={classes.button} endIcon={<KeyboardArrowUpIcon/>}
+                                                        size='small'
+                                                        variant='contained'
+                                                        color="primary"
+                                                        onClick={() => this.props.onHandsetUpgradeClicked()}>100 Day Early Upgrade Promo</Button>
+                                            </Box> : null
+                                    }
                                 </Box>
                         }
                     </Grid>

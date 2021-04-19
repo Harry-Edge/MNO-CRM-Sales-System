@@ -293,6 +293,7 @@ class ChooseHandset extends Component {
                                 onChooseHandsetTariffClicked={this.props.onChooseHandsetTariffClicked}
                                 onHandsetOrderDeleted={this.handleDeleteHandsetOrder}
                                 handsetChosen={this.state.handsetChosen}
+                                state={state.mobileAccount}
                                 ctn={this.props.state.mobileAccount.number}/>: null
                            }
                        </Paper>

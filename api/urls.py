@@ -26,8 +26,8 @@ urlpatterns = [
     path('handset-order', HandsetOrderAPI.as_view()),
     path('add-handset-tariff-to-order', AddHandsetTariffToOrder.as_view()),
     path('add-handset-credit-to-order', AddHandsetCreditToOrder.as_view()),
+    path('add-100-day-promo-to-order', AddOneHundredDayPromoToOrder.as_view()),
     path('add-spend-cap-to-handset-order', AddSpendCapToHandsetOrder.as_view()),
-    path('add-handset-friends-and-family', AddFriendsAndFamilyToHandsetOrder.as_view()),
     path('get-handset-insurance', GetHandsetInsurance.as_view()),
     path('add-insurance-to-handset-order', AddInsuranceToHandsetOrder.as_view()),
     path('validate-handset-imei', ValidateHandsetImei.as_view()),
@@ -43,5 +43,6 @@ urlpatterns = [
     path('submit-handset-order', SubmitHandsetOrder.as_view()),
 
     # Misc
-    path('update-customer-details', UpdateCustomerDetails.as_view())
+    path('update-customer-details', UpdateCustomerDetails.as_view()),
+    path('add-friends-and-family', AddFriendsAndFamilyToOrder.as_view()),
 ]
