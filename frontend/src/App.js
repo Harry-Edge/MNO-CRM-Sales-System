@@ -1,4 +1,3 @@
-import Dashboard from "./components/Dashboard";
 import CamelotPro from "./components/CamelotPro";
 import React from 'react';
 

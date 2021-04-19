@@ -1,10 +1,8 @@
 import React, {Component} from "react";
 import { withStyles } from '@material-ui/core/styles';
 import ChooseSimOnlyTariff from "../SimOnlyUpgradeComponents/ChooseSimOnlyTariff";
-import FinaliseSimOnly from "../SimOnlyUpgradeComponents/FinaliseSimOnly";
 
-
-const styles = (theme) => ({
+const styles = () => ({
     textSuccess: {
         color: 'green'
     },

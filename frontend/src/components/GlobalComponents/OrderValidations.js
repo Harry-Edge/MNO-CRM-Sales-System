@@ -163,7 +163,7 @@ class OrderValidations extends Component {
                             <Select
                               labelId="mob"
                               label="mob"
-                              error={this.state.mobError}
+                              error={!!this.state.mobError}
                               value={this.state.monthOfBirth}
                               disabled={!this.state.postcodeValidated}
                               onChange={(e) => this.handleMonthOfBirth(e)}
@@ -230,7 +230,7 @@ class OrderValidations extends Component {
                                  <Grid item xs={6} style={{marginTop: 4}}>
                                        <TextField size='small' className={classes.postcodeValidation} variant='outlined'
                                        label='Pin'
-                                       error={this.state.oneTimePinError}
+                                       error={!!this.state.mobError}
                                        onChange={(event) => {this.setState({oneTimePinInputted: event.target.value})}}
                                        disabled={!this.state.oneTimePin}/>
                                         <Button className={classes.button} style={{marginLeft: '15px'}} color='secondary'

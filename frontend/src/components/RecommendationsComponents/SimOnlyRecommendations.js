@@ -7,7 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button"
 
-const styles = (theme) => ({
+const styles = () => ({
     title: {
         fontWeight: 650,
         color: 'grey'
@@ -25,7 +25,6 @@ const styles = (theme) => ({
       borderColor: '#008080'
      },
     },
-
 });
 
 class SimOnlyRecommendations extends Component {

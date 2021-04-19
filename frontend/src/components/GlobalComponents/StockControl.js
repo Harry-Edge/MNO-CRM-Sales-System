@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core/styles';
 import {TextField} from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import HandsetInsurance from "./HandsetInsurance";
 
 const styles = () => ({
     imeiValidation: {

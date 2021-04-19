@@ -75,21 +75,22 @@ class GetCustomer(APIView):
             handset_tariffs_recommended, handsets = recommendations.get_handset_recommendations(mobile_number_object)
 
             handset_recommendations_list = []
-            for count, tariff in enumerate(handset_tariffs_recommended):
+            for tariff_count, tariff in enumerate(handset_tariffs_recommended):
                 def get_colour_options():
                     all_colours_available = []
-                    filter = Handsets.objects.filter(model=handsets[count].model)
-                    for handset_model in filter:
+                    filtered_handset = Handsets.objects.filter(model=handsets[tariff_count].model)
+                    for handset_model in filtered_handset:
                         stock = HandsetStock.objects.filter(handset=handset_model).count()
                         dic = {handset_model.colour: {"id": handset_model.id, 'stock': stock}}
                         all_colours_available.append(dic)
                     return all_colours_available
 
-                handset_recommended_dict = {'id': tariff.id, 'handset': handsets[count].model,
+                handset_recommended_dict = {'id': tariff.id, 'handset': handsets[tariff_count].model,
                                             'data': tariff.data_allowance, 'mrc': tariff.mrc,
                                             'colours_available': get_colour_options(),
-                                            'upfront': recommendations.get_upfront(tariff.mrc, handsets[count].model,
-                                                                                  tariff.data_allowance)}
+                                            'upfront': recommendations.get_upfront(tariff.mrc,
+                                                                                   handsets[tariff_count].model,
+                                                                                   tariff.data_allowance)}
                 handset_recommendations_list.append(handset_recommended_dict)
 
             # Serializes Data
@@ -137,9 +138,9 @@ class GetCustomer(APIView):
         return Response('Error', status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
-Notes
-"""
+# //
+# NOTES FUNCTIONS
+# //
 class GetCustomerNotes(APIView):
     permission_classes = (IsAuthenticated, )
 
@@ -189,9 +190,10 @@ class AddNote(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
-"""
-Sim-Only Order
-"""
+
+# //
+# SIM-ONLY ORDER FUNCTIONS
+# //
 class GetSimOnlyTariffs(APIView):
     permission_classes = (AllowAny,)
 
@@ -363,9 +365,9 @@ class SubmitSimOnlyOrder(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
-Handset Order
-"""
+# //
+# HANDSET ORDER FUNCTIONS
+# //
 class GetHandsets(APIView):
     permission_classes = (AllowAny,)
 
@@ -391,13 +393,12 @@ class GetHandsets(APIView):
 
         for handset in new_handset_list:
             all_colours_available = []
-            filter = Handsets.objects.filter(model=handset['model'])
-            for handset_model in filter:
+            filtered_handsets = Handsets.objects.filter(model=handset['model'])
+            for handset_model in filtered_handsets:
                 stock = HandsetStock.objects.filter(handset=handset_model).count()
                 dic = {handset_model.colour: {"id": handset_model.id, 'stock': stock}}
                 all_colours_available.append(dic)
             handset['colours'] = all_colours_available
-        print(new_handset_list)
         return new_handset_list
 
     def get(self, request):
@@ -434,7 +435,8 @@ class GetHandsetTariffs(APIView):
             def get_handset_tariff_upfront(tariff_count, handset, mrc, data_csv):
                 mrc_correct_format = (str(mrc)[:-2])
 
-                location = f'/Users/harry/Desktop/Git Projects/Excalibur Pro/crm/handset_tariff_and_upfront_prices/{data_csv}.csv'
+                location = f'/Users/harry/Desktop/Git Projects/Excalibur Pro' \
+                           f'/crm/handset_tariff_and_upfront_prices/{data_csv}.csv'
 
                 reader = csv.DictReader(open(location))
 
@@ -621,6 +623,7 @@ class AddFriendsAndFamilyToHandsetOrder(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
+
 class HandsetOrderAPI(APIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = HandsetOrderSerializer
@@ -640,8 +643,8 @@ class HandsetOrderAPI(APIView):
                 handset_order_object = HandsetOrder.objects.get(ctn=ctn)
                 handset_order = self.serializer_class(handset_order_object).data
 
-                handset_order['handset'] = Handsets.objects.get(id=handset_order['handset']).model +\
-                                           " " + Handsets.objects.get(id=handset_order['handset']).colour
+                handset_order['handset'] = Handsets.objects.get(id=handset_order['handset']).model\
+                                           + " " + Handsets.objects.get(id=handset_order['handset']).colour
 
                 if handset_order['handset_tariff']:
                     tariff_object = HandsetTariffs.objects.get(id=handset_order['handset_tariff'])
@@ -659,7 +662,6 @@ class HandsetOrderAPI(APIView):
                 get_basket_totals = GetBasketTotals(handset_order_object)
                 basket_totals = {'upfront': get_basket_totals.get_total_upfront(),
                                  'mrc': get_basket_totals.get_total_mrc()}
-
 
                 data = {'handset_order_items': handset_order, 'basket_totals': basket_totals}
 
@@ -683,9 +685,9 @@ class HandsetOrderAPI(APIView):
             return Response('Error Deleting Sim-Only Order', status=status.HTTP_304_NOT_MODIFIED)
 
 
-"""
-Misc
-"""
+# //
+# MISCELLANEOUS FUNCTIONS
+# //
 class GetSpendCaps(APIView):
     permission_classes = (AllowAny,)
 
@@ -741,9 +743,9 @@ class SubmitHandsetOrder(APIView):
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
 
-"""
-Order Validations
-"""
+# //
+# ORDER VALIDATIONS FUNCTIONS
+# //
 class ValidatePostcode(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -826,9 +828,10 @@ class ValidateHandsetImei(APIView):
         else:
             return Response('Bad Request', status=status.HTTP_400_BAD_REQUEST)
 
-"""
-Customer Details 
-"""
+
+# //
+# CUSTOMER DETAILS FUNCTIONS
+# //
 class UpdateCustomerDetails(APIView):
 
     permission_classes = (IsAuthenticated, )

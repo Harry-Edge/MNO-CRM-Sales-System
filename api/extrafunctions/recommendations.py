@@ -12,7 +12,8 @@ def get_upfront(mrc, model, data_allowance):
 
     def get_handset_upfront(handset, mrc, data_csv):
 
-        location = f'/Users/harry/Desktop/Git Projects/Excalibur Pro/crm/handset_tariff_and_upfront_prices/{data_csv}.csv'
+        location = f'/Users/harry/Desktop/Git Projects/Excalibur Pro' \
+                   f'/crm/handset_tariff_and_upfront_prices/{data_csv}.csv'
 
         reader = csv.DictReader(open(location))
 

@@ -6,7 +6,6 @@ import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
@@ -15,7 +14,7 @@ import Divider from "@material-ui/core/Divider";
 import {CircularProgress} from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 
-const styles = (theme) => ({
+const styles = () => ({
     currentlySelected: {
         backgroundColor: '#f2f2f2'
     },

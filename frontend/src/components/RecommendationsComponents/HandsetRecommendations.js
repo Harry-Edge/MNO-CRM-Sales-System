@@ -9,8 +9,8 @@ import Button from "@material-ui/core/Button"
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
-import TableCell from "@material-ui/core/TableCell";
-const styles = (theme) => ({
+
+const styles = () => ({
     title: {
         fontWeight: 650,
         color: 'grey'
@@ -42,10 +42,6 @@ class HandsetRecommendations extends Component {
              upfrontChosen: null,
              mrcChosen: null,
              dataChosen: null}
-
-    componentDidMount() {
-        console.log(this.props.recommendedTariffs)
-    }
 
     addRecommendedHandsetAndTariffToBasket = async () => {
         const handsetRequestOptions = {
