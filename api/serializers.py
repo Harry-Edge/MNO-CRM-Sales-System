@@ -14,7 +14,7 @@ class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'first_name', 'last_name', 'postcode', 'first_line_address', 'credit_class', 'email',
-                  'add_lines_available', 'account_last_accessed_by', 'account_last_accessed_date_time')
+                  'add_lines_available', 'account_last_accessed_by', 'account_last_accessed_date_time', 'payment_type')
         extra_kwargs = {'id': {'read_only': False}}
 
 

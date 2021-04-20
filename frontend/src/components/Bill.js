@@ -50,7 +50,7 @@ class Bill extends Component {
                     <Typography>Payment Date: <strong>18/03/21</strong></Typography>
                     <Typography>Previous Bill: <strong>£{this.props.bill}</strong></Typography>
                     <Typography>Average Bill: <strong>£{this.props.bill}</strong></Typography>
-                    <Typography>Payment Type: <strong>Direct Debit</strong></Typography>
+                    <Typography>Payment Type: <strong>{this.props.paymentType}</strong></Typography>
                     <Grid container style={{paddingTop: 20}}>
                         <Grid item xs={9}>
                                 <TextField id="outlined-basic" label="Enter Payment Amount" variant="outlined"

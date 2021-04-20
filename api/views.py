@@ -35,7 +35,8 @@ class GetCustomer(APIView):
 
     def post(self, request):
         """
-        Returns a Customers full details based on a ctn on their account
+        Returns a Customers full details, all of the information of their CTNs on their account, recommendations
+        for sim/handset, the customer notes and open order and various other relevant information.
         """
         serializer = self.serializer_class(data=request.data)
 

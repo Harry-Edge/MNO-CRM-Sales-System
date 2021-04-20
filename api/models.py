@@ -7,6 +7,7 @@ SPEND_CAPS = [('None', 'None'), ('0', '0'), ('5', '5'), ('10', '10'), ('20', '20
 class Customer(models.Model):
 
     ADD_LINE_OPTIONS = [('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4')]
+    PAYMENT_TYPES = [('Direct Debit', 'Direct Debit'), ('Regular', 'Regular')]
 
     first_name = models.CharField(max_length=200, null=True)
     last_name = models.CharField(max_length=200, null=True)
@@ -16,7 +17,7 @@ class Customer(models.Model):
     first_line_address = models.CharField(max_length=200, null=True)
     credit_class = models.IntegerField(null=True)
     add_lines_available = models.CharField(max_length=2, null=True, choices=ADD_LINE_OPTIONS)
-
+    payment_type = models.CharField(max_length=20, null=True, choices=PAYMENT_TYPES)
     account_last_accessed_by = models.CharField(max_length=10, null=True)
     account_last_accessed_date_time = models.DateTimeField(auto_now_add=False, null=True)
 

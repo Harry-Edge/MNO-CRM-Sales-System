@@ -196,7 +196,7 @@ class Dashboard extends Component{
                                                       simOnlyRecommendations: data.sim_only_recommendations,
                                                       handsetRecommendations: data.handset_recommendations})
                                 this.handleReturnToDashboard()
-                                console.log(data.mobile_account)
+                                console.log(data.customer)
 
                                 this.setState({loadingNewCTN: false})})
 
@@ -396,7 +396,8 @@ class Dashboard extends Component{
                                     {
                                         this.state.customer ?
                                            <Paper className={classes.paper}>
-                                                <Bill bill={this.state.customer.bill}/>
+                                                <Bill bill={this.state.customer.bill}
+                                                      paymentType={this.state.customer.payment_type}/>
                                             </Paper> : null
                                     }
                               </Grid>
