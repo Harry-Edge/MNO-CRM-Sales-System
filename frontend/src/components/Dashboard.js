@@ -28,6 +28,8 @@ import AdditionalHandset from "./AdditionalHandsetComponents/AdditionalHandset";
 import CustomerProfile from "./CustomerProfileComponents/CustomerProfile";
 import SimOnlyRecommendations from "./RecommendationsComponents/SimOnlyRecommendations";
 import HandsetRecommendations from "./RecommendationsComponents/HandsetRecommendations";
+import AddLineRecommendations from "./RecommendationsComponents/AddLineRecommendations";
+import Bill from "./Bill";
 import Notes from "./NotesComponents/Notes";
 import AddToHomeScreenIcon from '@material-ui/icons/AddToHomeScreen';
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -379,14 +381,29 @@ class Dashboard extends Component{
                           }
                         </Paper>
                       </Grid>
+                      {/* Notes */}
                       <Grid item xs={12}>
                           <Notes customer={this.state.customer} employee={this.state.employee}/>
+                      </Grid>
+                       <Grid item xs={12}>
+                           <Grid container spacing={2}>
+                               <Grid item xs={8}>
+                                    <Paper className={classes.paper}>
+                                        <AddLineRecommendations/>
+                                    </Paper>
+                              </Grid>
+                                <Grid item xs={4}>
+                                    <Paper className={classes.paper}>
+                                        <Bill/>
+                                    </Paper>
+                              </Grid>
+                           </Grid>
                       </Grid>
                       {/* Recommendations */}
                       <Grid item xs={12}>
                           {
                               this.state.simOnlyRecommendations ?
-                                  <Grid item xs={12}>
+                                  <Grid item xs={12} style={{paddingBottom: 20}}>
                                     <Paper className={classes.paper}>
                                       <SimOnlyRecommendations
                                                             onSelectedRecommendation={this.handleSimOnlyUpgradeClicked}

@@ -106,7 +106,8 @@ class HandsetRecommendations extends Component {
                                                                                                                                                         tariff.upfront,
                                                                                                                                                         tariff.mrc,
                                                                                                                                                         tariff.data)}
-                                                           value={this.state.modelSelected === tariff.handset ? this.state.selectedColour: ''}>
+                                                           value={this.state.modelSelected === tariff.handset ? this.state.selectedColour: ''}
+                                                            InputProps={{ disableUnderline: true }}>
                                                    <MenuItem value=''>
                                                        <em>Select Colour</em>
                                                    </MenuItem>
