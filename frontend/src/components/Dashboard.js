@@ -393,9 +393,12 @@ class Dashboard extends Component{
                                     </Paper>
                               </Grid>
                                 <Grid item xs={4}>
-                                    <Paper className={classes.paper}>
-                                        <Bill/>
-                                    </Paper>
+                                    {
+                                        this.state.customer ?
+                                           <Paper className={classes.paper}>
+                                                <Bill bill={this.state.customer.bill}/>
+                                            </Paper> : null
+                                    }
                               </Grid>
                            </Grid>
                       </Grid>

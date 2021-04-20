@@ -45,11 +45,11 @@ class Bill extends Component {
                 <Typography className={classes.title} >Bill</Typography>
                 <Divider/>
                 <Box m={1} style={{paddingTop: 10}}>
-                    <Typography>Latest Bill: <strong>£30</strong></Typography>
+                    <Typography>Latest Bill: <strong>£{this.props.bill}</strong></Typography>
                     <Typography>Bill Date: <strong>10/03/21</strong></Typography>
                     <Typography>Payment Date: <strong>18/03/21</strong></Typography>
-                    <Typography>Previous Bill: <strong>£50</strong></Typography>
-                    <Typography>Average Bill: <strong>£150</strong></Typography>
+                    <Typography>Previous Bill: <strong>£{this.props.bill}</strong></Typography>
+                    <Typography>Average Bill: <strong>£{this.props.bill}</strong></Typography>
                     <Typography>Payment Type: <strong>Direct Debit</strong></Typography>
                     <Grid container style={{paddingTop: 20}}>
                         <Grid item xs={9}>

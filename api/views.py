@@ -116,6 +116,7 @@ class GetCustomer(APIView):
             customer['total_lines'] = customer_object.mobilenumber_set.all().count()
             customer['account_last_accessed_date_time'] = customer_object.account_last_accessed_date_time.date()
             customer['open_orders'] = open_order_list
+            customer['bill'] = sum([bill_mrc['mrc'] for bill_mrc in customer_object.mobilenumber_set.all().values()])
             if date_cal.calculate_days_remaining() <= 100:
                 mobile_account['eligible_for_100_day_promo'] = True
 
