@@ -56,9 +56,7 @@ class GetCustomer(APIView):
                 """
                 Gets all the other lines the customer has and also adds the upgrade data and days remaining
                 """
-                other_lines = []
-                for line in customer_object.mobilenumber_set.all().values():
-                    other_lines.append(line)
+                other_lines = [line for line in customer_object.mobilenumber_set.all().values()]
                 for count, line in enumerate(customer_object.mobilenumber_set.all()):
                     recommended_date_cal = date_calculations.DateTimeCalculations(line)
                     current_other_line_dic = other_lines[count]
